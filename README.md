@@ -4,7 +4,7 @@
 
 所有技能通过软链接分发到各工具的 skills 目录，一处修改全局生效。
 
-## 技能一览（28 个）
+## 技能一览（27 个）
 
 | # | 技能 | 用途 | 来源 | 大小 |
 |---|------|------|------|------|
@@ -20,23 +20,21 @@
 | 10 | **humanizer** | 去除 AI 写作痕迹，检测修复 29 种 AI 写作模式 | [GitHub](https://github.com/blader/humanizer) (adapted) | 28K |
 | 11 | **mcp-builder** | 构建 MCP 服务器集成外部 API（Python/Node） | 本地生成 | 144K |
 | 12 | **pdf** | PDF 操作：提取文本/表格、创建、合并/拆分、填表 | 本地生成 | 92K |
-| 13 | **planning-with-files** | Manus 风格文件计划：task_plan.md, findings.md, progress.md | [GitHub](https://github.com/OthmanAdi/planning-with-files) ⚠️ | 1.4M |
+| 13 | **planning-with-files** | Manus 风格文件计划：task_plan.md, findings.md, progress.md | [GitHub](https://github.com/OthmanAdi/planning-with-files) | 1.4M |
 | 14 | **pptx** | PPT 创建/编辑/分析、布局、批注、演讲备注 | 本地生成 | 1.3M |
 | 15 | **programmer** | 全流程编程引擎：记忆检索→考古→调研→拆解→实现→校验 | 本地生成 | 60K |
-| 16 | **prose-craft** | 文档写作质量优化：声音建立、选词纠正、LLM 弱点修复 | [GitHub](https://github.com/obra/elements-of-style) (ref) | 148K |
+| 16 | **prose-craft** | 文档写作质量优化：声音建立、选词纠正、LLM 弱点修复 | [GitHub](https://github.com/obra/the-elements-of-style) (ref) | 148K |
 | 17 | **pua-debugging** | 强制穷举式问题解决：失败2次后触发，杜绝放弃 | 本地生成 | 20K |
 | 18 | **seo-optimization** | SEO 内容优化：页面因素、E-E-A-T、语义 SEO、GEO | 本地生成 | 48K |
 | 19 | **simplify** | 简化代码：在不改变行为的前提下提升可读性 | 本地生成 | 16K |
 | 20 | **skill-creator** | 创建新技能的指南和工作流 | 本地生成 | 72K |
 | 21 | **skill-seekers** | 从文档网站、GitHub 仓库、PDF 转换为 Claude Skill | [GitHub](https://github.com/yusufkaraaslan/Skill_Seekers) | 8K |
-| 22 | **slack-gif-creator** | 创建 Slack 优化的 GIF 动画（⚠️ 缺少 core/gif_builder.py） | 本地生成 | 8K |
-| 23 | **social-media** | 社交媒体帖子写作：平台格式、字数限制、语气 | 本地生成 | 16K |
-| 24 | **storytelling** | 故事创作：小说写作、漫画脚本、影片企划、角色塑造 | [GitHub](https://github.com/miles990/claude-domain-skills) | 16K |
-| 25 | **theme-factory** | 主题样式工具包：10 个预设主题，适用于幻灯片/文档/网页 | 本地生成 | 180K |
-| 26 | **transcript-cleanup** | 清理语音转文字输出：修复语音伪影，保留说话者声音 | 本地生成 | 8K |
-| 27 | **video-scripting** | 视频脚本/TTS 脚本：节奏、钩子结构、语音过渡 | 本地生成 | 16K |
-| 28 | **webapp-testing** | 用 Playwright 测试本地 Web 应用（⚠️ 缺少 scripts/with_server.py） | 本地生成 | 4K |
-| 29 | **xlsx** | 电子表格创建/编辑/分析：公式、格式、数据可视化 | 本地生成 | 24K |
+| 22 | **social-media** | 社交媒体帖子写作：平台格式、字数限制、语气 | 本地生成 | 16K |
+| 23 | **storytelling** | 故事创作：小说写作、漫画脚本、影片企划、角色塑造 | [GitHub](https://github.com/miles990/claude-domain-skills) | 16K |
+| 24 | **theme-factory** | 主题样式工具包：10 个预设主题，适用于幻灯片/文档/网页 | 本地生成 | 180K |
+| 25 | **transcript-cleanup** | 清理语音转文字输出：修复语音伪影，保留说话者声音 | 本地生成 | 8K |
+| 26 | **video-scripting** | 视频脚本/TTS 脚本：节奏、钩子结构、语音过渡 | 本地生成 | 16K |
+| 27 | **xlsx** | 电子表格创建/编辑/分析：公式、格式、数据可视化 | 本地生成 | 24K |
 
 ### huashu-nuwa 内含子技能（8 个视角 Skill）
 
@@ -57,40 +55,52 @@
 
 ### 有外部上游仓库（可检查更新）
 
-| 技能 | 上游仓库 | 状态 |
-|------|---------|------|
-| planning-with-files | [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | ✅ v2.35.0（2026-04-28 更新） |
-| darwin-skill | [alchaincyf/darwin-skill](https://github.com/alchaincyf/darwin-skill) | ⚠️ 需检查 |
-| huashu-nuwa | [alchaincyf/nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | ⚠️ 需检查 |
-| storytelling | [miles990/claude-domain-skills](https://github.com/miles990/claude-domain-skills) | ⚠️ 需检查 |
-| humanizer | [blader/humanizer](https://github.com/blader/humanizer) (adapted) | ⚠️ 需检查 |
-| prose-craft | [obra/elements-of-style](https://github.com/obra/elements-of-style) (reference) | ⚠️ 需检查 |
-| skill-seekers | [yusufkaraaslan/Skill_Seekers](https://github.com/yusufkaraaslan/Skill_Seekers) | ⚠️ 需检查 |
+| 技能 | 上游仓库 | 最新版本/提交 | 本地状态 | 备注 |
+|------|---------|-------------|---------|------|
+| planning-with-files | [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | 2026-04-21 `v2.35.0` | ✅ 已是最新 | Hermes adapter + NLPM audit |
+| skill-seekers | [yusufkaraaslan/Skill_Seekers](https://github.com/yusufkaraaslan/Skill_Seekers) | 2026-04-26 `v3.5.1` | 🔴 高优先更新 | C3.x 语言过滤修复 + defaults.json 重构 |
+| humanizer | [blader/humanizer](https://github.com/blader/humanizer) | 2026-04-01 `#80` | ⚠️ 待更新 | 新增被动语态规则 + OpenCode 支持 |
+| darwin-skill | [alchaincyf/darwin-skill](https://github.com/alchaincyf/darwin-skill) | 2026-04-21 `2056abf` | ⚠️ 待更新 | banner 扩展 + 异常边界条件 + 自评优化 74→80 |
+| huashu-nuwa | [alchaincyf/nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | 2026-04-23 `ea4b9ab` | ⚠️ 待更新 | Bloome 合作展示 + hero banner |
+| storytelling | [miles990/claude-domain-skills](https://github.com/miles990/claude-domain-skills) | 2026-01-20 `dbd2fed` | ⚠️ 待更新 | 上游已重构为扁平 plugin 结构（24 个独立 plugin） |
+| prose-craft | [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style) | 2025-10-18 `6099c50` | ✅ 上游无新提交 | 用 Strunk 原则重写 |
 
-### 本地/自定义生成（无外部来源）
+### 本地/自定义生成（已确认无 GitHub 上游源）
 
-agent-browser, algorithmic-art, canvas-design, citation-sourcing, codemap, doc-coauthoring, docx, mcp-builder, pdf, pptx, programmer, pua-debugging, seo-optimization, simplify, skill-creator, slack-gif-creator, social-media, theme-factory, transcript-cleanup, video-scripting, webapp-testing, xlsx
+agent-browser, algorithmic-art, canvas-design, citation-sourcing, codemap, doc-coauthoring, docx, mcp-builder, pdf, pptx, programmer, pua-debugging, seo-optimization, simplify, skill-creator, social-media, theme-factory, transcript-cleanup, video-scripting, xlsx
 
 ## 软链接分发
 
-技能文件集中存储在本仓库，通过软链接分发到各工具目录：
+技能文件集中存储在本仓库，通过软链接分发到各工具目录（每个工具 27 个）：
 
 ```
-~/.claude/skills/          → 2 个技能
-~/.config/opencode/skills/ → 22 个技能
-~/.opencode/skills/        → 3 个技能
-~/.agents/skills/          → 1 个技能
-~/.trae/skills/            → 5 个技能
-~/.cursor/skills/          → 1 个技能
+~/.trae/skills/            → 27 个技能
+~/.config/opencode/skills/ → 27 个技能
+~/.opencode/skills/        → 27 个技能
+~/.claude/skills/          → 27 个技能
+~/.agents/skills/          → 27 个技能
+~/.cursor/skills/          → 27 个技能
 ```
 
-## 已知问题
+### 添加/修复软链接
+
+```bash
+# 为所有工具目录创建缺失的软链接
+for dir in ~/.trae/skills ~/.config/opencode/skills ~/.opencode/skills ~/.claude/skills ~/.agents/skills ~/.cursor/skills; do
+  mkdir -p "$dir"
+  for skill in /Users/ganjie/skills/*/; do
+    name=$(basename "$skill"); [ "$name" = "README.md" ] && continue
+    [ -e "$dir/$name" ] || ln -s "$skill" "$dir/$name"
+  done
+done
+```
+
+## 已删除的损坏 Skill（2026-04-28）
 
 | 技能 | 问题 |
 |------|------|
-| planning-with-files | ✅ 已更新至 v2.35.0（2026-04-28） |
-| webapp-testing | ⚠️ 缺少 `scripts/with_server.py` 依赖脚本 |
-| slack-gif-creator | ⚠️ 缺少 `core/gif_builder.py` 依赖脚本 |
+| ~~webapp-testing~~ | 缺少 `scripts/with_server.py` 依赖脚本 |
+| ~~slack-gif-creator~~ | 缺少 `core/gif_builder.py` 依赖脚本 |
 
 ## 质量分级
 
@@ -98,7 +108,4 @@ agent-browser, algorithmic-art, canvas-design, citation-sourcing, codemap, doc-c
 darwin-skill, docx, pptx, canvas-design, prose-craft, humanizer, seo-optimization, huashu-nuwa, mcp-builder, programmer, xlsx, skill-creator, theme-factory
 
 ### 精简但自足
-citation-sourcing, transcript-cleanup, video-scripting, social-media, pua-debugging, simplify, storytelling, algorithmic-art
-
-### 缺少依赖
-webapp-testing, slack-gif-creator
+citation-sourcing, transcript-cleanup, video-scripting, social-media, pua-debugging, simplify, storytelling, algorithmic-art, agent-browser, skill-seekers, doc-coauthoring, codemap
