@@ -1,3 +1,0 @@
-timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
-2026-04-27T08:13	token-rewrite	programmer	87.3	86.25	keep	整体	token优化重写(-73%体积,references分离,PhaseR新增)	dry_run
-2026-04-27T08:13	round3	programmer	86.25	88.75	keep	D5-指令具体性	@explorer/@oracle输出格式恢复+质量洞察表格	ora-1
