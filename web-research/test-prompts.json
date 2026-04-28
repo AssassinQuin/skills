@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "prompt": "调研 React Server Components 的最佳实践和常见陷阱",
+    "expected": "应触发 skill → memory 检索 → 头脑风暴(3-7搜索主题) → 工具分配(exa+searxng+github) → 🔒用户确认 → ≤3子agent并行搜索 → 原始结果归档 → @oracle总结 → memory存储+docs保存",
+    "scenario": "典型英文技术调研，验证完整6阶段流程"
+  },
+  {
+    "id": 2,
+    "prompt": "调研 Python asyncio 高并发方案，对比 asyncio vs trio vs curio",
+    "expected": "应触发头脑风暴生成对比维度 → 搜索工具覆盖方案对比(exa语义搜索)+代码实现(github_search_code) → 子agent分工按主题分 → 总结含方案对比表",
+    "scenario": "方案对比型调研，验证搜索工具分工和对比分析能力"
+  },
+  {
+    "id": 3,
+    "prompt": "调研炉石传说酒馆战棋的 AI 算法实现方案",
+    "expected": "应触发中文搜索(searxng language=zh)+英文交叉验证(exa) → github搜索相关开源项目 → 全文提取2-3个高价值URL → memory存储概述+本地保存详情",
+    "scenario": "中英混合+游戏AI领域，验证多语言搜索和memory持久化"
+  }
+]
