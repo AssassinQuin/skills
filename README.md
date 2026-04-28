@@ -58,11 +58,11 @@
 | 技能 | 上游仓库 | 最新版本/提交 | 本地状态 | 备注 |
 |------|---------|-------------|---------|------|
 | planning-with-files | [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | 2026-04-21 `v2.35.0` | ✅ 已是最新 | Hermes adapter + NLPM audit |
-| skill-seekers | [yusufkaraaslan/Skill_Seekers](https://github.com/yusufkaraaslan/Skill_Seekers) | 2026-04-26 `v3.5.1` | 🔴 高优先更新 | C3.x 语言过滤修复 + defaults.json 重构 |
-| humanizer | [blader/humanizer](https://github.com/blader/humanizer) | 2026-04-01 `#80` | ⚠️ 待更新 | 新增被动语态规则 + OpenCode 支持 |
-| darwin-skill | [alchaincyf/darwin-skill](https://github.com/alchaincyf/darwin-skill) | 2026-04-21 `2056abf` | ⚠️ 待更新 | banner 扩展 + 异常边界条件 + 自评优化 74→80 |
-| huashu-nuwa | [alchaincyf/nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | 2026-04-23 `ea4b9ab` | ⚠️ 待更新 | Bloome 合作展示 + hero banner |
-| storytelling | [miles990/claude-domain-skills](https://github.com/miles990/claude-domain-skills) | 2026-01-20 `dbd2fed` | ⚠️ 待更新 | 上游已重构为扁平 plugin 结构（24 个独立 plugin） |
+| skill-seekers | [yusufkaraaslan/Skill_Seekers](https://github.com/yusufkaraaslan/Skill_Seekers) | 2026-04-26 `v3.5.1` | ✅ 2026-04-28 更新 | 重命名为 skill-builder，MCP 工具集成 |
+| humanizer | [blader/humanizer](https://github.com/blader/humanizer) | 2026-04-01 `v2.1.1` | ✅ 2026-04-28 更新 | 被动语态规则 + OpenCode 支持 + personality/soul |
+| darwin-skill | [alchaincyf/darwin-skill](https://github.com/alchaincyf/darwin-skill) | 2026-04-21 `2056abf` | ✅ 2026-04-28 更新 | 异常边界条件 + 成果卡片重设计 |
+| huashu-nuwa | [alchaincyf/nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | 2026-04-23 `ea4b9ab` | ✅ 2026-04-28 更新 | Phase 5 双Agent精炼 + Bloome 展示 |
+| storytelling | [miles990/claude-domain-skills](https://github.com/miles990/claude-domain-skills) | 2026-01-20 `dbd2fed` | ✅ 2026-04-28 更新 | 同步上游重构后的 storytelling plugin |
 | prose-craft | [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style) | 2025-10-18 `6099c50` | ✅ 上游无新提交 | 用 Strunk 原则重写 |
 
 ### 本地/自定义生成（已确认无 GitHub 上游源）
