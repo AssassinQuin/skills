@@ -1,9 +1,9 @@
 ---
-name: skill-builder
+name: skill-seekers
 description: Automatically detect source types and build AI skills using Skill Seekers. Use when the user wants to create skills from documentation, repos, PDFs, videos, or other knowledge sources.
 ---
 
-# Skill Builder
+# Skill Seekers
 
 You have access to the Skill Seekers MCP server which provides 35 tools for converting knowledge sources into AI-ready skills.
 
