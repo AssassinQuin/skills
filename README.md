@@ -59,7 +59,7 @@
 
 | 技能 | 上游仓库 | 状态 |
 |------|---------|------|
-| planning-with-files | [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | 🔴 **本地 v2.13.0，远端 v2.35.0，落后 145 commits** |
+| planning-with-files | [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | ✅ v2.35.0（2026-04-28 更新） |
 | darwin-skill | [alchaincyf/darwin-skill](https://github.com/alchaincyf/darwin-skill) | ⚠️ 需检查 |
 | huashu-nuwa | [alchaincyf/nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | ⚠️ 需检查 |
 | storytelling | [miles990/claude-domain-skills](https://github.com/miles990/claude-domain-skills) | ⚠️ 需检查 |
@@ -88,7 +88,7 @@ agent-browser, algorithmic-art, canvas-design, citation-sourcing, codemap, doc-c
 
 | 技能 | 问题 |
 |------|------|
-| planning-with-files | 🔴 版本严重落后（v2.13.0 → v2.35.0），建议 `cd planning-with-files && git pull origin master` |
+| planning-with-files | ✅ 已更新至 v2.35.0（2026-04-28） |
 | webapp-testing | ⚠️ 缺少 `scripts/with_server.py` 依赖脚本 |
 | slack-gif-creator | ⚠️ 缺少 `core/gif_builder.py` 依赖脚本 |
 
