@@ -5,6 +5,8 @@ description: Toolkit for interacting with and testing local web applications usi
 
 # Web Application Testing
 
+> ⚠️ **Missing dependencies**: `scripts/with_server.py` referenced below is not included. Use Playwright directly without the helper, or install from the skill's upstream source.
+
 To test local web applications, write native Python Playwright scripts.
 
 **Helper Scripts Available**:

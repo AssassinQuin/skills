@@ -5,6 +5,8 @@ description: "Knowledge and utilities for creating animated GIFs optimized for S
 
 # Slack GIF Creator
 
+> ⚠️ **Missing dependencies**: `core/gif_builder.py` (GIFBuilder class) referenced below is not included. Use PIL/pillow directly to implement the GIF generation logic described.
+
 A toolkit providing utilities and knowledge for creating animated GIFs optimized for Slack.
 
 ## Slack Requirements
