@@ -72,27 +72,38 @@ grep(pattern="{研究主题关键词}", path=/Users/ganjie/skills/)
 
 ### 2.2 搜索工具分配
 
-为每个搜索主题选择最适合的工具组合：
+为每个搜索主题选择最适合的工具组合。**每个工具的精确参数规范见 [references/tool-specs.md](references/tool-specs.md)。**
 
 | 工具 | 适用场景 | 搜索类型 |
 |------|---------|---------|
-| `exa_web_search` | 语义搜索、高质量内容、学术/技术 | 自然语言 query |
-| `searxng_web_search` | 广泛搜索、多源聚合、新闻/博客 | 关键词 query |
-| `web-search-prime` | 中文内容、国内信息 | 中文 query |
-| `zread_search_doc` | GitHub 仓库文档、开源项目 | repo_name + query |
-| `github_search_code` | 代码实现模式、具体用法 | 代码片段搜索 |
-| `github_search_repositories` | 发现相关开源项目 | repo 搜索 |
-| `exa_web_fetch` | 读取搜索结果中的具体页面 | URL 提取全文 |
-| `@explorer` (本地) | 项目代码库中的相关实现 | glob + grep |
+| `searxng_web_search` | 广泛搜索、多源聚合、中英文均适用 | 关键词/自然语言 query |
+| `exa_web_search_exa` | 语义搜索、高质量内容、学术/技术 | 自然语言 query（≤70字符） |
+| `github_search_code` | 代码实现模式、具体用法 | `content:` 代码搜索 |
+| `github_search_repositories` | 发现相关开源项目 | `topic:`, `language:`, `stars:` |
+| `exa_web_fetch_exa` | 批量提取 exa 结果页面全文 | URL[]（≤5/次） |
+| `webfetch` | 单页面提取全文 | 单 URL |
+| `web-search-prime` | ⚠️ 仅当 searxng 不可用且需中文内容时 | 中文 query |
+| `zread_search_doc` | ⚠️ 仅当需读取特定 GitHub repo 文档时 | repo_name + query |
 
 **分配原则**：
 
 | 原则 | 说明 |
 |------|------|
 | 互补覆盖 | 每个主题至少用 2 种不同工具交叉验证 |
-| 语言匹配 | 中文主题 → `web-search-prime` + `searxng`；英文主题 → `exa` + `searxng` |
-| 深度优先 | 广搜（searxng/exa）找到 URL → 深读（exa_web_fetch/webfetch）提取全文 |
-| 代码相关 | 涉及实现 → 额外加 `github_search_code` 或 `zread` |
+| 优先 exa/searxng | 默认使用 `exa` + `searxng`，避免依赖单一服务商 |
+| 语言匹配 | 中文 → `searxng(language=zh)`；英文 → `exa` + `searxng` |
+| 深度优先 | 广搜找到 URL → 深读提取全文（exa 结果用 `exa_web_fetch`，其他用 `webfetch`） |
+| 代码相关 | 涉及实现 → `github_search_code` + `github_search_repositories` |
+| 降级使用 | `web-search-prime` 仅当 searxng 不可用时；`zread` 仅当需特定 repo 文档时 |
+
+**搜索模式**（详见 [references/tool-specs.md#工具组合模式](references/tool-specs.md)）：
+
+| 模式 | 触发条件 | 工具组合 |
+|------|---------|---------|
+| A 技术方案 | 英文技术调研 | exa → exa_fetch → github_repos → github_code |
+| B 中文内容 | 中文主题调研 | searxng(zh) → webfetch → exa 交叉验证 |
+| C 代码实现 | 查实现模式 | github_repos → github_code → exa 理论 |
+| D 综合 | 默认 | Agent A(exa) + Agent B(searxng) + Agent C(github) |
 
 ### 2.3 🔒 用户确认
 
@@ -114,34 +125,33 @@ Agent B (@librarian): {主题B} + {主题E}
 Agent C (@librarian): {主题C} + {主题F}
 ```
 
-**Agent 指令模板**：
+**Agent 指令模板**（每个 agent 必须先读取 [references/tool-specs.md](references/tool-specs.md) 获取精确参数规范）：
 
 ```
 研究主题: {主题名}
-搜索工具: {分配的工具列表，含具体 query}
+搜索工具: {分配的工具列表，含具体 query 和参数}
+工具规范: 读取 /Users/ganjie/skills/web-research/references/tool-specs.md
 项目根目录: {project_root}
 
 任务:
-1. 用指定工具搜索，每个 query 返回 top 5-10 结果
-2. 对最有价值的 2-3 个结果，用 exa_web_fetch 或 webfetch 提取全文
-3. 整理为结构化笔记
+1. 按工具规范中的精确参数调用搜索工具，每个 query 取 top 5-10 结果
+2. 对高相关性结果(2-3个)，用 exa_web_fetch_exa 或 webfetch 提取全文
+3. 按统一输出格式整理为结构化笔记
 
-输出格式 (markdown):
-## {主题名} 搜索结果
-
-### 来源 1: {标题}
-- URL: {url}
-- 工具: {使用的搜索工具}
-- 摘要: {2-3 句关键发现}
-- 全文要点: {提取的核心内容}
-
-### 来源 2: ...
----
+统一输出格式（每个来源）:
+### 来源 {N}: {标题}
+- **URL**: {url}
+- **工具**: {工具名}
+- **Query**: {使用的搜索 query}
+- **相关性**: 高/中/低
+- **摘要**: {2-3 句关键发现}
+- **全文要点**: {仅全文提取时填写}
 
 约束:
 - 只返回与主题直接相关的结果
-- 记录每个来源的 URL 和搜索工具
-- 如发现与主题不相关，跳过不记录
+- 记录每个来源的 URL、工具名、query
+- exa query ≤70字符；searxng 支持布尔 AND/OR
+- 优先使用 exa/searxng，避免使用 web-search-prime（仅降级用）
 - 中文输出
 ```
 
