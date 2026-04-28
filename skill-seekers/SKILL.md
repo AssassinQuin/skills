@@ -67,3 +67,58 @@ Automatically detect the source type from user input:
 - `build_how_to_guides` — Generate how-to guides from tests
 - `split_config` — Split large configs into focused skills
 - `export_to_weaviate`, `export_to_chroma`, `export_to_faiss`, `export_to_qdrant` — Vector DB export
+
+## Key Tool Parameters
+
+### `scrape_docs`
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `url` | string | ✅ | Root URL of the documentation site |
+| `output_path` | string | ❌ | Output directory for scraped content |
+| `config_path` | string | ❌ | Path to JSON config file |
+| `max_depth` | number | ❌ | Max crawl depth (default: 3) |
+| `max_pages` | number | ❌ | Max pages to scrape (default: 100) |
+
+### `scrape_github`
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `repo_url` | string | ✅ | GitHub repository URL or `owner/repo` |
+| `branch` | string | ❌ | Branch to scrape (default: main) |
+| `include_patterns` | string[] | ❌ | Glob patterns for files to include |
+| `exclude_patterns` | string[] | ❌ | Glob patterns for files to exclude |
+| `max_file_size` | number | ❌ | Max file size in bytes (default: 100KB) |
+
+### `scrape_pdf`
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `file_path` | string | ✅ | Path to PDF file |
+| `pages` | string | ❌ | Page range (e.g., "1-10,15,20-30") |
+| `extract_tables` | boolean | ❌ | Extract tables as structured data (default: false) |
+
+### `enhance_skill`
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `skill_path` | string | ✅ | Path to the skill file to enhance |
+| `focus_areas` | string[] | ❌ | Areas to improve: structure, examples, edge_cases, completeness |
+| `target_platform` | string | ❌ | Target: claude, opencode, cursor (default: claude) |
+
+### `package_skill`
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `skill_path` | string | ✅ | Path to the skill file |
+| `format` | string | ✅ | Output format: markdown, json, yaml |
+| `include_metadata` | boolean | ❌ | Include frontmatter metadata (default: true) |
+
+### `generate_config`
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `url` | string | ✅ | URL to generate config for |
+| `preset` | string | ❌ | Config preset: minimal, standard, comprehensive |
+| `output_path` | string | ❌ | Where to save the config file |
+
+## Error Handling
+
+- **Large sites**: Use `estimate_pages` first, then set `max_pages` to control scope
+- **Rate limiting**: Config file supports `delay_ms` between requests
+- **Authentication**: Use config file for sites requiring login (set `headers` or `cookies`)
+- **Broken links**: Set `continue_on_error: true` in config to skip failures

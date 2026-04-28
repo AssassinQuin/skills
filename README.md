@@ -4,7 +4,7 @@
 
 所有技能通过软链接分发到各工具的 skills 目录，一处修改全局生效。
 
-## 技能一览（27 个）
+## 技能一览（28 个）
 
 | # | 技能 | 用途 | 来源 | 大小 |
 |---|------|------|------|------|
@@ -19,22 +19,23 @@
 | 9 | **huashu-nuwa** | 女娲造人：深度调研→思维框架提炼→生成人物 Skill | [GitHub](https://github.com/alchaincyf/nuwa-skill) | 18M |
 | 10 | **humanizer** | 去除 AI 写作痕迹，检测修复 29 种 AI 写作模式 | [GitHub](https://github.com/blader/humanizer) (adapted) | 28K |
 | 11 | **mcp-builder** | 构建 MCP 服务器集成外部 API（Python/Node） | 本地生成 | 144K |
-| 12 | **pdf** | PDF 操作：提取文本/表格、创建、合并/拆分、填表 | 本地生成 | 92K |
-| 13 | **planning-with-files** | Manus 风格文件计划：task_plan.md, findings.md, progress.md | [GitHub](https://github.com/OthmanAdi/planning-with-files) | 1.4M |
-| 14 | **pptx** | PPT 创建/编辑/分析、布局、批注、演讲备注 | 本地生成 | 1.3M |
-| 15 | **programmer** | 全流程编程引擎：记忆检索→考古→调研→拆解→实现→校验 | 本地生成 | 60K |
-| 16 | **prose-craft** | 文档写作质量优化：声音建立、选词纠正、LLM 弱点修复 | [GitHub](https://github.com/obra/the-elements-of-style) (ref) | 148K |
-| 17 | **pua-debugging** | 强制穷举式问题解决：失败2次后触发，杜绝放弃 | 本地生成 | 20K |
-| 18 | **seo-optimization** | SEO 内容优化：页面因素、E-E-A-T、语义 SEO、GEO | 本地生成 | 48K |
-| 19 | **simplify** | 简化代码：在不改变行为的前提下提升可读性 | 本地生成 | 16K |
-| 20 | **skill-creator** | 创建新技能的指南和工作流 | 本地生成 | 72K |
-| 21 | **skill-seekers** | 从文档网站、GitHub 仓库、PDF 转换为 Claude Skill | [GitHub](https://github.com/yusufkaraaslan/Skill_Seekers) | 8K |
-| 22 | **social-media** | 社交媒体帖子写作：平台格式、字数限制、语气 | 本地生成 | 16K |
-| 23 | **storytelling** | 故事创作：小说写作、漫画脚本、影片企划、角色塑造 | [GitHub](https://github.com/miles990/claude-domain-skills) | 16K |
-| 24 | **theme-factory** | 主题样式工具包：10 个预设主题，适用于幻灯片/文档/网页 | 本地生成 | 180K |
-| 25 | **transcript-cleanup** | 清理语音转文字输出：修复语音伪影，保留说话者声音 | 本地生成 | 8K |
-| 26 | **video-scripting** | 视频脚本/TTS 脚本：节奏、钩子结构、语音过渡 | 本地生成 | 16K |
-| 27 | **xlsx** | 电子表格创建/编辑/分析：公式、格式、数据可视化 | 本地生成 | 24K |
+| 12 | **memory** | 记忆管理：跨会话持久化、语义搜索、标签体系、作用域隔离 | 本地生成 | 12K |
+| 13 | **pdf** | PDF 操作：提取文本/表格、创建、合并/拆分、填表 | 本地生成 | 92K |
+| 14 | **planning-with-files** | Manus 风格文件计划：task_plan.md, findings.md, progress.md | [GitHub](https://github.com/OthmanAdi/planning-with-files) | 1.4M |
+| 15 | **pptx** | PPT 创建/编辑/分析、布局、批注、演讲备注 | 本地生成 | 1.3M |
+| 16 | **programmer** | 全流程编程引擎：记忆检索→考古→调研→拆解→实现→校验 | 本地生成 | 60K |
+| 17 | **prose-craft** | 文档写作质量优化：声音建立、选词纠正、LLM 弱点修复 | [GitHub](https://github.com/obra/the-elements-of-style) (ref) | 148K |
+| 18 | **pua-debugging** | 强制穷举式问题解决：失败2次后触发，杜绝放弃 | 本地生成 | 20K |
+| 19 | **seo-optimization** | SEO 内容优化：页面因素、E-E-A-T、语义 SEO、GEO | 本地生成 | 48K |
+| 20 | **simplify** | 简化代码：在不改变行为的前提下提升可读性 | 本地生成 | 16K |
+| 21 | **skill-creator** | 创建新技能的指南和工作流 | 本地生成 | 72K |
+| 22 | **skill-seekers** | 从文档网站、GitHub 仓库、PDF 转换为 Claude Skill | [GitHub](https://github.com/yusufkaraaslan/Skill_Seekers) | 12K |
+| 23 | **social-media** | 社交媒体帖子写作：平台格式、字数限制、语气 | 本地生成 | 16K |
+| 24 | **storytelling** | 故事创作：小说写作、漫画脚本、影片企划、角色塑造 | [GitHub](https://github.com/miles990/claude-domain-skills) | 16K |
+| 25 | **theme-factory** | 主题样式工具包：10 个预设主题，适用于幻灯片/文档/网页 | 本地生成 | 180K |
+| 26 | **transcript-cleanup** | 清理语音转文字输出：修复语音伪影，保留说话者声音 | 本地生成 | 8K |
+| 27 | **video-scripting** | 视频脚本/TTS 脚本：节奏、钩子结构、语音过渡 | 本地生成 | 16K |
+| 28 | **xlsx** | 电子表格创建/编辑/分析：公式、格式、数据可视化 | 本地生成 | 24K |
 
 ### huashu-nuwa 内含子技能（8 个视角 Skill）
 
@@ -58,28 +59,28 @@
 | 技能 | 上游仓库 | 最新版本/提交 | 本地状态 | 备注 |
 |------|---------|-------------|---------|------|
 | planning-with-files | [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | 2026-04-21 `v2.35.0` | ✅ 已是最新 | Hermes adapter + NLPM audit |
-| skill-seekers | [yusufkaraaslan/Skill_Seekers](https://github.com/yusufkaraaslan/Skill_Seekers) | 2026-04-26 `v3.5.1` | ✅ 2026-04-28 更新 | 重命名为 skill-builder，MCP 工具集成 |
+| skill-seekers | [yusufkaraaslan/Skill_Seekers](https://github.com/yusufkaraaslan/Skill_Seekers) | 2026-04-26 `v3.5.1` | ✅ 2026-04-28 更新 | MCP 工具集成 + 参数文档 |
 | humanizer | [blader/humanizer](https://github.com/blader/humanizer) | 2026-04-01 `v2.1.1` | ✅ 2026-04-28 更新 | 被动语态规则 + OpenCode 支持 + personality/soul |
 | darwin-skill | [alchaincyf/darwin-skill](https://github.com/alchaincyf/darwin-skill) | 2026-04-21 `2056abf` | ✅ 2026-04-28 更新 | 异常边界条件 + 成果卡片重设计 |
 | huashu-nuwa | [alchaincyf/nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | 2026-04-23 `ea4b9ab` | ✅ 2026-04-28 更新 | Phase 5 双Agent精炼 + Bloome 展示 |
-| storytelling | [miles990/claude-domain-skills](https://github.com/miles990/claude-domain-skills) | 2026-01-20 `dbd2fed` | ✅ 2026-04-28 更新 | 同步上游重构后的 storytelling plugin |
+| storytelling | [miles990/claude-domain-skills](https://github.com/miles990/claude-domain-skills) | 2026-01-20 `dbd2fed` | ✅ 2026-04-28 更新 | 同步上游 + 添加执行流程 |
 | prose-craft | [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style) | 2025-10-18 `6099c50` | ✅ 上游无新提交 | 用 Strunk 原则重写 |
 
 ### 本地/自定义生成（已确认无 GitHub 上游源）
 
-agent-browser, algorithmic-art, canvas-design, citation-sourcing, codemap, doc-coauthoring, docx, mcp-builder, pdf, pptx, programmer, pua-debugging, seo-optimization, simplify, skill-creator, social-media, theme-factory, transcript-cleanup, video-scripting, xlsx
+agent-browser, algorithmic-art, canvas-design, citation-sourcing, codemap, doc-coauthoring, docx, mcp-builder, memory, pdf, pptx, programmer, pua-debugging, seo-optimization, simplify, skill-creator, social-media, theme-factory, transcript-cleanup, video-scripting, xlsx
 
 ## 软链接分发
 
-技能文件集中存储在本仓库，通过软链接分发到各工具目录（每个工具 27 个）：
+技能文件集中存储在本仓库，通过软链接分发到各工具目录（每个工具 28 个）：
 
 ```
-~/.trae/skills/            → 27 个技能
-~/.config/opencode/skills/ → 27 个技能
-~/.opencode/skills/        → 27 个技能
-~/.claude/skills/          → 27 个技能
-~/.agents/skills/          → 27 个技能
-~/.cursor/skills/          → 27 个技能
+~/.trae/skills/            → 28 个技能
+~/.config/opencode/skills/ → 28 个技能
+~/.opencode/skills/        → 28 个技能
+~/.claude/skills/          → 28 个技能
+~/.agents/skills/          → 28 个技能
+~/.cursor/skills/          → 28 个技能
 ```
 
 ### 添加/修复软链接
@@ -105,7 +106,7 @@ done
 ## 质量分级
 
 ### 高质量（完整的参考文件和脚本）
-darwin-skill, docx, pptx, canvas-design, prose-craft, humanizer, seo-optimization, huashu-nuwa, mcp-builder, programmer, xlsx, skill-creator, theme-factory
+darwin-skill, docx, pptx, canvas-design, prose-craft, humanizer, seo-optimization, huashu-nuwa, mcp-builder, programmer, memory, xlsx, skill-creator, theme-factory
 
 ### 精简但自足
 citation-sourcing, transcript-cleanup, video-scripting, social-media, pua-debugging, simplify, storytelling, algorithmic-art, agent-browser, skill-seekers, doc-coauthoring, codemap
