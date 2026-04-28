@@ -216,12 +216,14 @@ Agent C (@librarian): {主题C} + {主题F}
 将 3 个子 agent 的搜索结果合并，保存到 skill 工作目录：
 
 ```
-/Users/ganjie/skills/web-research/data/{YYYYMMDD}-{topic-slug}/
+{skill_dir}/data/{YYYYMMDD}-{topic-slug}/
 ├── raw-agent-a.md        # Agent A 原始搜索结果
 ├── raw-agent-b.md        # Agent B 原始搜索结果
 ├── raw-agent-c.md        # Agent C 原始搜索结果
 └── sources-index.md      # 去重后的来源索引
 ```
+
+> `{skill_dir}` = 本 SKILL.md 所在目录（即 `/Users/ganjie/skills/web-research/`）。`data/` 目录在首次运行时自动创建。
 
 ### 4.2 去重去噪
 
@@ -236,6 +238,8 @@ Agent C (@librarian): {主题C} + {主题F}
 
 ### 5.1 @oracle 子 Agent 总结
 
+**角色定义**：@oracle 是纯综合角色——只做总结、分析和判断，**不执行额外搜索**。
+
 ```
 你是研究总结专家。请根据以下搜索结果，生成结构化研究报告。
 
@@ -244,10 +248,18 @@ Agent C (@librarian): {主题C} + {主题F}
 
 输出要求:
 1. 中文
-2. 结构: 背景目标 → 核心发现(按子主题分组) → 方案对比(如有) → 结论建议 → 信息源列表
-3. 每个发现标注来源 [来源#]
-4. 发现之间有交叉验证的特别标注
-5. 识别知识空白，标注 "⚠️ 需进一步研究"
+2. 结构（按需调整，非对比型省略"方案对比"段）:
+   - 背景与目标（1段）
+   - 核心发现（按子主题分组，每个发现标注来源 [来源#]）
+   - 方案对比（仅对比型调研：表格，含优缺点和证据）
+   - 结论与建议（可执行的下一步行动）
+   - 信息源列表（所有来源的 URL 和工具）
+3. 交叉验证标注：同一发现来自多来源时标注 "[来源A,B 交叉验证]"
+4. 知识空白标注 "⚠️ 需进一步研究: {具体缺什么}"
+5. 质量标准：
+   - 每个事实性论断必须有来源标注
+   - 不编造搜索结果中不存在的信息
+   - 不做无依据的预测或推荐
 ```
 
 ### 5.2 🔒 用户确认
@@ -274,7 +286,7 @@ Agent C (@librarian): {主题C} + {主题F}
 **存储格式**：
 
 ```
-content: "{研究主题} 研究: {概述，含关键发现和结论}。本地详细文件: /Users/ganjie/skills/web-research/data/{slug}/"
+content: "{研究主题} 研究: {概述，含关键发现和结论}。本地详细文件: {skill_dir}/data/{slug}/"
 tags: "global,reference"
 type: "reference"
 ```
