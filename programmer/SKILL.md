@@ -9,6 +9,22 @@ description: >
   不触发：纯问答、解释、分析、调研等非编码类请求。
 metadata:
   version: 2
+allowed-tools:
+  # GitHub MCP
+  - github_get_me
+  - github_list_branches
+  - github_create_branch
+  - github_push_files
+  - github_create_pull_request
+  - github_pull_request_read
+  - github_merge_pull_request
+  - github_list_commits
+  # Memory MCP（通过 Cross-Skill API，见 Skill 集成节）
+  - memory_memory_search
+  - memory_memory_store
+  - memory_memory_list
+  - memory_memory_update
+  - memory_memory_delete
 ---
 
 # Programmer — 全流程编程执行引擎
@@ -71,7 +87,7 @@ Phase 1.3 调研委托 [web-research skill](../web-research/SKILL.md)：
 | 调研 | — | web-research skill（Phase 1.3） |
 | 记忆读写 | Cross-Skill API 直调 | memory skill 守门（首次加载） |
 | 任务规划 | @oracle 拆解（含行号/依赖） | 不委托 planning-with-files |
-| 代码精简 | — | simplify skill（仅 Phase 4.0 检测后建议） |
+| 代码精简 | — | simplify skill（Phase 4.0 检测后，向用户建议，用户确认后委托执行） |
 
 ---
 
@@ -174,10 +190,10 @@ Phase 1.3 调研委托 [web-research skill](../web-research/SKILL.md)：
 输入:
   project_root: str
   ui_requirement: str     # UI 需求描述
-  design_context: str     # 现有设计规范/组件库
+  design_context: str     # 从 overview.md 代码风格 + memory_search(tags=["project"], query="设计规范 UI") 获取
 任务: 实现 UI 变更
 输出: 同 @fixer 变更摘要格式
-约束: 只处理视觉/交互/响应式 | 遵循现有设计系统
+约束: 只处理视觉/交互/响应式 | 遵循现有设计系统 | 无设计系统时按主流惯例
 ```
 
 ### 约束注入（统一模板）
@@ -322,14 +338,14 @@ Commit: {type}({scope}): {简述}
 
 ### 1.1 项目记忆检索
 
-并行 4 个 memory_search：
+并行 4 个 `memory_search`（tags 至少指定 scope 别名，query 含项目名）：
 
-```
-tags: ["project"]   query: "{项目名} 项目规范 编码规范"
-tags: ["project"]   query: "{项目名} 踩坑 注意事项"
-tags: ["project"]   query: "{项目名} 技术栈 架构 决策"
-tags: ["global"]    query: "通用规范 工作流"
-```
+| # | tags | query |
+|---|------|-------|
+| 1 | `["project"]` | `"{项目名} 项目规范 编码规范"` |
+| 2 | `["project"]` | `"{项目名} 踩坑 注意事项"` |
+| 3 | `["project"]` | `"{项目名} 技术栈 架构 决策"` |
+| 4 | `["global"]` | `"通用规范 工作流"` |
 
 项目/全局规范**独立展示不合并**，标注来源 `[项目]` `[全局]`，冲突时项目优先。混乱→Phase 0。均无→新项目。
 
@@ -401,19 +417,23 @@ docs/dev-{YYYYMMDD-HHmm}-{需求简述}/
 
 ### 1.6 复杂度判定
 
-| 条件 | 路径 |
-|------|------|
-| 单文件<50行，无新依赖 | 简单→跳 Phase 2，主进程生成最小 task-plan |
-| 2-3文件（含测试） | 中等→Phase 2 |
-| 3+文件或新模块 | 复杂→Phase 2 + 必须调研 |
+```python
+if 单文件<50行 and 无新依赖:
+    简单路径: 跳 Phase 2, 主进程生成最小 task-plan
+    # 简单路径仍执行 Phase 1.1-1.4, 但可跳过 1.3(调研)
+elif 2-3文件(含测试):
+    中等: Phase 2
+elif 3+文件 or 新模块:
+    复杂: Phase 2 + 必须调研
+```
 
-**Bug 修复特例**：
+**Bug 修复特例**（`"修复/fix"` 关键词时额外判定）：
 
-| 条件 | 路径 |
-|------|------|
-| 同类 bug 历史≥2次 或 改动≥3文件 | 升级重构→Phase 2 完整流程 |
-| 单点修复，根因明确 | 简单路径 + Bug Fix 6步（Phase 3 Bug Fix 节） |
-| 根因不明 | 中等以上→Phase 2，@oracle 参与根因分析 |
+```python
+if 同类bug≥2次 or 改动≥3文件: → 升级重构, Phase 2 完整流程
+elif 单点修复 and 根因明确: → 简单路径 + Bug Fix 6步(Phase 3.4)
+else: → 中等以上, Phase 2, @oracle 参与根因分析
+```
 
 简单任务也必须生成最小 task-plan.md。
 
@@ -492,13 +512,7 @@ docs/dev-{YYYYMMDD-HHmm}-{需求简述}/
 | Bug(简单) | @fixer | Bug Fix 6步 |
 | Bug(重构) | @oracle→@fixer | 评审+Bug Fix |
 
-**调度优先级**（就绪任务 N > 3 时）：
-
-| 优先级 | 规则 | 理由 |
-|--------|------|------|
-| 1 | 解除阻塞：被最多后续任务依赖的先跑 | 最大化并行度 |
-| 2 | 同类合并：同类 agent 任务尽量同批 | 减少上下文切换 |
-| 3 | 复杂度降序：高复杂度先跑 | 长任务先启动 |
+**调度优先级**（就绪任务 N > 3 时）：① 解除阻塞（被最多后续任务依赖的先跑）→ ② 同类合并 → ③ 复杂度降序
 
 **调度循环**：就绪任务→路由→≤3子进程→完成更新 task-plan→`github_push_files`→超时(>5min)→检查新就绪。
 
@@ -535,34 +549,27 @@ github_push_files(
 
 **强制 6 步**（@fixer Bug 任务必须执行）：
 
-```
-1. 根因分析: 记录现象→根因→方案。inconclusive → 向主进程报告（格式见 @fixer 指令）
-2. 同类排查: 全局搜索相似模式，发现同类追加变更记录
-3. 方案评估: 含重构评估。重构触发条件：同bug≥2次 | 改动≥3文件 | 设计不合理
-4. 实现: 禁止硬编码绕过、禁止吞异常
-5. 补测试: 覆盖复现路径+边界情况
-6. 更新完成说明: 根因+方案+排查结果+测试+发现
-```
-
-重构触发后暂停，向主进程报告建议升级为重构任务。
+1. **根因分析**: 记录现象→根因→方案。inconclusive→向主进程报告
+2. **同类排查**: 全局搜索相似模式，发现同类追加变更记录
+3. **方案评估**: 含重构评估（触发：同bug≥2次 | 改动≥3文件 | 设计不合理→暂停，报告升级为重构）
+4. **实现**: 禁止硬编码绕过、禁止吞异常
+5. **补测试**: 覆盖复现路径+边界情况
+6. **更新完成说明**: 根因+方案+排查结果+测试+发现
 
 ### 3.5 异常处理
 
 | 异常 | 处理 |
 |------|------|
-| agent 失败 | ❌标记+记录+继续其他 |
-| 需求偏差 | 暂停+中文确认 |
-| 文件冲突 | 串行化 |
-| 环境/依赖 | 修复→失败报告用户 |
+| agent 失败 / 需求偏差 | ❌标记+暂停确认 |
+| 文件冲突 / 外部并发修改 | 串行化 / diff→合并或暂停 |
+| 环境/依赖失败 | 修复→仍失败报告用户 |
 | 文件>800行 | 自动拆分（Phase 3.1） |
 | agent 超时>5min | ⚠️+询问用户 |
-| memory 失败 | 跳过→Phase4重试→仍失败报告 |
-| librarian 失败 | 降级主进程+不阻塞并行 |
-| 外部并发修改 | diff→合并或暂停询问 |
-| 代码考古无结果 | 绿地项目→跳过考古，overview.md 记录为空 |
-| 全部记忆为空 | 新项目→跳 Phase 0，直接 Phase 1.4 |
+| memory / librarian 失败 | 跳过→Phase4重试 / 降级主进程，不阻塞并行 |
+| 代码考古无结果 | 绿地项目→overview.md 记录为空 |
+| 全部记忆为空 | 新项目→跳 Phase 0 |
 | 无测试可审计 | test-report.md 记录「无已有测试」，建议补充 |
-| 用户中途追加需求 | 记入 task-plan「待处理」节 → 当前任务完成后统一处理 |
+| 用户中途追加需求 | 记入 task-plan「待处理」→ 当前任务完成后统一处理 |
 
 ---
 
