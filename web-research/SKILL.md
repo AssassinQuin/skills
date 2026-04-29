@@ -5,8 +5,25 @@ description: >
   'web research', 'search and analyze', '查找资料', '搜集信息', 'investigate',
   'study', '调研报告', '技术调研', '方案调研', '文献', 'literature review',
   'deep dive', '研究报告', '技术调研报告'.
-  Workflow: local-first scan → brainstorm → search → summarize → persist.
+  Workflow: local-first scan → brainstorm → parallel search → summarize → persist.
   Output: structured research report in {skill_dir}/data/.
+allowed-tools:
+  - searxng_searxng_web_search
+  - searxng_web_url_read
+  - exa_web_search_exa
+  - exa_web_fetch_exa
+  - websearch_web_search_exa
+  - webfetch
+  - github_search_repositories
+  - github_search_code
+  - github_get_file_contents
+  - github_list_commits
+  - web-search-prime_web_search_prime
+  - zread_search_doc
+  - zread_read_file
+  - zread_get_repo_structure
+  - memory_memory_search
+  - memory_memory_store
 ---
 
 # Web Research Skill
@@ -14,22 +31,34 @@ description: >
 多源并行调研：本地优先 → 头脑风暴 → 搜索 → 综合 → 持久化。
 
 **语言：面向用户中文。每个发现必须可追溯真实来源。**
+**工具原则：优先非智普 MCP 服务（SearXNG > Exa > GitHub），智普工具仅作最后 fallback。**
 
 ## 核心原则
 
 ```
 搜索优先级：skill目录已有 → 项目目录已有 → memory已有 → 网络搜索
+工具优先级：SearXNG(开源聚合) → Exa(语义搜索) → GitHub(API) → webfetch(兜底) → 智普(fallback)
 保存策略：原始数据+最终报告统一存 {skill_dir}/data/（跨项目复用）
 Token效率：工具参数详见 references/tool-specs.md，SKILL.md 只定义流程
 ```
+
+## 三链工具体系
+
+| 链 | 主工具 | 最佳场景 |
+|----|--------|---------|
+| **A SearXNG** | `searxng_web_search` + `searxng_web_url_read` | 通用搜索、中文、时效性、URL内容提取 |
+| **B Exa** | `exa_web_search_exa` + `exa_web_fetch_exa` | 英文技术/学术语义搜索、批量全文提取 |
+| **C GitHub** | `github_search_*` + `github_get_file_contents` | 开源项目发现、代码搜索、仓库文档深挖 |
+| 兜底 | `webfetch` | 页面提取、llms.txt 探测 |
+| 智普fallback | `web-search-prime`, `zread_*` | 仅当 Tier 1 全部不可用时 |
 
 ## 流程概览
 
 ```
 Phase 0: 快速判定    → 小查询直接答 / 深度调研走完整流程
 Phase 1: 本地优先    → skill目录 → 项目目录 → memory（任一命中可短路）
-Phase 2: 头脑风暴    → 搜索主题 + 工具方案 + 🔒确认
-Phase 3: 并行搜索    → ≤3 子agent 分工搜索
+Phase 2: 头脑风暴    → 搜索主题 + 工具链分配 + 🔒确认
+Phase 3: 并行搜索    → ≤3 子agent 分工搜索（按链分工）
 Phase 4: 综合+持久化 → 去重 → @oracle总结 → 🔒确认 → 保存到skill目录 + memory
 ```
 
@@ -41,7 +70,7 @@ Phase 4: 综合+持久化 → 去重 → @oracle总结 → 🔒确认 → 保存
 
 | 信号 | 判定 | 路径 |
 |------|------|------|
-| 单一事实（"Exa pricing是什么"） | 快速查询 | 直接用 exa/tavily 搜1-2次，返回答案+来源，不进完整流程 |
+| 单一事实（"Exa pricing是什么"） | 快速查询 | 直接用 searxng/exa 搜1-2次，返回答案+来源，不进完整流程 |
 | 对比/分析/多角度 | 深度调研 | 进 Phase 1 |
 
 ---
@@ -62,7 +91,6 @@ grep(pattern="{研究主题关键词}", path="{skill_dir}/data/")
 ```
 memory_search(query="{研究主题}", mode="semantic", limit=5)
 ```
-> 关键词匹配对复杂主题（如"分布式一致性算法"vs"Paxos"）召回不足，memory 语义搜索可补漏。
 
 **命中判定**：
 - 任一步找到相关内容 → 读取 → 展示摘要 → 🔒询问："直接复用 / 增量更新 / 重新开始"
@@ -82,7 +110,6 @@ grep(pattern="{研究主题关键词}", path="{project_root}/docs/")
 
 ```
 memory_search(query="{研究主题} 研究 调研", tags=["global","reference"], limit=10)
-memory_search(query="{研究主题}", tags=["project","context"], limit=10)
 ```
 
 **命中处理**：展示摘要 → 纳入 Phase 2 上下文。
@@ -104,28 +131,23 @@ memory_search(query="{研究主题}", tags=["project","context"], limit=10)
 2. **{主题B}** — ...
 ```
 
-### 2.2 工具分配
+### 2.2 工具链分配
 
 工具参数规范见 **[references/tool-specs.md](references/tool-specs.md)**。
 
-**分配原则**（简表）：
+**分配规则**（按语言和内容类型选链）：
 
-| 原则 | 说明 |
-|------|------|
-| 每主题≥2工具交叉验证 | exa/tavily + duckduckgo/brave |
-| 优先 tavily/exa | 默认主力 |
-| 免费降级 | tavily不可用 → duckduckgo → web-search-prime |
-| 中文→tavily(cn)/duckduckgo(cn-zh) | 英文→exa+tavily |
-| 涉及代码→github_search | 查实现模式 |
+| 主题类型 | 主链 | 交叉验证链 |
+|----------|------|-----------|
+| 中文内容 | A (SearXNG, language=zh) | B (Exa 英文交叉) |
+| 英文技术/学术 | B (Exa 语义搜索) | A (SearXNG 交叉) |
+| 代码/开源实现 | C (GitHub) | A (SearXNG 搜 site:github.com) |
+| 时效性新闻 | A (SearXNG, time_range=day/week) | — |
+| 综合调研 | A+B+C 混合 | 交叉验证 |
 
-**搜索模式**：
+**每主题至少 2 个工具交叉验证**（如 SearXNG + Exa，或 Exa + GitHub）。
 
-| 模式 | 场景 | 工具 |
-|------|------|------|
-| A 技术方案 | 英文技术 | exa→tavily→fetch→github |
-| B 中文内容 | 中文主题 | tavily(cn)/duckduckgo(cn-zh)→webfetch→exa交叉 |
-| C 代码实现 | 实现模式 | github_repos→github_code→exa理论 |
-| D 综合 | 默认 | A+B+C混合，≤3 agent分工 |
+**智普工具使用条件**：仅在 SearXNG 和 Exa 均不可用时，才能使用 `web-search-prime` 或 `zread_*`，且必须在输出中标注 `⚠️ 智普fallback`。
 
 ### 2.3 预算
 
@@ -139,20 +161,38 @@ memory_search(query="{研究主题}", tags=["project","context"], limit=10)
 
 ## Phase 3: 并行搜索
 
-最多 **3 个子agent** 并行。按 2.2 模式分组。
+最多 **3 个子agent** 并行。按工具链分工，非按主题分工。
 
-> **角色要求**：优先使用 @librarian（擅长文档检索）。若环境无 @librarian 角色，直接用通用 @fixer 或 @explorer 替代，agent 指令不变。
+> **角色要求**：优先使用 @librarian（擅长文档检索）。若环境无 @librarian 角色，直接用通用 @explorer 或 @fixer 替代。
 
-**Agent 指令**（精简模板）：
+**典型 Agent 分工**（综合调研）：
+
+```
+Agent 1 (链A+B): SearXNG 通用搜索 + Exa 语义搜索
+  工具: searxng_web_search, searxng_web_url_read,
+        exa_web_search_exa, exa_web_fetch_exa
+  职责: 主搜索 + 内容提取 + 交叉验证
+
+Agent 2 (链C): GitHub 代码搜索
+  工具: github_search_repositories, github_search_code,
+        github_get_file_contents, github_list_commits
+  职责: 开源项目发现 + 代码模式 + 仓库文档深挖
+
+Agent 3 (交叉验证): 对前两个 agent 的高价值发现做补充搜索
+  工具: searxng_web_search, webfetch
+  职责: 补充搜索 + 验证关键结论 + 提取遗漏内容
+```
+
+**Agent 指令模板**：
 
 ```
 研究主题: {主题名}
-工具: {工具列表+具体query}
+工具链: {链标识 + 具体工具}
 工具规范: 读取 {skill_dir}/references/tool-specs.md
 
 任务:
 1. 按规范调用搜索工具，每query取top 5-10结果
-2. 高相关结果(2-3个)提取全文
+2. 高相关结果(2-3个)提取全文（用 searxng_web_url_read 或 exa_web_fetch_exa）
 3. 按统一格式输出
 
 输出格式（每个来源）:
@@ -162,7 +202,12 @@ memory_search(query="{研究主题}", tags=["project","context"], limit=10)
 - **摘要**: {2-3句}
 - **全文要点**: {仅全文提取时}
 
-约束: 中文输出 | 只返回相关结果 | 记录URL+工具+query
+约束:
+- 中文输出
+- 只返回相关结果
+- 记录URL+工具+query（必须可追溯）
+- 优先使用 SearXNG/Exa/GitHub，避免使用智普工具
+- 如果智普工具被使用，标注 ⚠️ 智普fallback
 ```
 
 ---
@@ -209,12 +254,6 @@ content: "{主题}研究: {概述，含关键发现和结论}。详情: {skill_d
 tags: "global,reference"
 ```
 
-**项目 docs 软链接**（可选，仅当用户需要项目内可见时）：
-```
-{project_root}/docs/research-{slug} → {skill_dir}/data/{slug}/研究报告.md
-```
-> 不复制，只写一个简短的 README.md 指向 skill 目录中的完整报告。
-
 ---
 
 ## 异常处理
@@ -222,8 +261,12 @@ tags: "global,reference"
 | 异常 | 处理 |
 |------|------|
 | Memory不可用 | 跳过memory操作，继续搜索 |
-| 搜索工具全部失败 | 报告用户，建议换主题或检查网络 |
+| SearXNG 不可用 | 降级到 Exa → 再不可用用 web-search-prime（智普fallback，标注⚠️） |
+| Exa 限流/超时 | 降级到 SearXNG，重试1次 |
+| GitHub search 无结果 | 放宽条件（去掉 stars/language 过滤），或 SearXNG 搜 `site:github.com` |
+| 全文提取失败 | 保留搜索摘要，标注"无法提取全文" |
 | 子agent超时 | 收集已完成结果，标注"部分搜索" |
 | 无搜索结果 | 调整query重试一次→仍无则报告 |
 | 用户中断 | 保存已有结果到skill目录 |
 | skill_dir不存在 | 用mkdir -p创建 |
+| Tier 1 全部不可用 | 使用智普工具（web-search-prime + zread），报告标注 `⚠️ 智普fallback模式` |
