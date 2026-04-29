@@ -52,13 +52,20 @@ Phase 4: 综合+持久化 → 去重 → @oracle总结 → 🔒确认 → 保存
 
 ### 1.1 Skill 目录扫描（最高优先级）
 
+**Step 1 关键词匹配**：
 ```
 glob(pattern="{skill_dir}/data/**/*.md")
 grep(pattern="{研究主题关键词}", path="{skill_dir}/data/")
 ```
 
+**Step 2 语义补充**（关键词未命中时）：
+```
+memory_search(query="{研究主题}", mode="semantic", limit=5)
+```
+> 关键词匹配对复杂主题（如"分布式一致性算法"vs"Paxos"）召回不足，memory 语义搜索可补漏。
+
 **命中判定**：
-- 找到相关文件 → 读取内容 → 展示摘要 → 🔒询问："直接复用 / 增量更新 / 重新开始"
+- 任一步找到相关内容 → 读取 → 展示摘要 → 🔒询问："直接复用 / 增量更新 / 重新开始"
 - 选择"直接复用" → 跳到 Phase 4 仅做总结
 - 选择"增量更新" → Phase 2 仅搜索已有研究未覆盖的方向
 
@@ -132,7 +139,9 @@ memory_search(query="{研究主题}", tags=["project","context"], limit=10)
 
 ## Phase 3: 并行搜索
 
-最多 **3 个 @librarian 子agent** 并行。按 2.2 模式分组。
+最多 **3 个子agent** 并行。按 2.2 模式分组。
+
+> **角色要求**：优先使用 @librarian（擅长文档检索）。若环境无 @librarian 角色，直接用通用 @fixer 或 @explorer 替代，agent 指令不变。
 
 **Agent 指令**（精简模板）：
 
