@@ -38,6 +38,18 @@
 - **全文要点**: {提取的核心内容，仅全文提取时填写}
 ```
 
+### 工具可用性层级
+
+| 层级 | 工具 | 条件 |
+|------|------|------|
+| 🟢 始终可用 | exa_web_search, exa_web_fetch, web-search-prime, webfetch, github_search_*, zread_* | 内置工具，无需额外配置 |
+| 🟡 需启用 MCP | tavily_search, tavily_extract, tavily_crawl, tavily_map | 需 API key + `docker mcp server enable tavily` |
+| 🟡 需启用 MCP | brave_web_search, brave_news_search | 需 API key + `docker mcp server enable brave` |
+| 🟢 免费可用 | duckduckgo search, duckduckgo fetch_content | 无需 API key + `docker mcp server enable duckduckgo` |
+| 🔴 不推荐 | searxng_web_search | 需自建 SearXNG 实例，复杂度高 |
+
+**降级链**: tavily/brave → duckduckgo → web-search-prime → 仅用 exa
+
 ---
 
 ## 工具详细规范
@@ -98,17 +110,16 @@
 
 ---
 
-### 3. searxng_web_search — 多源聚合搜索
+### 3. tavily_search — AI 优化搜索
 
-**适用**：广泛搜索、多源对比、新闻/博客/论坛。结果来源多样。
+**适用**：LLM 优化搜索、AI 研究、生产环境使用。返回 AI 生成的答案摘要，搜索质量高，支持域名过滤和时间范围。
 
 ```json
 {
-  "query": "搜索关键词或短语",
-  "categories": ["general"],
-  "language": "all",
-  "result_count": 10,
-  "result_format": "text"
+  "query": "搜索关键词或自然语言描述，最多400字符/50词",
+  "search_depth": "basic",
+  "max_results": 5,
+  "include_answer": true
 }
 ```
 
@@ -116,28 +127,160 @@
 
 | 参数 | 必填 | 值 | 说明 |
 |------|------|-----|------|
-| query | ✅ | 关键词 query | 支持布尔运算 `AND OR`，短语 `"exact match"` |
-| categories | — | `["general"]` / `["news"]` / `["images"]` | 默认 general |
-| language | — | `"all"` / `"en"` / `"zh"` | 按目标内容语言选 |
-| result_count | — | 10 | 默认 10，不超 20 |
-| result_format | ✅ | `"text"` | 固定用 text |
-| time_range | — | `"day"` / `"week"` / `"month"` / `"year"` | 时效性搜索时使用 |
+| query | ✅ | 最多 400 字符 / 50 词 | 搜索 query |
+| search_depth | — | `"basic"` (1 credit) / `"advanced"` (2 credits) / `"fast"` / `"ultra-fast"` | basic 为默认，advanced 质量更高 |
+| max_results | — | 5, 范围 5-20 | 返回结果数量 |
+| include_domains | — | string[] | 白名单，仅搜索指定域名 |
+| exclude_domains | — | string[] | 黑名单，排除指定域名 |
+| time_range | — | `"day"` / `"week"` / `"month"` / `"year"` | 时效性过滤 |
+| include_answer | — | boolean | 是否返回 LLM 生成的答案摘要 |
+| country | — | string, 如 `"cn"` | 优先返回该国家的结果 |
 
 **Query 模式**：
 
 | 场景 | query 示例 |
 |------|-----------|
-| 广泛调研 | `"MCTS algorithm implementation comparison"` |
-| 中文内容 | `"炉石传说 AI 算法 实现 方案"` |
-| 时效性 | `"React 19 new features 2025"`（配合 time_range="month"）|
+| 技术调研 | `"Python WebSocket scaling architecture best practices"` |
+| 中文内容 | `"Redis 集群方案对比 2024"`（配合 country="cn"） |
+| 时效性 | `"React 19 new features"`（配合 time_range="month"） |
 
-**备选场景**：当 exa 结果不足时，用 searxng 补充搜索。
+**注意**：每月 1000 次免费额度。basic 消耗 1 credit，advanced 消耗 2 credits。`include_answer=true` 可直接获得 AI 总结，适合快速调研。
 
 ---
 
-### 4. web-search-prime — 中文优化搜索（⚠️ 降级使用）
+### 4. tavily_extract — 智能内容提取
 
-**适用**：⚠️ **仅在 searxng 不可用且需要中文内容时使用**。优先使用 searxng(language=zh)。
+**适用**：从 URL 智能提取内容，支持分块和重排序。比 webfetch 更适合批量、需要结构化输出的场景。
+
+```json
+{
+  "urls": ["https://example.com/page1", "https://example.com/page2"],
+  "extract_depth": "basic",
+  "format": "markdown"
+}
+```
+
+**参数规范**：
+
+| 参数 | 必填 | 值 | 说明 |
+|------|------|-----|------|
+| urls | ✅ | string[] | 要提取的 URL 列表 |
+| extract_depth | — | `"basic"` (10s 超时) / `"advanced"` (30s 超时) | advanced 提取更深但更慢 |
+| query | — | string | 可选：用于对提取的 chunks 做重排序 |
+| chunks_per_source | — | 1-5, 默认 3 | 每个 URL 返回的最大 chunk 数 |
+| format | — | `"markdown"` / `"text"` | 输出格式 |
+
+**调用时机**：tavily_search 结果中标记为"高相关性"的 URL，或需要从特定页面批量提取结构化内容时。
+
+**与 exa_web_fetch 的分工**：
+
+| 来源 | 用哪个工具 |
+|------|-----------|
+| exa 搜索结果的 URL | `exa_web_fetch_exa`（支持批量，无需 API key） |
+| tavily 搜索结果的 URL | `tavily_extract`（支持重排序，结构化更好） |
+| 其他工具的 URL | `webfetch` 或 `duckduckgo fetch_content` |
+
+---
+
+### 5. duckduckgo search — 免费搜索
+
+**适用**：免费搜索，无需 API key。适合作为 tavily/brave 不可用时的降级方案，或日常快速搜索。
+
+```json
+{
+  "query": "搜索关键词或短语",
+  "max_results": 10,
+  "region": "wt-wt"
+}
+```
+
+**参数规范**：
+
+| 参数 | 必填 | 值 | 说明 |
+|------|------|-----|------|
+| query | ✅ | 关键词或短语 | 搜索 query |
+| max_results | — | 10 | 返回结果数量 |
+| region | — | string, 如 `"cn-zh"` / `"us-en"` / `"wt-wt"` | 地区代码，wt-wt 为无地区限制 |
+
+**Query 模式**：
+
+| 场景 | query 示例 |
+|------|-----------|
+| 中文搜索 | `"炉石传说 AI 算法 实现"`（配合 region="cn-zh"） |
+| 英文搜索 | `"MCTS algorithm implementation Python"`（配合 region="us-en"） |
+| 广泛搜索 | `"distributed cache comparison"`（配合 region="wt-wt"） |
+
+**注意**：完全免费，无需 API key。速率限制 30 次/分钟。适合作为主力搜索的降级方案。
+
+---
+
+### 6. duckduckgo fetch_content — 免费内容提取
+
+**适用**：免费提取网页内容，无需 API key。支持多种后端自动切换，适合作为 webfetch 的免费替代。
+
+```json
+{
+  "url": "https://example.com/page",
+  "start_index": 0,
+  "max_length": 8000,
+  "backend": "auto"
+}
+```
+
+**参数规范**：
+
+| 参数 | 必填 | 值 | 说明 |
+|------|------|-----|------|
+| url | ✅ | 完整 URL | 要提取的页面 |
+| start_index | — | 0 | 从页面内容的第几个字符开始 |
+| max_length | — | 8000 | 最大提取字符数 |
+| backend | — | `"httpx"` / `"curl"` / `"auto"` | auto 会先尝试 httpx，遇到 403/Cloudflare 时自动切换 curl |
+
+**调用时机**：duckduckgo search 或其他搜索结果中需要提取全文，且不想消耗 API 额度时。
+
+**注意**：完全免费，速率限制 20 次/分钟。`backend="auto"` 推荐用于有反爬保护的网站。
+
+---
+
+### 7. brave_web_search — 独立索引搜索
+
+**适用**：拥有独立搜索索引的搜索引擎，隐私优先。搜索结果质量高，适合作为 tavily 的替代方案。
+
+```json
+{
+  "query": "搜索关键词或自然语言描述，最多400字符/50词",
+  "country": "US",
+  "search_lang": "en",
+  "count": 10
+}
+```
+
+**参数规范**：
+
+| 参数 | 必填 | 值 | 说明 |
+|------|------|-----|------|
+| query | ✅ | 最多 400 字符 / 50 词 | 搜索 query |
+| country | — | string, 默认 `"US"` | 优先返回该国家的结果 |
+| search_lang | — | string, 默认 `"en"` | 搜索结果语言 |
+| count | — | 1-20, 默认 10 | 返回结果数量 |
+| freshness | — | `"pd"` (天) / `"pw"` (周) / `"pm"` (月) / `"py"` (年) | 时效性过滤 |
+| result_filter | — | array, 默认 `["web", "query"]` | 结果类型过滤 |
+
+**Query 模式**：
+
+| 场景 | query 示例 |
+|------|-----------|
+| 技术调研 | `"Rust async runtime comparison tokio async-std"` |
+| 时效性 | `"OpenAI GPT-5 release"`（配合 freshness="pm"） |
+| 中文内容 | `"大语言模型 微调 方案"`（配合 search_lang="zh"） |
+
+**注意**：需要 API key。拥有独立搜索索引，不依赖 Google/Bing。隐私优先，搜索结果通常质量较高。
+
+---
+
+### 8. web-search-prime — 中文优化搜索（⚠️ 降级使用）
+
+**适用**：⚠️ **仅在 tavily/duckduckgo 均不可用且需要中文内容时使用**。优先使用 tavily(country="cn") 或 duckduckgo search(region="cn-zh")。
 
 ```json
 {
@@ -157,11 +300,11 @@
 | content_size | — | `"medium"` / `"high"` | high 返回更详细摘要，重要搜索用 high |
 | search_recency_filter | — | `"noLimit"` / `"oneMonth"` / `"oneWeek"` | 默认 noLimit |
 
-**规则**：**只在搜中文内容时使用**。英文内容用 exa/searxng。
+**规则**：**只在搜中文内容且 tavily/duckduckgo 都不可用时使用**。英文内容用 exa/tavily。
 
 ---
 
-### 5. zread_search_doc — GitHub 仓库文档搜索（⚠️ 降级使用）
+### 9. zread_search_doc — GitHub 仓库文档搜索（⚠️ 降级使用）
 
 **适用**：查找特定已知 repo 的文档。⚠️ **仅当已确认具体 repo 名称时使用**，优先用 github_search_code 搜索代码实现。
 
@@ -185,7 +328,7 @@
 
 ---
 
-### 6. github_search_repositories — 项目发现
+### 10. github_search_repositories — 项目发现
 
 **适用**：发现与主题相关的开源项目。
 
@@ -218,7 +361,7 @@
 
 ---
 
-### 7. github_search_code — 代码模式搜索
+### 11. github_search_code — 代码模式搜索
 
 **适用**：查找具体代码实现模式、函数用法。
 
@@ -240,9 +383,9 @@
 
 ---
 
-### 8. webfetch — 通用网页提取
+### 12. webfetch — 通用网页提取
 
-**适用**：读取 searxng/web-search-prime 搜索结果中的具体页面。
+**适用**：读取各种搜索结果中的具体页面。作为通用提取工具使用。
 
 ```json
 {
@@ -267,42 +410,47 @@
 | save_binary | — | `false` | 固定 false |
 | prompt | — | 自然语言 | 可选：指定提取什么内容 |
 
-**与 exa_web_fetch 的分工**：
+**与 exa_web_fetch / tavily_extract / duckduckgo fetch_content 的分工**：
 
 | 来源 | 用哪个工具 |
 |------|-----------|
-| exa 搜索结果的 URL | `exa_web_fetch_exa`（支持批量） |
-| searxng/web-search-prime 的 URL | `webfetch`（单页面） |
+| exa 搜索结果的 URL | `exa_web_fetch_exa`（支持批量，无需 API key） |
+| tavily 搜索结果的 URL | `tavily_extract`（支持重排序，结构化更好） |
+| duckduckgo / 其他免费场景 | `duckduckgo fetch_content`（免费，支持后端自动切换） |
+| 其他所有场景 | `webfetch`（通用，内置工具） |
 
 ---
 
 ## 工具组合模式
 
-### 模式 A：技术方案调研
+### 模式 A：技术方案调研（英文技术调研）
 
 ```
 1. exa_web_search(语义query) → top 10 高质量结果
-2. searxng_web_search(关键词query) → 补充多样化结果
-3. exa_web_fetch(top 2-3 URLs) → 深度阅读
+2. tavily_search(关键词query, search_depth="advanced") → 补充结果 + 可选 AI answer
+3. exa_web_fetch(top 2-3 URLs) 或 tavily_extract → 深度阅读
 4. github_search_repositories(相关项目) → 发现开源实现
 5. zread_search_doc(最佳项目) → 读取文档细节
 ```
 
+**降级**：tavily 不可用 → duckduckgo search + webfetch
+
 ### 模式 B：中文内容调研
 
 ```
-1. searxng_web_search(中文query, language=zh) → 中文结果
+1. tavily_search(中文query, country="cn") 或 duckduckgo search(region="cn-zh") → 中文结果
 2. exa_web_search(英文query) → 英文交叉验证
-3. webfetch(top 2-3 URLs) → 深度阅读
-⚠️ 仅当 searxng 不可用时降级到 web-search-prime
+3. webfetch 或 duckduckgo fetch_content(top 2-3 URLs) → 深度阅读
 ```
+
+**降级**：仅当 tavily/duckduckgo 都不可用时才用 web-search-prime
 
 ### 模式 C：代码实现调研
 
 ```
 1. github_search_repositories(主题+语言) → 发现项目
 2. github_search_code(关键函数名) → 找实现模式
-3. exa_web_search(技术原理 query) → 理论背景
+3. exa_web_search(技术原理query) → 理论背景
 4. webfetch(最佳项目README) → 读文档
 ```
 
@@ -310,7 +458,7 @@
 
 ```
 Agent A: exa(主题A语义) + exa_fetch → 高质量英文
-Agent B: searxng(主题B, language=zh/en) + webfetch → 广泛搜索
+Agent B: tavily/duckduckgo(主题B, 中文/关键词) + tavily_extract/duckduckgo_fetch → 广泛搜索
 Agent C: github_repos(主题C) + github_code → 开源实践
 ```
 
@@ -320,9 +468,11 @@ Agent C: github_repos(主题C) + github_code → 开源实践
 
 | 错误 | 处理 |
 |------|------|
-| exa 超时/限流 | 降级到 searxng，结果质量略低但可用 |
-| searxng 连接失败 | 降级到 exa + web-search-prime |
-| web-search-prime 返回空 | 换 query 措辞或改用 searxng |
+| exa 超时/限流 | 降级到 tavily 或 duckduckgo |
+| tavily 不可用/额度用尽 | 降级到 duckduckgo + exa |
+| duckduckgo 限流（30次/分） | 等待或降级到 web-search-prime |
+| brave 不可用 | 降级到 tavily 或 exa |
+| web-search-prime 返回空 | 换 query 措辞或改用 tavily/duckduckgo |
 | zread repo 不存在 | 确认 repo_name 格式，或先通过 github_search 确认 |
 | webfetch 页面无法解析 | 记录 URL，标注"无法提取全文"，保留搜索摘要 |
 | github_search 无结果 | 放宽搜索条件（去掉 stars/language 过滤） |

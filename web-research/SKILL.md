@@ -1,7 +1,7 @@
 ---
 name: web-research
 description: >
-  Multi-source research skill using parallel sub-agents with exa, searxng, web-search-prime,
+  Multi-source research skill using parallel sub-agents with exa, tavily, duckduckgo, brave, web-search-prime,
   zread, and local code search. Triggers: 'research', '调研', '搜索研究', 'web research',
   'search and analyze', '查找资料', '搜集信息', 'investigate', 'study'.
   Workflow: load memory → brainstorm topics → design search plan → dispatch ≤3 sub-agents →
@@ -32,7 +32,7 @@ Phase 6: 持久化      → memory 存储 + 项目 docs/ 保存
 
 ### 1.1 Memory 检索
 
-遵循 [memory skill 标签体系](../memory/SKILL.md)，并行 3 个检索：
+详见 [memory skill Cross-Skill API](../memory/SKILL.md)。并行 3 个检索：
 
 ```
 memory_search(query="{研究主题} 研究 调研", tags=["global", "reference"], limit=20)
@@ -88,13 +88,17 @@ grep(pattern="{研究主题关键词}", path=/Users/ganjie/skills/)
 
 | 工具 | 适用场景 | 搜索类型 |
 |------|---------|---------|
-| `searxng_web_search` | 广泛搜索、多源聚合、中英文均适用 | 关键词/自然语言 query |
 | `exa_web_search_exa` | 语义搜索、高质量内容、学术/技术 | 自然语言 query（≤70字符） |
+| `tavily_search` | 🟡 MCP-LLM 优化搜索、AI研究、生产级 | 关键词/自然语言 query，支持深度搜索 |
+| `tavily_extract` | 🟡 MCP-智能全文提取、批量URL | URL[]，支持 query 引导提取 |
+| `duckduckgo search` | 🟢 免费搜索、无需API key、隐私优先 | 关键词 query，支持 region |
+| `duckduckgo fetch_content` | 🟢 免费全文提取、Cloudflare 绕过 | 单 URL，支持 auto backend |
+| `brave_web_search` | 🟡 MCP-独立索引、隐私优先、多模态 | 关键词 query，支持 freshness |
 | `github_search_code` | 代码实现模式、具体用法 | `content:` 代码搜索 |
 | `github_search_repositories` | 发现相关开源项目 | `topic:`, `language:`, `stars:` |
 | `exa_web_fetch_exa` | 批量提取 exa 结果页面全文 | URL[]（≤5/次） |
 | `webfetch` | 单页面提取全文 | 单 URL |
-| `web-search-prime` | ⚠️ 仅当 searxng 不可用且需中文内容时 | 中文 query |
+| `web-search-prime` | ⚠️ 仅当其他搜索不可用且需中文内容时 | 中文 query |
 | `zread_search_doc` | ⚠️ 仅当需读取特定 GitHub repo 文档时 | repo_name + query |
 
 **分配原则**：
@@ -102,20 +106,21 @@ grep(pattern="{研究主题关键词}", path=/Users/ganjie/skills/)
 | 原则 | 说明 |
 |------|------|
 | 互补覆盖 | 每个主题至少用 2 种不同工具交叉验证 |
-| 优先 exa/searxng | 默认使用 `exa` + `searxng`，避免依赖单一服务商 |
-| 语言匹配 | 中文 → `searxng(language=zh)`；英文 → `exa` + `searxng` |
-| 深度优先 | 广搜找到 URL → 深读提取全文（exa 结果用 `exa_web_fetch`，其他用 `webfetch`） |
+| 优先 tavily/exa | 默认使用 `tavily`(如已启用) + `exa`，避免依赖单一服务商 |
+| 免费降级 | tavily/brave 不可用 → `duckduckgo`(免费无需key) → `web-search-prime` |
+| 语言匹配 | 中文 → `tavily(country=cn)` 或 `duckduckgo(region=cn-zh)`；英文 → `exa` + `tavily` |
+| 深度优先 | 广搜找到 URL → 深读提取全文（tavily 结果用 `tavily_extract`，exa 用 `exa_web_fetch`，其他用 `webfetch` 或 `duckduckgo fetch_content`） |
 | 代码相关 | 涉及实现 → `github_search_code` + `github_search_repositories` |
-| 降级使用 | `web-search-prime` 仅当 searxng 不可用时；`zread` 仅当需特定 repo 文档时 |
+| 降级使用 | `web-search-prime` 仅当 tavily/duckduckgo 均不可用时；`zread` 仅当需特定 repo 文档时 |
 
 **搜索模式**（详见 [references/tool-specs.md#工具组合模式](references/tool-specs.md)）：
 
 | 模式 | 触发条件 | 工具组合 |
 |------|---------|---------|
-| A 技术方案 | 英文技术调研 | exa → exa_fetch → github_repos → github_code |
-| B 中文内容 | 中文主题调研 | searxng(zh) → webfetch → exa 交叉验证 |
+| A 技术方案 | 英文技术调研 | exa → tavily → exa_fetch/tavily_extract → github_repos → github_code |
+| B 中文内容 | 中文主题调研 | tavily(country=cn)/duckduckgo(cn-zh) → webfetch → exa 交叉验证 |
 | C 代码实现 | 查实现模式 | github_repos → github_code → exa 理论 |
-| D 综合 | 默认 | Agent A(exa) + Agent B(searxng) + Agent C(github) |
+| D 综合 | 默认 | Agent A(exa+tavily) + Agent B(duckduckgo/webfetch) + Agent C(github) |
 
 ### 2.3 搜索预算控制
 
@@ -139,7 +144,7 @@ grep(pattern="{研究主题关键词}", path=/Users/ganjie/skills/)
 主题分组 → 确定主搜索模式 → 按模式分配 agent
 
 Agent A: 模式A(技术方案) 或 模式B(中文) 的主题集合
-Agent B: 模式D(综合搜索, searxng 为主) 的主题集合
+Agent B: 模式D(综合搜索, tavily/duckduckgo 为主) 的主题集合
 Agent C: 模式C(代码实现, github 为主) 的主题集合
 
 规则:
@@ -183,7 +188,7 @@ Agent C (@librarian): {主题C} + {主题F}
 
 任务:
 1. 按工具规范中的精确参数调用搜索工具，每个 query 取 top 5-10 结果
-2. 对高相关性结果(2-3个)，用 exa_web_fetch_exa 或 webfetch 提取全文
+2. 对高相关性结果(2-3个)，用 tavily_extract 或 exa_web_fetch_exa 或 webfetch 或 duckduckgo fetch_content 提取全文
 3. 按统一输出格式整理为结构化笔记
 
 统一输出格式（每个来源）:
@@ -198,8 +203,8 @@ Agent C (@librarian): {主题C} + {主题F}
 约束:
 - 只返回与主题直接相关的结果
 - 记录每个来源的 URL、工具名、query
-- exa query ≤70字符；searxng 支持布尔 AND/OR
-- 优先使用 exa/searxng，避免使用 web-search-prime（仅降级用）
+- exa query ≤70字符；tavily query ≤400字符；duckduckgo 支持 region 参数
+- 优先使用 tavily(如可用)/exa，降级使用 duckduckgo(免费)，避免使用 web-search-prime（仅最后降级用）
 - 中文输出
 ```
 
@@ -210,7 +215,7 @@ Agent C (@librarian): {主题C} + {主题F}
 | 每主题搜索量 | 3-5 个 query，每个取 top 5-10 结果 |
 | 深度阅读 | 每主题取最有价值的 2-3 个 URL 提取全文 |
 | 超时 | 单个 agent >8min → 终止，返回已有结果 |
-| 失败降级 | 工具报错 → 换备选工具继续 |
+| 失败降级 | 工具报错 → 换备选工具继续（降级链: tavily → duckduckgo → web-search-prime） |
 
 ---
 
@@ -280,7 +285,12 @@ Agent C (@librarian): {主题C} + {主题F}
 
 ### 6.1 Memory 存储
 
-遵循 [memory skill 标签体系](../memory/SKILL.md)：
+详见 [memory skill Cross-Skill API](../memory/SKILL.md)。
+
+**写入规则**（每条存储前必须执行）：
+- **精炼内容**：去掉对话语气词和冗余，一句话说清，脱离上下文仍可理解，单条≤120字
+- **先去重**：`memory_search(query="<摘要>", limit=5)` → 相似度>0.85 则更新而非新建
+- **双标签**：tags 必须含 scope+type
 
 | 内容 | tags | type |
 |------|------|------|
