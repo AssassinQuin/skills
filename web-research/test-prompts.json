@@ -40,5 +40,11 @@
     "prompt": "调研之前做过的 MCP Docker 容器自动关闭方案，看看有没有新的补充",
     "expected": "Phase 1.1 skill目录扫描命中已有研究 → 展示摘要 → 🔒询问复用/增量更新 → 增量更新时仅搜索未覆盖方向",
     "scenario": "已有研究复用+增量更新，验证Phase 1本地优先短路路径"
+  },
+  {
+    "id": 8,
+    "prompt": "调研 opencode 最好用的插件，mcp 本地服务，分别给出优缺点",
+    "expected": "触发词'调研'应命中 → Phase 0判定为深度调研 → Phase 1本地扫描 → Phase 2头脑风暴 → Phase 3子agent严格按模板执行（输出格式含URL/工具/Query/相关性/摘要） → Phase 4综合报告",
+    "scenario": "真实用户场景复现：验证触发词识别+子agent指令遵循。此前失败：1)触发词未识别 2)子agent输出无格式"
   }
 ]

@@ -12,7 +12,7 @@ Tier 2（fallback）: web-search-prime（智普）, zread（智普）
 
 | 服务商 | 工具 | 优先级 | 最佳场景 |
 |--------|------|--------|---------|
-| **SearXNG** (开源聚合) | `searxng_web_search`, `searxng_web_url_read` | ⭐ 主力 | 通用搜索、中文搜索、时效性搜索、URL 内容提取 |
+| **SearXNG** (开源聚合) | `searxng_searxng_web_search`, `searxng_web_url_read` | ⭐ 主力 | 通用搜索、中文搜索、时效性搜索、URL 内容提取 |
 | **Exa** (语义搜索) | `exa_web_search_exa`, `exa_web_fetch_exa` | ⭐ 主力 | 英文技术/学术语义搜索、批量全文提取 |
 | **GitHub** (官方API) | `github_search_repositories`, `github_search_code`, `github_get_file_contents` | ⭐ 主力 | 开源项目发现、代码模式搜索、仓库文档深挖 |
 | **内置** | `webfetch` | 通用兜底 | 页面内容提取、llms.txt 探测 |

@@ -11,6 +11,12 @@ search:
     - html
     - json
 
+outgoing:
+  proxies:
+    all://:
+      - socks5h://host.docker.internal:7890
+  using_tor_proxy: false
+
 server:
   secret_key: "53d058421bd63f2be025b3e73731d275e1bf2a1bc98bd74ff0bff92c9e94e680"
   limiter: false
