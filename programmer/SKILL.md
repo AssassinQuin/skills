@@ -379,18 +379,61 @@ full 额外:
 
 ---
 
-## Git 操作（可选）
+## Git 操作
 
-有 Git 自动用，无则跳过。GitHub MCP 可用时走 PR 流程，不可用则本地 commit。
+### 环境检测
+
+```
+git rev-parse --is-inside-work-tree → 有 Git
+github_get_me → GitHub MCP 可用
+```
+
+### 分级策略
 
 | 模式 | Git 行为 |
 |------|---------|
-| quick | 完成后本地 commit |
-| normal | 完成后本地 commit |
-| full + GitHub | 创建分支 → 按任务 commit → PR + merge |
+| quick / normal | 完成后本地 commit（无分支） |
+| full（无 GitHub） | 创建分支 → 按任务 commit |
+| full + GitHub | 创建分支 → 按任务 commit → PR → merge |
 
-分支：`{type}/{YYYYMMDD}-{简述}`（feat | fix | refactor）
-Commit：`{type}({scope}): {简述}`
+### 命名与提交
+
+```
+分支: {type}/{YYYYMMDD}-{简述}    示例: feat/20260430-add-debounce
+Commit: {type}({scope}): {简述}   示例: fix(parser): handle encoding fallback
+type: feat | fix | refactor | chore
+```
+
+提交前：`git status` + `git diff --staged` 确认无遗漏/多余文件。
+
+### PR 流程（full + GitHub）
+
+```
+1. github_push_files 或 git push -u origin {分支名}
+2. github_create_pull_request(title≤70字, body=改动摘要+测试清单)
+3. 🔒用户确认 → github_merge_pull_request（默认merge，用户要求时squash）
+4. 合并后清理: git checkout main && git pull
+```
+
+### 冲突处理
+
+| 场景 | 策略 |
+|------|------|
+| push 被拒绝 | `git pull --rebase` → 解决冲突 → `git rebase --continue` → 再 push |
+| merge 冲突 | 逐文件分析，优先保留双方有效改动，不确定时展示给用户 |
+| @fixer 并行冲突 | 后提交的先 pull 合并前一个改动再提交 |
+
+**原则**：不盲目 ours/theirs | 解决后必须跑测试 | 不确定时问用户
+
+### 回滚与禁忌
+
+| 场景 | 操作 |
+|------|------|
+| 未 push 的 commit 有问题 | `git commit --amend` 或 `git reset --soft HEAD~N` |
+| 已 push 的 commit 有问题 | 创建新 commit 修复 |
+| 分支方向错误 | `git revert`（保留历史） |
+
+**禁止**：`git push --force` / `git reset --hard` / `--no-verify`（除非用户明确要求）
 
 ---
 
