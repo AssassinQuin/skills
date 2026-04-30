@@ -1,16 +1,16 @@
 ---
 name: programmer
 description: >
-  全流程编程执行引擎。当用户提出开发需求、功能需求、bug修复、功能增强时触发。
-  自动执行：项目记忆检索与整理 → 代码考古 → 可选外部调研 → 任务拆解 →
-  分批并行实现 → 规范校验 → 记忆更新。
-  触发词：「开发」「实现」「新增功能」「加一个」「修复」「改一下」「refactor」
-  「feature」「fix」「需求」「帮我做」「add feature」「implement」「build」。
-  不触发：纯问答、解释、分析、调研等非编码类请求。
+  编程执行引擎。触发：开发/实现/修复/refactor/feature/fix/需求/帮我做/add feature/implement/build。
+  不触发：纯问答、解释、分析、调研。
 metadata:
-  version: 2
+  version: 3
 allowed-tools:
-  # GitHub MCP
+  - memory_memory_search
+  - memory_memory_store
+  - memory_memory_list
+  - memory_memory_update
+  - memory_memory_delete
   - github_get_me
   - github_list_branches
   - github_create_branch
@@ -19,634 +19,386 @@ allowed-tools:
   - github_pull_request_read
   - github_merge_pull_request
   - github_list_commits
-  # Memory MCP（通过 Cross-Skill API，见 Skill 集成节）
-  - memory_memory_search
-  - memory_memory_store
-  - memory_memory_list
-  - memory_memory_update
-  - memory_memory_delete
 ---
 
-# Programmer — 全流程编程执行引擎
+# Programmer — 编程执行引擎
 
-## 概览
+## 核心原则
 
-```
-Phase R: 会话恢复 → 审计已完成任务 → 进度定位 → 上下文加载
-Phase 0 (条件): 首次使用 → 记忆整理
-Phase 1: 记忆检索 + 代码考古 + [调研] → requirements.md + overview.md → 🔒用户确认 → Git 创建分支
-Phase 2: @oracle 任务拆解 → task-plan.md → 🔒用户确认计划
-Phase 3: 智能调度(≤3子进程) → 在功能分支上代码变更 → 按任务粒度 commit
-Phase 4: 测试审计 → test-report.md → 🔒用户确认 → 记忆更新 → 🔒最终确认 → Git 合并
-```
-
-**语言：面向用户一律中文。task-plan.md 是任务状态唯一真相源。**
+1. **Memory-first**：项目架构、技术栈、代码风格存 memory，不每次全量扫描
+2. **方案先行**：所有改动先给方案，用户确认后再执行
+3. **按需深入**：只在需要时才启动子 agent，简单任务不过度流程
+4. **渐进式记忆**：开发时从涉及的代码中逐步发现并存储项目规范，项目理解随使用深化
+5. **洞察分离**：发现的问题、可优化点与规范分开存储，不混在一起
 
 ---
 
-## 治理模型：4 文档审查制
+## 渐进式记忆（规范积累）
 
-AI 全程自主编码，人类通过审查 4 个文档把控质量，**不看代码**。每个文档生成后🔒暂停等用户确认。
+开发时从实际接触的代码中发现项目的开发规范，逐步存入 memory。不做全量扫描，只积累当前任务涉及的。
 
-| # | 文档 | 阶段 | 确认点 |
-|---|------|------|--------|
-| 1 | `requirements.md` | Phase 1 | 🔒 Phase 1.5 |
-| 2 | `task-plan.md` | Phase 2 | 🔒 Phase 2.2 |
-| 3 | Phase R.2 审计报告 | Phase R | 恢复时展示 |
-| 4 | `test-report.md` | Phase 4 | 🔒 Phase 4.2 |
-| 5 | Git 分支合并 | Phase 4 | 🔒 Phase 4.6 后执行 |
+### 规范来源
 
-**铁律**：🔒未确认 = 不进入下一 Phase。文档修改后必须重新确认。
+| 触发时机 | 从代码中发现什么 | tags |
+|---------|---------------|------|
+| Step 3 @fixer 读写文件时 | 命名规范、错误处理方式、日志风格、import 习惯 | `project,convention` |
+| Step 3 发现设计模式 | 观察者/工厂/策略等模式的实际用法和约定 | `project,convention,pattern` |
+| Step 4 质量检测时 | 测试习惯、type hints、docstring、目录组织规范 | `project,convention` |
+
+### 存储规则
+
+```
+# 每次只存本次接触到的模块的规范，不贪多（≤3条）
+memory_store("{项目} {模块}: {规范内容}", tags="project,convention")
+
+# 去重：已有相似规范 → memory_update 补充/修正，不重复存
+existing = memory_search(query="{项目} {模块} 规范", tags=["project","convention"], limit=5)
+相似>0.85 → memory_update 更新
+```
+
+### 使用方式
+
+**Step 1 加载**时，加载与当前任务相关的模块规范：
+```
+memory_search(tags=["project","convention"], query="{涉及的模块/文件路径}", limit=10)
+```
+
+**Step 3 约束注入**时，将相关规范纳入约束块：
+```
+## 项目约束
+技术栈: {架构信息}
+代码风格: {代码风格}
+模块规范: {本次涉及的模块已积累的规范}
+```
+
+### 规范演化
+
+- **触摸新模块** → 从代码中提取该模块的规范
+- **再次触摸** → 验证旧规范是否仍准确，不准就更新
+- **跨模块发现全局规范**（如统一的错误处理模式）→ 存为 `project,convention`（不带模块限定）
+- **代码已改但规范未更新** → Step 1 加载时发现不一致则修正
 
 ---
 
-## Skill 集成
+## 洞察（问题与优化）
 
-### Memory
+开发/研究过程中发现的问题、可优化点、改善建议。与规范（convention）分开存储。
 
-遵循 [memory skill Cross-Skill API](../memory/SKILL.md)（稳定接口）：
+| 触发时机 | 洞察类型 | tags | 示例 |
+|---------|---------|------|------|
+| Step 3 发现代码异味 | 可优化 | `project,insight,optimization` | "utils.py 的 parse_log() 重复解析3次，可合并为一次" |
+| Step 3 发现潜在风险 | 问题 | `project,insight,issue` | "api_client.py 的重试逻辑有竞态条件风险" |
+| Bug Fix 根因分析 | 陷阱 | `project,insight,pitfall` | "card_data 模块的 JSON 解析没有编码 fallback" |
+| Step 4 质量检测 | 改善建议 | `project,insight,improvement` | "建议将 data_loader.py 拆分为 loader + parser" |
 
-- **scope 别名**：`project` / `shared` / `global` / `session`
-- **检索**：`memory_search(tags=["project"], limit=50)` — 至少指定 scope
-- **存储**：`memory_store(content, metadata={tags: "project,decision"})` — 双标签
-- **去重**：存储前 `memory_search(query="<摘要>", limit=5)` → 相似>0.85 则更新
-- **降级**：memory 不可用时跳过，不阻塞主流程
+### 存储规则
 
-### Web Research
+```
+memory_store("{项目} {模块}: {问题描述} | 建议: {改善方案}", tags="project,insight,{type}")
 
-Phase 1.3 调研委托 [web-research skill](../web-research/SKILL.md)：
+# 去重同上
+existing = memory_search(query="{项目} {模块} 洞察", tags=["project","insight"], limit=5)
+相似>0.85 → memory_update
+```
 
-- **触发**：需新框架/外部API/选型≥2方案
-- **委托**：`@librarian` 加载 web-research skill，传入 `{query, 技术栈, 项目上下文}`
-- **输出**：research.md（按 [research-template.md](references/research-template.md)）
+### 洞察使用
 
-### 委托边界
-
-| 功能 | 由 programmer 自行处理 | 委托外部 skill |
-|------|----------------------|---------------|
-| 调研 | — | web-research skill（Phase 1.3） |
-| 记忆读写 | Cross-Skill API 直调 | memory skill 守门（首次加载） |
-| 任务规划 | @oracle 拆解（含行号/依赖） | 不委托 planning-with-files |
-| 代码精简 | — | simplify skill（Phase 4.0 检测后，向用户建议，用户确认后委托执行） |
+- **Step 1**：加载相关模块的洞察，标注风险点
+- **Step 2 方案**：方案中提及已知的洞察（"注意：该模块有 XX 问题"）
+- **Step 3 实现**：避坑 + 可顺便修复相关洞察
 
 ---
 
-## Agent 规范
+## 入口模式识别
 
-### 职责矩阵
+读取用户输入后，先识别入口模式，再判复杂度。不同模式影响 Step 1-2 的执行方式。
 
-| Agent | 触发阶段 | 输入 | 输出 |
-|-------|---------|------|------|
-| **@explorer** | P1.2, R.2, 4.1 | project_root, scan_scope | 技术栈+文件清单+代码风格 |
-| **@librarian** | P1.3 | query, 技术栈, 项目上下文 | research.md |
-| **@fixer** | P3 | project_root, T{n}, 约束块 | 变更摘要(见下方) |
-| **@oracle** | P2.1, P3重构 | project_root, 需求, 源文件 | 方案+风险+步骤 |
-| **@designer** | P3 UI任务 | project_root, UI需求, 设计上下文 | UI代码+样式 |
+| 模式 | 识别信号 | 典型输入 |
+|------|---------|---------|
+| **A. 参考代码 → 开发** | 用户附带代码片段/文件路径/示例，要求参考实现 | "参考这段代码，帮我实现 XX"、"照这个风格写一个" |
+| **B. 需求文档 → 开发** | 用户给出需求文档路径或大段需求描述 | "按这个需求文档开发"、"需求见附件" |
+| **C. 调研方向 + 本地代码 → 开发** | 用户给调研方向/技术方向，要求结合项目开发 | "调研 XX 方案然后在我们项目里实现"、"看看有没有更好的方案" |
+| **D. 直接需求** | 以上都不匹配，标准的开发请求 | "新增 XX 功能"、"修复 XX bug" |
 
-**约束**：≤3子进程并行 | 同类agent≤2 | @oracle串行 | 有依赖→同一agent
+**叠加规则**：入口模式决定 Step 1-2 的**内容格式**（参考分析/需求解析/调研/标准）；复杂度决定**方案深度和确认次数**（1/2/3次）。两者叠加时，内容格式跟入口模式，深度跟复杂度。
 
-### @explorer 指令
+各模式在 Step 1-2 的差异：
 
-```python
-输入:
-  project_root: str       # 项目根目录
-  scan_scope: str         # "顶层" | "特定目录:{path}" | "文件模式:{glob}"
-任务:
-  1. 浏览目录结构，识别技术栈
-  2. glob+grep 定位关键文件
-  3. 记录路径/函数/行号/依赖关系
-  4. 提取代码风格规范（5维度：命名/缩进/注释/文件组织/import）
-输出格式:
-  ## 技术栈: {语言} {框架} {构建工具} {测试框架}
-  ## 文件清单: | 路径 | 职责 | 关键函数/类 |
-  ## 代码风格: | 维度 | 规范 |
-约束: 只读不写 | 单次≤60s
+| | A.参考代码 | B.需求文档 | C.调研+本地 | D.直接需求 |
+|---|-----------|-----------|------------|-----------|
+| Step 1 上下文 | **分析参考代码**：提取模式/风格/API用法，与 memory 中的项目风格对比 | **解析需求文档**：提取功能点、验收标准、约束 | **调研先行**：@researcher 外部调研 + memory 加载本地架构 | memory 加载项目上下文 |
+| Step 2 方案 | 方案需标注：哪些参考代码复用、哪些适配改造 | 按需求文档拆解，逐条映射到代码改动 | 调研结果 + 本地代码分析 → 方案选型 → 用户选 → 再拆任务 | 标准方案流程 |
+
+---
+
+## 复杂度三档
+
+读取需求后立即判定：
+
+| 条件 | 模式 | 方案深度 | 确认点 |
+|------|------|---------|--------|
+| 单文件<50行 且 无新依赖 且 非重构 | **quick** | 一句话方案 | 1(方案) |
+| 2-5文件 or 中等改动 | **normal** | 任务列表+依赖 | 2(方案+完成) |
+| 大功能 / 重构 / 多模块 | **full** | 完整 task-plan | 3(需求+计划+报告) |
+
+**Bug 修复特殊判定**：
+
+| Bug 特征 | 判定模式 | 流程 |
+|---------|---------|------|
+| 单点修复，≤2文件 | **quick** | 根因→修复→验证（3步） |
+| 同类≥2次 or 改动≥3文件 | **full** | 完整 Bug Fix 6步流程 |
+
+---
+
+## 流程
+
+### Step 1: 加载上下文（按入口模式分支）
+
+**所有模式共同前置**：
+```
+mem = memory_search(tags=["project"], query="{项目名} 架构 技术栈 代码风格", limit=30)
+
+# memory 降级策略
+if memory_search 连续失败 2 次:
+    → 走 @explorer 全量扫描模式（等同首次使用）
+    → 后续步骤不再尝试 memory 操作，跳过 Step 5 记忆更新
+    → 告知用户 "memory 不可用，本次使用一次性扫描"
+
+if mem 为空 or 新项目:
+    Agent(explorer) → 扫描项目结构、技术栈、关键文件、代码风格
+    # 存为结构化多条记录，非大块自由文本
+    memory_store("技术栈: {具体技术栈}", tags="project,architecture")
+    memory_store("目录结构: {关键目录}", tags="project,architecture")
+    memory_store("代码风格: {命名/日志/错误处理}", tags="project,convention")
+else:
+    从 mem 提取上下文
+
+# 加载与本次任务相关的模块规范
+conventions = memory_search(tags=["project","convention"], query="{涉及的模块/文件}", limit=10)
+
+# 加载相关模块的洞察（问题、风险）
+insights = memory_search(tags=["project","insight"], query="{涉及的模块/文件}", limit=10)
 ```
 
-### @librarian 指令
+**按入口模式额外执行**：
 
-```python
-输入:
-  query: str              # 调研问题
-  tech_stack: str         # 当前技术栈
-  project_context: str    # 项目背景
-任务:
-  加载 web-research skill → 执行调研 → 输出 research.md
-输出: research.md（按 research-template.md）
-约束: 只查最新版文档 | 查新API也算触发条件
+| 模式 | 额外动作 |
+|------|---------|
+| **A.参考代码** | Read 用户提供的代码 → 提取：设计模式、API 用法、代码风格、关键逻辑。与 memory 中项目风格对比，标注差异和需适配点 |
+| **B.需求文档** | Read 需求文档 → 提取功能点清单、验收标准、非功能需求、约束条件。映射到项目中已有的模块/文件 |
+| **C.调研+本地** | @researcher 外部调研（方向+技术栈）→ 输出方案对比。同时 memory 加载本地相关模块架构。两份材料合并 |
+| **D.直接需求** | 无额外动作 |
+
+**增量更新**：实现过程中发现架构/风格有变化 → 更新 memory，下次自动用新版。
+
+### Step 2: 方案（用户确认后才执行）
+
+**所有模式先确认方案，再动代码。** 方案内容按入口模式有差异：
+
+**A. 参考代码模式**的方案：
+```
+1. 参考代码分析：提取了哪些模式/API/风格
+2. 适配计划：哪些直接复用 / 哪些需改造 / 改造原因
+3. 涉及文件 + 每个文件改动摘要
+→ 🔒用户确认
 ```
 
-### @fixer 指令
-
-```python
-输入:
-  project_root: str
-  dev_doc_dir: str
-  task: T{n} 描述（来自 task-plan.md）
-  constraint_block: 项目约束（见约束注入）
-任务: 执行 T{n}
-输出格式（完成后必须返回）:
-  ## 变更摘要
-  ### 修改文件: | 文件路径 | 操作(新增/修改) | 行数变化 |
-  ### 测试结果: | 测试文件 | 用例数 | 通过/失败 |
-  ### 变更说明: {一句话描述改动}
-约束:
-  遵守项目约束 | 不改范围外文件 | 保持代码风格
-  单文件≤800行 | 完成后更新 task-plan
-  通过 github_push_files 提交 | 发现异常须标注
-异常报告（向主进程）:
-  格式: "⚠️ T{n} 异常: {类型} | {现象} | {已尝试} | {建议}"
-  类型: inconclusive根因 | 环境依赖缺失 | 超出范围
-  主进程收到后: 暂停该任务 → 评估 → 降级/升级/用户确认
+**B. 需求文档模式**的方案：
+```
+1. 需求理解确认：功能点清单 + 验收标准
+2. 逐条映射到代码改动：功能点 → 涉及文件 → 改动描述
+3. 依赖关系 + 建议执行顺序
+→ 🔒用户确认
 ```
 
-### @oracle 指令
+**C. 调研+本地模式**的方案（两轮确认）：
+```
+第一轮：调研结果 + 方案选型
+  展示：调研发现 → 2-3个候选方案 + 优劣对比 + 推荐方案
+  → 🔒用户选择方案
 
-```python
-输入:
-  project_root: str
-  requirement: str        # 用户需求
-  source_files: list      # 相关源文件路径
-任务:
-  阅读源文件 → 分析 → 输出评审结果
-输出格式:
-  | # | 输出项 | 说明 |
-  |---|--------|------|
-  | 1 | 推荐方案 | 含理由和替代方案对比 |
-  | 2 | 风险点 | 实现中需注意的陷阱 |
-  | 3 | 重构建议 | 若需要，给出重构方向 |
-  | 4 | 步骤拆解 | 供 @fixer 执行的具体步骤 |
-约束: 只分析不实现 | 输出写入 task-plan 评审备注
+第二轮：选定方案的开发计划
+  结合本地代码：改动文件 + 改动内容 + 依赖
+  → 🔒用户确认开发计划
 ```
 
-### @designer 指令
+**D. 直接需求模式**的方案（按复杂度）：
 
-```python
-触发判定: 任务涉及以下任一 → 路由到 @designer
-  - UI组件/页面/布局
-  - CSS/样式/主题/响应式
-  - 动画/交互/微交互
-  - 视觉一致性/设计系统
-输入:
-  project_root: str
-  ui_requirement: str     # UI 需求描述
-  design_context: str     # 从 overview.md 代码风格 + memory_search(tags=["project"], query="设计规范 UI") 获取
-任务: 实现 UI 变更
-输出: 同 @fixer 变更摘要格式
-约束: 只处理视觉/交互/响应式 | 遵循现有设计系统 | 无设计系统时按主流惯例
+| 复杂度 | 方案深度 |
+|--------|---------|
+| quick | 一句话方案 + 涉及文件 → 🔒确认 |
+| normal | 改动文件 + 每文件改动摘要 + 依赖 → 🔒确认 |
+| full | 需求概要 → 🔒确认 → @oracle 拆解 task-plan → 🔒确认计划 |
+
+### Step 3: 实现（确认后执行）
+
+**quick**：直接 Edit/Write 代码。
+
+**normal/full**：按 task-plan 调度子 agent 实现（≤3 并行）。
+
+#### 子 Agent 体系
+
+| Agent | 触发条件 | subagent_type | 职责 |
+|-------|---------|---------------|------|
+| **@explorer** | 新项目扫描、测试审计 | explorer | 扫描项目：技术栈+文件清单+代码风格，输出结构化字段 |
+| **@oracle** | full 模式任务拆解、架构评审 | oracle | 分析源文件 → 方案+风险+步骤拆解 |
+| **@fixer** | 代码实现 | coder | 按任务描述+约束块实现代码变更+测试 |
+| **@researcher** | C.调研模式、full 需外部调研时 | researcher | 搜索外部文档/框架/API，输出调研摘要 |
+
+**@explorer 输出规范**：扫描后必须输出以下字段，每条独立存入 memory：
+```
+技术栈: {语言+版本, 框架, 数据库, 测试框架}
+目录结构: {src/, tests/, config/ 等关键目录}
+代码风格: {命名规范, import习惯, 错误处理模式, 日志风格}
+依赖管理: {requirements.txt/pyproject.toml/package.json}
 ```
 
-### 约束注入（统一模板）
+每个 @fixer 输入：任务描述 + 约束块（代码风格 + 项目规范 + 涉及文件内容）。
 
-Phase R.5 和 Phase 3 调度时，注入以下上下文块：
+完成后 @fixer 返回（结构化）：
+```
+变更文件: [path1, path2, ...]
+变更摘要: {每个文件一句话改了什么}
+测试结果: {通过/失败/跳过, 失败原因}
+新发现问题: {有/无, 描述}
+```
+
+每个 @researcher 返回（结构化）：
+```
+调研主题: {主题}
+关键发现: [要点1, 要点2, ...]
+方案对比: [{方案名: 优劣}]
+推荐方案: {方案名及理由}
+信息来源: [URL1, URL2, ...]
+```
+
+**调度约束**：≤3子进程并行 | 有依赖的任务串行 | 同类任务合并
+
+#### 子 Agent 失败处理
+
+| 失败场景 | 处理策略 |
+|---------|---------|
+| 单个 @fixer 失败 | 重试 1 次 → 仍失败则跳过，记录失败原因，继续其他任务 |
+| 并行任务部分失败 | 完成的部分保留，失败部分报告用户选择：重试/跳过/手动处理 |
+| @oracle 拆解失败 | 降级为 normal 模式，主 agent 直接拆任务列表 |
+| @explorer 扫描超时 | 降级为读取项目 README + 目录结构 |
+| 所有子 agent 不可用 | 主 agent 直接执行，跳过并行调度 |
+
+**原则**：部分失败不阻塞整体流程，记录失败上下文供用户决策。
+
+#### 约束注入
+
+@fixer/@oracle 执行时，从 memory 检索结果组装约束块：
+```
+# 组装逻辑（伪代码）
+constraints = "## 项目约束\n"
+constraints += "技术栈: " + (mem["architecture"].技术栈 or "未知，从代码推断") + "\n"
+constraints += "代码风格: " + (mem["convention"].代码风格 or "未知，保持一致") + "\n"
+
+# 只注入本次涉及的模块规范
+for conv in conventions.filter(涉及模块):
+    constraints += f"模块规范({conv.模块}): {conv.内容}\n"
+
+# 只注入已知风险
+for ins in insights.filter(涉及模块, type=issue|pitfall):
+    constraints += f"⚠️ 已知风险({ins.模块}): {ins.问题}\n"
+```
+
+输出示例：
+```
+## 项目约束
+技术栈: Python 3.11 + pytest + SQLite
+代码风格: snake_case命名, 中文docstring, type hints可选
+模块规范(analysis): 使用 @dataclass, 无 Pydantic
+⚠️ 已知风险(card_data): JSON 解析无编码 fallback
+```
+
+#### Bug Fix 专项（按复杂度分级）
+
+**quick Bug Fix**（单点，≤2文件）：
+1. **根因分析**：现象→根因→方案（一句话）
+2. **实现**：禁止硬编码绕过、禁止吞异常
+3. **验证**：确认修复有效，无回归
+
+**normal/full Bug Fix**（完整 6 步）：
+1. **根因分析**：记录现象→根因→方案。不明确则标记后继续
+2. **同类排查**：grep 相似模式，发现同类追加变更记录
+3. **方案评估**：同类≥2 or 改动≥3文件 → 升级 full
+4. **实现**：禁止硬编码绕过、禁止吞异常
+5. **补测试**：覆盖复现路径 + 边界
+6. **更新完成说明**：根因+方案+排查+测试+发现
+
+#### 大文件处理
+
+- 500+行 → 先骨架再分批填充（≤300行/批）
+- 1000+行 → 拆分为 ≤800 行文件
+- 拆分优先级：按职责 > 按实体 > 按层级
+
+### Step 4: 验证与收尾
 
 ```
-## 项目约束（必须遵守）
-### 编码规范
-{Phase 1.1 检索到的项目规范}
-### 全局偏好
-{Phase 1.1 检索到的全局记忆}
-### 代码风格
-{Phase 1.2 @explorer 提取的代码风格规范}
-### 质量洞察
-{Phase 4.0 或 R.4 加载的历史洞察，如有}
+所有模式:
+  质量检测（自动扫描本次变更文件）:
+  ┌────────────────┬──────────┬─────────────────────────┐
+  │ 检测项          │ 阈值     │ 处理                     │
+  ├────────────────┼──────────┼─────────────────────────┤
+  │ 单测耗时        │ >30s/条  │ 标记慢测试，建议优化      │
+  │ 代码重复        │ ≥3处相似 │ 提取公共函数              │
+  │ 函数长度        │ >50行    │ 建议拆分                 │
+  │ 嵌套深度        │ ≥4层     │ 建议扁平化/早返回         │
+  │ 硬编码          │ 魔数/魔串│ 建议提取常量              │
+  │ 错误处理        │ 缺失     │ 必须补上                 │
+  │ 安全问题        │ 注入/XSS │ 必须修复                 │
+  └────────────────┴──────────┴─────────────────────────┘
+  有问题 → 🔒展示问题清单，用户确认后修复
+
+full 额外:
+  Agent(explorer) → 测试覆盖审计 → test-report.md → 🔒用户确认
+```
+
+### Step 5: 记忆更新 + 渐进式规范 + 洞察
+
+```
+# 1. 基础记忆更新（full / 有重要发现）
+  memory_store(≤120字, tags="project,{type}")
+  type: decision | bug | context
+  先去重: memory_search → 相似>0.85 → memory_update
+
+# 2. 渐进式规范提取（所有模式）
+从本次读写过的代码中提取规范（每次≤3条，只存本次涉及的模块）：
+  memory_store("{项目} {模块}: {规范内容}", tags="project,convention")
+  先去重: memory_search → 相似则更新
+
+# 3. 洞察记录（发现问题时）
+  memory_store("{项目} {模块}: {问题} | 建议: {方案}", tags="project,insight,{type}")
+  type: optimization | issue | pitfall | improvement
+  先去重: memory_search → 相似则更新
+
+  memory 不可用时跳过，不阻塞
 ```
 
 ---
 
-## Git 规范（GitHub MCP）
+## Git 操作（可选）
 
-> 所有代码变更在功能分支上进行，通过 GitHub MCP 工具管理。
+有 Git 自动用，无则跳过。GitHub MCP 可用时走 PR 流程，不可用则本地 commit。
 
-### 参数来源
+| 模式 | Git 行为 |
+|------|---------|
+| quick | 完成后本地 commit |
+| normal | 完成后本地 commit |
+| full + GitHub | 创建分支 → 按任务 commit → PR + merge |
 
-```python
-# Phase 1.7 前置：获取 owner/repo（后续所有 GitHub MCP 调用复用）
-me = github_get_me()
-owner = me.login
-repo = basename(project_root)  # 通常与 GitHub repo 名一致
-
-# 前置检查（任一不满足 → 提示用户并等待）：
-# 1. .git 存在？→ 无则 git init && git add . && git commit -m 'initial'
-# 2. github remote？→ git remote -v 含 github.com → 无则 git remote add
-# 3. me 可访问仓库？→ github_get_me() 成功
-```
-
-### 分支策略
-
-| 时机 | MCP 操作 | 参数 |
-|------|---------|------|
-| P1.7 需求确认后 | `github_create_branch` | `owner, repo, branch="feat/...", from_branch=当前主分支` |
-| P3 每个子任务完成 | `github_push_files` | `owner, repo, branch=功能分支, files=[{path, content}], message="..."` |
-| P4.7 最终确认后 | `github_create_pull_request` → `github_merge_pull_request` | 见 Phase 4.7 |
-
-### 命名与 Commit
-
-```
-分支: {类型}/{YYYYMMDD}-{需求简述}
-  类型: feat | fix | refactor
-  示例: feat/20260428-card-winrate-analysis
-
-Commit: {type}({scope}): {简述}
-  type: feat | fix | refactor | test | docs
-  scope: 受影响的模块/文件名
-  示例: feat(analysis): add winrate trend calculation
-```
-
-### MCP 错误处理
-
-| 异常 | 处理 |
-|------|------|
-| `github_get_me` 失败 | 提示检查 GitHub 认证 → 等待用户处理 |
-| `github_create_branch` 分支已存在 | 切换到现有分支或追加后缀 `-2` |
-| `github_push_files` 冲突 | 串行化该任务 |
-| `github_merge_pull_request` 冲突 | 暂停 → 展示冲突 → 用户决定 |
+分支：`{type}/{YYYYMMDD}-{简述}`（feat | fix | refactor）
+Commit：`{type}({scope}): {简述}`
 
 ---
 
-## Phase R: 会话恢复
-
-检查 `docs/dev-*/session-state.md` 是否存在且未完成。
-
-### R.2 任务审计（@explorer）
-
-```
-项目根目录: {project_root}
-开发文档: {dev_doc_dir}
-
-请阅读 task-plan.md，对所有标记为 ✅ 已完成的任务逐一验证：
-1. 读取任务描述中的「涉及文件」和「改动描述」
-2. 检查对应文件是否存在
-3. 检查文件内容是否包含任务描述中的改动
-4. 如有测试文件，检查测试是否覆盖
-
-输出: ## 任务审计报告 → | 任务 | 声明 | 审计 | 缺失项 |
-```
-每个任务 ≤30s，只做表面验证。
-
-### R.3 进度定位
-
-基于审计生成：✅已确认 / ⚠️部分完成 / ❌未完成 / 🔵当前断点 / ⬜待执行。
-
-自动修正 task-plan：⚠️→`🔄部分完成` | ❌→`⬜待执行`，追加变更记录。
-
-### R.4 上下文加载
-
-| 加载项 | 来源 |
-|--------|------|
-| 项目规范 | `memory_search(tags=["project"], limit=50)` |
-| 全局偏好 | `memory_search(tags=["global"], limit=20)` |
-| 质量洞察 | `memory_search(query="{项目名} 洞察", tags=["project"], limit=10)` |
-| overview + task-plan | docs/dev-*/ |
-| Git 分支 | session-state.md 中的分支名 + `git branch --show-current` 验证 |
-
-展示进度报告 + 异常任务 + 当前分支状态 → 询问继续还是处理异常。
-
-### R.5 上下文压缩规范
-
-压缩前**必须**写 `session-state.md`。
-
-**必须保留**：规范表格(含来源) | 任务状态 | 决策理由 | 质量洞察 | 恢复锚点 | Git 分支名。
-
-**禁止**：精简规范内容 / 丢弃任务状态 / 省略失败原因 / 删除分支信息。
-
----
-
-## Phase 0: 首次使用记忆整理
-
-触发：Phase 1.1 返回混乱（重复≥2、无scope tag、矛盾）。
-
-### 0.1 记忆扫描
-
-`memory_list(tags=["project"])` → 输出全部项目记忆条目。
-
-### 0.2 整理操作
-
-逐条处理：
-- **合并**：语义重复 → 保留最新/最完整，删其余
-- **确认**：矛盾 → 展示矛盾点 → 用户选哪个
-- **补全**：无 scope tag → 补 `project`；无 type → 推断补 `convention`/`decision`/`bug`/`context`
-- **删除**：明显过时 → 确认后删
-
-### 0.3 存储与确认
-
-整理后存入 `memory_store(metadata={tags: "project,convention"})`。展示整理结果 → 用户确认。
-
----
-
-## Phase 1: 信息收集
-
-### 1.1 项目记忆检索
-
-并行 4 个 `memory_search`（tags 至少指定 scope 别名，query 含项目名）：
-
-| # | tags | query |
-|---|------|-------|
-| 1 | `["project"]` | `"{项目名} 项目规范 编码规范"` |
-| 2 | `["project"]` | `"{项目名} 踩坑 注意事项"` |
-| 3 | `["project"]` | `"{项目名} 技术栈 架构 决策"` |
-| 4 | `["global"]` | `"通用规范 工作流"` |
-
-项目/全局规范**独立展示不合并**，标注来源 `[项目]` `[全局]`，冲突时项目优先。混乱→Phase 0。均无→新项目。
-
-### 1.2 代码考古（@explorer）
-
-按 @explorer 指令模板执行。输出写入 overview.md 的技术栈+文件清单+代码风格部分。
-
-### 1.3 外部调研（@librarian + web-research，条件）
-
-**触发条件**：需新框架/外部API/选型≥2方案/需查新API。
-
-**执行**：`@librarian` 加载 web-research skill，传入 `{query, 技术栈, 项目上下文}`，输出 research.md（按 [research-template.md](references/research-template.md)）。
-
-### 1.4 生成开发文档
-
-```
-docs/dev-{YYYYMMDD-HHmm}-{需求简述}/
-├── requirements.md     ← 治理文档1（本Phase生成，格式见下方）
-├── overview.md         ← 规范摘要+考古结果（格式见下方）
-├── research.md         ← 调研报告（若有）
-├── task-plan.md        ← 治理文档2（Phase 2 生成，模板见 references/）
-├── test-report.md      ← 治理文档4（Phase 4 生成，格式见下方）
-└── session-state.md    ← 恢复指针（格式见 references/session-state.md）
-```
-
-**requirements.md 格式**：
-```markdown
-# {需求标题}
-## 背景
-{业务背景}
-## 需求描述
-{具体需求}
-## 验收标准
-- [ ] {标准1}
-- [ ] {标准2}
-## 非功能需求
-- 性能: {要求} | 安全: {要求}
 ## 约束
-- {约束条件}
-```
 
-**overview.md 格式**：
-```markdown
-# 项目概览
-## 技术栈
-| 层 | 技术 | 版本 |
-## 文件清单
-| 路径 | 职责 | 关键函数/类 |
-## 代码风格规范
-| 维度 | 规范 | （来自 @explorer 输出）
-## 规范摘要
-| 来源 | 规范内容 | （来自 Phase 1.1 记忆检索）
-```
-
-**test-report.md 格式**：
-```markdown
-# 测试报告
-## 测试概览
-| 指标 | 值 |  （文件数/用例数/通过失败/耗时）
-## 覆盖矩阵
-| 任务 | 测试文件 | 覆盖功能点 | 缺失 | 结果 |
-## 未覆盖风险项
-- {风险}
-```
-
-### 1.5 🔒 用户确认需求
-
-展示 requirements.md → **等用户确认后才进 Phase 2**。
-
-### 1.6 复杂度判定
-
-```python
-if 单文件<50行 and 无新依赖:
-    简单路径: 跳 Phase 2, 主进程生成最小 task-plan
-    # 简单路径仍执行 Phase 1.1-1.4, 但可跳过 1.3(调研)
-elif 2-3文件(含测试):
-    中等: Phase 2
-elif 3+文件 or 新模块:
-    复杂: Phase 2 + 必须调研
-```
-
-**Bug 修复特例**（`"修复/fix"` 关键词时额外判定）：
-
-```python
-if 同类bug≥2次 or 改动≥3文件: → 升级重构, Phase 2 完整流程
-elif 单点修复 and 根因明确: → 简单路径 + Bug Fix 6步(Phase 3.4)
-else: → 中等以上, Phase 2, @oracle 参与根因分析
-```
-
-简单任务也必须生成最小 task-plan.md。
-
-### 1.7 Git 分支创建
-
-前置检查（见 Git 规范节「参数来源」）→ 通过后：
-
-```
-1. github_list_branches → 确认分支不存在
-2. 生成分支名: feat/{YYYYMMDD}-{简述} | fix/... | refactor/...
-3. github_create_branch(owner, repo, branch, from_branch=当前主分支)
-4. 本地追踪: git fetch origin {branch} && git checkout {branch}
-5. 记录分支名到 session-state.md
-```
-
----
-
-## Phase 2: 任务拆解
-
-### 2.1 @oracle 分析
-
-```
-项目根目录: {project_root}
-需求: {user_requirement}
-开发文档目录: {dev_doc_dir}
-
-请阅读: overview.md + research.md（若有）+ 项目规范摘要
-任务: 将需求拆解为子任务，每个包含:
-- 任务编号 (T1, T2, ...) / 标题 / 涉及文件和行号
-- 具体改动描述 / 依赖的前置任务编号
-- 预估复杂度 (低/中/高) / 可并行标记
-
-拆解规则: 500+行→框架+分批 | 1000+行→拆多文件（参考 Phase 3.1 逻辑拆分原则表）
-
-输出示例:
-### T1: 新增 API 客户端框架
-- **文件**: `src/api_client.py` (新建)
-- **改动**: 创建 HTTP 客户端类骨架
-- **依赖**: 无 | **复杂度**: 中 | **可并行**: 是
-```
-
-写入 task-plan.md。模板见 [references/task-plan-template.md](references/task-plan-template.md)。
-
-### 2.2 🔒 用户确认计划
-
-中文展示任务清单+并行组 → **等用户确认后才进 Phase 3**。
-
----
-
-## Phase 3: 并行实现
-
-### 3.1 大文件策略
-
-**行数阈值**：
-- 500+行：骨架→分批填充(≤300行/批)→逐批验证
-- 1000+行→拆多文件(≤800行/文件)
-
-**逻辑拆分原则**（优先级排序）：
-
-| 优先级 | 原则 | 适用场景 | 示例 |
-|--------|------|---------|------|
-| 1 | 按职责/关注点 | 文件含多种不相关逻辑 | `api_client.py` → `api/auth.py` + `api/data.py` |
-| 2 | 按实体/领域 | 文件操作多种数据实体 | `models.py` → `models/card.py` + `models/deck.py` |
-| 3 | 按层级 | 文件跨越架构层 | `handler.py` → `routes.py` + `service.py` + `repository.py` |
-
-拆分后通过 `__init__.py` 重导出保持兼容。
-
-### 3.2 调度路由
-
-| 任务特征 | Agent | 模式 |
-|---------|-------|------|
-| 纯实现/测试 | @fixer | 标准 |
-| 架构/重构 | @oracle→@fixer | 先评后做 |
-| UI/样式 | @designer | 独立 |
-| 查新API | @librarian→@fixer | 先查后做 |
-| Bug(简单) | @fixer | Bug Fix 6步 |
-| Bug(重构) | @oracle→@fixer | 评审+Bug Fix |
-
-**调度优先级**（就绪任务 N > 3 时）：① 解除阻塞（被最多后续任务依赖的先跑）→ ② 同类合并 → ③ 复杂度降序
-
-**调度循环**：就绪任务→路由→≤3子进程→完成更新 task-plan→`github_push_files`→超时(>5min)→检查新就绪。
-
-**GitHub Push 参数**（每个子任务完成时）：
-```python
-github_push_files(
-  owner=owner,           # 来自 Phase 1.7 前置获取
-  repo=repo,
-  branch=功能分支名,       # 来自 session-state.md
-  files=[
-    {"path": "src/new_file.py", "content": "文件内容"},
-    {"path": "tests/test_new.py", "content": "测试内容"}
-  ],
-  message="feat(scope): 简述"   # 遵循 commit 规范
-)
-```
-
-### 3.3 子任务同步
-
-唯一真相源：task-plan.md。变更→更新(追加/取消🚫/修改/拆分)→变更记录→一致性检查。同步点：agent完成时 | 调度循环 | Phase3结束全量校验。每个同步点通过 `github_push_files` 提交。
-
-### 3.4 Bug Fix 专项规范
-
-> Phase 3 调度路由中 Bug 类型任务的执行规范，由 @fixer 遵循。
-
-**Bug 等级**：
-
-| 等级 | 触发 | 要求 |
-|------|------|------|
-| 快速 | 单点，根因明确 | 修复+补测试+踩坑记录 |
-| 系统 | 多处相似，同一根因 | 统一修复+补测试+记录 |
-| **重构** | 需改核心逻辑/架构 | 回退到 Phase 2 完整流程 |
-| 防御 | 修复引入新风险 | 回归+边界测试 |
-
-**强制 6 步**（@fixer Bug 任务必须执行）：
-
-1. **根因分析**: 记录现象→根因→方案。inconclusive→向主进程报告
-2. **同类排查**: 全局搜索相似模式，发现同类追加变更记录
-3. **方案评估**: 含重构评估（触发：同bug≥2次 | 改动≥3文件 | 设计不合理→暂停，报告升级为重构）
-4. **实现**: 禁止硬编码绕过、禁止吞异常
-5. **补测试**: 覆盖复现路径+边界情况
-6. **更新完成说明**: 根因+方案+排查结果+测试+发现
-
-### 3.5 异常处理
-
-| 异常 | 处理 |
-|------|------|
-| agent 失败 / 需求偏差 | ❌标记+暂停确认 |
-| 文件冲突 / 外部并发修改 | 串行化 / diff→合并或暂停 |
-| 环境/依赖失败 | 修复→仍失败报告用户 |
-| 文件>800行 | 自动拆分（Phase 3.1） |
-| agent 超时>5min | ⚠️+询问用户 |
-| memory / librarian 失败 | 跳过→Phase4重试 / 降级主进程，不阻塞并行 |
-| 代码考古无结果 | 绿地项目→overview.md 记录为空 |
-| 全部记忆为空 | 新项目→跳 Phase 0 |
-| 无测试可审计 | test-report.md 记录「无已有测试」，建议补充 |
-| 用户中途追加需求 | 记入 task-plan「待处理」→ 当前任务完成后统一处理 |
-
----
-
-## Phase 4: 收尾
-
-### 4.0 质量洞察
-
-检测：测试>30s | 重复≥3处 | 函数>50行 | 嵌套≥4层 | 循环依赖 | 硬编码 | API无错误处理 | 无分页。
-
-汇总 task-plan「发现」+主动检测 → 洞察报告 → 存 `memory_store(metadata={tags: "project,context"})`。
-
-### 4.1 测试审计（@explorer）+ 生成 test-report.md
-
-@explorer 扫描已完成任务的测试覆盖，输出：`| 任务 | 测试文件 | 覆盖功能点 | 缺失测试 | 结果 |`
-
-test-report.md 按 Phase 1.4 定义的格式生成。
-
-### 4.2 🔒 用户确认测试报告
-
-展示 test-report.md → **等用户确认后才继续**。未覆盖项需用户决定：接受风险/补充测试。
-
-### 4.3 文档收尾
-
-task-plan 终态 | overview 更新架构(若有变) | requirements.md 更新验收状态。
-
-### 4.4 记忆更新
-
-⚠️ **只存项目记忆，不存全局**。
-
-**写入规则**：
-- **精炼内容**：单条≤120字，脱离上下文仍可理解
-- **先去重**：`memory_search(query="<摘要>", limit=5)` → 相似>0.85 则更新
-- **双标签**：`tags` 必须含 `project` + type
-
-| tags | 模板 |
-|------|------|
-| `project,decision` | `"在 {project} 中，{决策}，原因: {原因}"` |
-| `project,convention` | `"{project} 规范: {内容}"` |
-| `project,bug` | `"{project} 踩坑: {问题} → {方案}"` |
-| `project,context` | `"{project} 质量洞察: {发现}"` |
-
-### 4.5 记忆清理
-
-`memory_list(tags=["project"])` → 过时删/重复合并/不精确优化 → 中文确认。
-
-### 4.6 🔒 最终确认
-
-中文展示 4 文档审查结果：📋 需求达标 | 📋 计划终态 | 🔍 审计摘要 | ✅ 测试覆盖。附加：文档路径 | 记忆变更 | 质量洞察。
-
-### 4.7 Git 分支合并
-
-触发：Phase 4.6 🔒确认通过。
-
-```
-1. 展示变更摘要:
-   - github_pull_request_read(method="get_diff", owner, repo, pullNumber)
-   - github_list_commits(owner, repo, sha=功能分支)
-
-2. 创建 PR:
-   github_create_pull_request(
-     title="{type}({scope}): {简述}",
-     body="## Summary\n{变更摘要}\n\n## Test Plan\n{测试覆盖}",
-     head=功能分支, base="main"
-   )
-
-3. 合并 PR:
-   github_merge_pull_request(pullNumber, merge_method="squash")
-
-4. 合并后验证:
-   github_list_branches → 确认状态
-   git checkout main && git pull
-```
-
-**合并异常**：
-
-| 异常 | 处理 |
-|------|------|
-| 合并冲突 | 暂停 → 展示冲突文件 → 用户决定 |
-| PR 创建失败 | 展示错误 → 询问用户 |
-| 合并后测试失败 | 不自动回滚 → 展示失败 → 询问用户 |
+- 单文件 ≤ 800 行
+- 面向用户一律中文
+- 每次实现后更新 memory 中的架构信息（如有变化）
+- session 恢复时：读 task-plan.md 定位断点，memory 加载上下文，无需重新扫描
+- **纯初始化场景**（用户未给具体开发需求，只说"第一次用"/"初始化"）：只执行 Step 1 扫描并存入 memory，然后提示用户提出开发需求，不进入 Step 2-5
+- **session 断点恢复**：按 task-plan 中的任务状态判断：已完成→验证+继续下一；进行中→从当前任务重试；未开始→从该任务开始
