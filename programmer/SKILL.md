@@ -155,9 +155,19 @@ existing = memory_search(query="{项目} {模块} 洞察", tags=["project","insi
 **所有模式共同前置**：
 ```
 mem = memory_search(tags=["project"], query="{项目名} 架构 技术栈 代码风格", limit=30)
+
+# memory 降级策略
+if memory_search 连续失败 2 次:
+    → 走 @explorer 全量扫描模式（等同首次使用）
+    → 后续步骤不再尝试 memory 操作，跳过 Step 5 记忆更新
+    → 告知用户 "memory 不可用，本次使用一次性扫描"
+
 if mem 为空 or 新项目:
     Agent(explorer) → 扫描项目结构、技术栈、关键文件、代码风格
-    memory_store(架构信息, tags="project,architecture")
+    # 存为结构化多条记录，非大块自由文本
+    memory_store("技术栈: {具体技术栈}", tags="project,architecture")
+    memory_store("目录结构: {关键目录}", tags="project,architecture")
+    memory_store("代码风格: {命名/日志/错误处理}", tags="project,convention")
 else:
     从 mem 提取上下文
 
@@ -228,10 +238,18 @@ insights = memory_search(tags=["project","insight"], query="{涉及的模块/文
 
 | Agent | 触发条件 | subagent_type | 职责 |
 |-------|---------|---------------|------|
-| **@explorer** | 新项目扫描、测试审计 | explorer | 扫描项目：技术栈+文件清单+代码风格 |
+| **@explorer** | 新项目扫描、测试审计 | explorer | 扫描项目：技术栈+文件清单+代码风格，输出结构化字段 |
 | **@oracle** | full 模式任务拆解、架构评审 | oracle | 分析源文件 → 方案+风险+步骤拆解 |
-| **@fixer** | 代码实现 | coder | 按任务描述实现代码变更+测试 |
-| **@researcher** | C.调研模式、full 需外部调研时 | researcher | 搜索外部文档/框架/API |
+| **@fixer** | 代码实现 | coder | 按任务描述+约束块实现代码变更+测试 |
+| **@researcher** | C.调研模式、full 需外部调研时 | researcher | 搜索外部文档/框架/API，输出调研摘要 |
+
+**@explorer 输出规范**：扫描后必须输出以下字段，每条独立存入 memory：
+```
+技术栈: {语言+版本, 框架, 数据库, 测试框架}
+目录结构: {src/, tests/, config/ 等关键目录}
+代码风格: {命名规范, import习惯, 错误处理模式, 日志风格}
+依赖管理: {requirements.txt/pyproject.toml/package.json}
+```
 
 每个 @fixer 输入：任务描述 + 约束块（代码风格 + 项目规范 + 涉及文件内容）。
 
@@ -239,15 +257,43 @@ insights = memory_search(tags=["project","insight"], query="{涉及的模块/文
 
 **调度约束**：≤3子进程并行 | 有依赖的任务串行 | 同类任务合并
 
+#### 子 Agent 失败处理
+
+| 失败场景 | 处理策略 |
+|---------|---------|
+| 单个 @fixer 失败 | 重试 1 次 → 仍失败则跳过，记录失败原因，继续其他任务 |
+| 并行任务部分失败 | 完成的部分保留，失败部分报告用户选择：重试/跳过/手动处理 |
+| @oracle 拆解失败 | 降级为 normal 模式，主 agent 直接拆任务列表 |
+| @explorer 扫描超时 | 降级为读取项目 README + 目录结构 |
+| 所有子 agent 不可用 | 主 agent 直接执行，跳过并行调度 |
+
+**原则**：部分失败不阻塞整体流程，记录失败上下文供用户决策。
+
 #### 约束注入
 
-@fixer/@oracle 执行时注入：
+@fixer/@oracle 执行时，从 memory 检索结果组装约束块：
+```
+# 组装逻辑（伪代码）
+constraints = "## 项目约束\n"
+constraints += "技术栈: " + (mem["architecture"].技术栈 or "未知，从代码推断") + "\n"
+constraints += "代码风格: " + (mem["convention"].代码风格 or "未知，保持一致") + "\n"
+
+# 只注入本次涉及的模块规范
+for conv in conventions.filter(涉及模块):
+    constraints += f"模块规范({conv.模块}): {conv.内容}\n"
+
+# 只注入已知风险
+for ins in insights.filter(涉及模块, type=issue|pitfall):
+    constraints += f"⚠️ 已知风险({ins.模块}): {ins.问题}\n"
+```
+
+输出示例：
 ```
 ## 项目约束
-技术栈: {memory 中的架构信息}
-代码风格: {memory 中的代码风格}
-模块规范: {本次涉及的模块已积累的规范}
-已知风险: {本次涉及的模块已有洞察中的问题}
+技术栈: Python 3.11 + pytest + SQLite
+代码风格: snake_case命名, 中文docstring, type hints可选
+模块规范(analysis): 使用 @dataclass, 无 Pydantic
+⚠️ 已知风险(card_data): JSON 解析无编码 fallback
 ```
 
 #### Bug Fix 专项（按复杂度分级）
@@ -275,8 +321,19 @@ insights = memory_search(tags=["project","insight"], query="{涉及的模块/文
 
 ```
 所有模式:
-  质量检测 → 测试>30s | 重复≥3 | 函数>50行 | 嵌套≥4 | 硬编码 | 无错误处理
-  有问题 → 修复或报告
+  质量检测（自动扫描本次变更文件）:
+  ┌────────────────┬──────────┬─────────────────────────┐
+  │ 检测项          │ 阈值     │ 处理                     │
+  ├────────────────┼──────────┼─────────────────────────┤
+  │ 单测耗时        │ >30s/条  │ 标记慢测试，建议优化      │
+  │ 代码重复        │ ≥3处相似 │ 提取公共函数              │
+  │ 函数长度        │ >50行    │ 建议拆分                 │
+  │ 嵌套深度        │ ≥4层     │ 建议扁平化/早返回         │
+  │ 硬编码          │ 魔数/魔串│ 建议提取常量              │
+  │ 错误处理        │ 缺失     │ 必须补上                 │
+  │ 安全问题        │ 注入/XSS │ 必须修复                 │
+  └────────────────┴──────────┴─────────────────────────┘
+  有问题 → 🔒展示问题清单，用户确认后修复
 
 full 额外:
   Agent(explorer) → 测试覆盖审计 → test-report.md → 🔒用户确认
