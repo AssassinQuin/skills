@@ -158,7 +158,7 @@ existing = memory_search(query="{项目} {模块} 洞察", tags=["project","insi
 
 **所有模式共同前置**：
 
-1. 执行 `memory_search(tags=["project"], query="{项目名} 架构 技术栈 代码风格", limit=30)`
+1. 执行 `memory_search(tags=["project"], query="{项目名} 架构 技术栈 代码风格", limit=30)`（加载模块规范和洞察，详见"渐进式记忆"和"洞察"章节）
 2. 如果 memory_search 连续失败 2 次 → 降级为 @explorer 全量扫描，后续跳过 Step 5，告知用户"memory 不可用"
 3. 如果返回空或新项目 → **纯初始化场景判定**：用户未给具体开发需求（如"第一次用"/"初始化"）→ 只执行本步扫描 + 存入 memory → 输出扫描结果模板 → **终止，不进入 Step 2-5**，提示用户提出开发需求
 4. 如果返回空但用户有具体开发需求 → 启动 @explorer 扫描，结果存为结构化多条记忆：
@@ -344,7 +344,7 @@ full 额外:
   Agent(explorer) → 测试覆盖审计 → test-report.md → 🔒用户确认
 ```
 
-### Step 5: 记忆更新 + 渐进式规范 + 洞察
+### Step 5: 记忆更新 + 渐进式规范 + 洞察（详见同名章节）
 
 ```
 # 1. 基础记忆更新（full / 有重要发现）
@@ -368,6 +368,8 @@ full 额外:
 ---
 
 ## Git 操作
+
+> **插入点**：在 Step 4 验证通过后、Step 5 记忆更新前执行 Git 操作。quick/normal 在 Step 4 后本地 commit；full 在 Step 3 每个任务完成后按任务 commit。
 
 ### 环境检测
 
