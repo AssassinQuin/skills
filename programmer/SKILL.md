@@ -216,7 +216,7 @@ existing = memory_search(query="{项目} {模块} 洞察", tags=["project","insi
 |--------|---------|
 | quick | 一句话方案 + 涉及文件 → 🔒确认 |
 | normal | 改动文件 + 每文件改动摘要 + 依赖 → 🔒确认 |
-| full | 需求概要 → 🔒确认 → @oracle 拆解 task-plan → 🔒确认计划 |
+| full | 需求概要 → 🔒确认 → @oracle 拆解 task-plan（使用 `references/task-plan-template.md` 模板） → 🔒确认计划 |
 
 ### Step 3: 实现（确认后执行）
 
@@ -442,3 +442,12 @@ type: feat | fix | refactor | chore
 
   请告诉我你要开发什么功能。
   ```
+
+---
+
+## 附：资源文件
+
+| 文件 | 用途 |
+|------|------|
+| `references/task-plan-template.md` | full 模式的 task-plan 生成模板 |
+| `test-prompts.json` | 达尔文评估用的测试 prompt 集 |
