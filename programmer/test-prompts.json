@@ -2,31 +2,31 @@
   {
     "id": 1,
     "prompt": "在 analysis 模块中新增一个函数，计算卡组胜率随回合数的变化趋势",
-    "expected": "应触发 skill → 记忆检索 → 代码考古(@explorer) → 可选调研 → @oracle拆解任务 → @fixer并行实现 → 质量洞察 → 记忆更新，所有提问用中文，agent按职责矩阵分配",
-    "scenario": "中等复杂度，涉及 2-3 个文件，验证 Agent 职责矩阵是否正确路由"
+    "expected": "判定为 normal 模式 → memory 加载项目架构(已有) → 给出改动方案(涉及文件+改动摘要) → 用户确认 → @fixer 实现 → 质量检测 → 完成确认",
+    "scenario": "中等复杂度 2-3 文件，验证 normal 模式方案先行流程"
   },
   {
     "id": 2,
     "prompt": "修复 Power.log 解析中出现的编码错误",
-    "expected": "应触发 skill → 快速定位相关文件(@explorer) → Bug修复专项规范(根因分析+同类排查+补测试+评重构) → @fixer修复 → 更新踩坑记忆，不能敷衍，必须考虑重构",
-    "scenario": "简单修复，验证 Bug 修复专项规范是否生效"
+    "expected": "判定为 quick 模式(单点修复) → memory 加载上下文 → 一句话方案 → 用户确认 → 直接修复 → Bug Fix 专项(根因+同类排查+补测试)",
+    "scenario": "简单修复，验证 quick 模式+Bug Fix 专项是否精简有效"
   },
   {
     "id": 3,
     "prompt": "重构整个 card_data 目录，改为从 API 拉取数据而不是本地文件",
-    "expected": "应触发 skill → @explorer代码考古 → @librarian外部调研(API方案) → @oracle完整拆解+重构评审 → 多轮@fixer并行实现(≤3子进程) → 子任务同步维护 → 大量记忆更新 → 质量洞察报告",
-    "scenario": "复杂需求，验证完整流程：精确agent分配、外部调研触发、重构评审路径、子任务同步"
+    "expected": "判定为 full 模式(重构+多模块) → memory 加载 → 需求确认 → @oracle 拆解 task-plan → 用户确认计划 → @fixer 并行实现(≤3) → 质量检测+测试审计 → 记忆更新(架构变更)",
+    "scenario": "复杂重构，验证 full 模式完整流程+架构变更存入 memory"
   },
   {
     "id": 4,
-    "prompt": "新增一个完整的卡牌对战模拟器，支持 AI 对战和回放功能",
-    "expected": "应触发大文件策略 → 框架先生成(@fixer) → 分批填充 → 逐批验证 → 单文件不超800行 → 超出自动拆分 → 质量洞察(代码重复检测等)",
-    "scenario": "大文件场景，验证分批生成、文件拆分规则和质量洞察机制"
+    "prompt": "这是我第一次在这个项目中用这个 skill 开发功能",
+    "expected": "memory_search 返回空 → 触发 @explorer 扫描 → 架构/技术栈/代码风格存入 memory → 后续任务直接从 memory 加载，不再全量扫描",
+    "scenario": "首次使用，验证 memory-first：扫描一次后存入 memory"
   },
   {
     "id": 5,
-    "prompt": "这是我第一次在这个项目中用这个 skill 开发功能",
-    "expected": "应触发 Phase 0 → 整理已有记忆 → 合并重复 → 删除过时 → 规范分离(项目/全局独立展示不合并) → 生成规范摘要 → 中文展示确认",
-    "scenario": "首次使用场景，验证记忆整理和规范合并冲突解决"
+    "prompt": "在 src/utils 中新增一个 debounce 函数",
+    "expected": "判定为 quick 模式(单文件<50行) → memory 加载 → 一句话方案 → 用户确认 → 直接写入 → 无文档生成 → 本地 commit",
+    "scenario": "极简任务，验证 quick 模式 0 文档 1 确认的轻量流程"
   }
 ]
