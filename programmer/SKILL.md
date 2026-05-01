@@ -120,6 +120,8 @@ existing = memory_search(query="{项目} {模块} 洞察", tags=["project","insi
 | **C. 调研方向 + 本地代码 → 开发** | 用户给调研方向/技术方向，要求结合项目开发 | "调研 XX 方案然后在我们项目里实现"、"看看有没有更好的方案" |
 | **D. 直接需求** | 以上都不匹配，标准的开发请求 | "新增 XX 功能"、"修复 XX bug" |
 
+**模式互斥规则**：同一请求只匹配一个入口模式。当"重构"+"新方案"同时出现时，以主要意图为准：重构现有代码为主 → D；需先调研新方案再重构 → C。不确定时默认 D。
+
 **叠加规则**：入口模式决定 Step 1-2 的**内容格式**（参考分析/需求解析/调研/标准）；复杂度决定**方案深度和确认次数**（1/2/3次）。两者叠加时，内容格式跟入口模式，深度跟复杂度。
 
 各模式在 Step 1-2 的差异：
@@ -133,19 +135,19 @@ existing = memory_search(query="{项目} {模块} 洞察", tags=["project","insi
 
 ## 复杂度三档
 
-读取需求后立即判定：
+读取需求后立即判定。判定基于需求描述的预估（文件数/行数为估算），Step 2 方案阶段可根据实际代码调整复杂度等级。
 
-| 条件 | 模式 | 方案深度 | 确认点 |
-|------|------|---------|--------|
-| 单文件<50行 且 无新依赖 且 非重构 | **quick** | 一句话方案 | 1(方案) |
-| 2-5文件 or 中等改动 | **normal** | 任务列表+依赖 | 2(方案+完成) |
-| 大功能 / 重构 / 多模块 | **full** | 完整 task-plan | 3(需求+计划+报告) |
+| 条件 | 模式 | 方案深度 | 确认点 | 产出 |
+|------|------|---------|--------|------|
+| 1文件 且 ≤50行新代码 且 无新依赖 且 非重构 | **quick** | 一句话方案 | 1(方案) | 仅代码变更，无 task-plan/测试审计 |
+| 2-5文件 或 50-300行新代码 或 新增1个依赖 | **normal** | 任务列表+依赖 | 2(方案+完成) | 代码变更 + 质量检测 |
+| ≥6文件 或 >300行新代码 或 重构/多模块/新架构 | **full** | 完整 task-plan | 3(需求+计划+报告) | task-plan.md + 代码 + 测试审计 |
 
 **Bug 修复特殊判定**：
 
 | Bug 特征 | 判定模式 | 流程 |
 |---------|---------|------|
-| 单点修复，≤2文件 | **quick** | 根因→修复→验证（3步） |
+| 单点修复，≤2文件 | **quick** | 快速 grep 同类 → 根因 → 修复 → 验证（4步） |
 | 同类≥2次 or 改动≥3文件 | **full** | 完整 Bug Fix 6步流程 |
 
 ---
@@ -155,30 +157,16 @@ existing = memory_search(query="{项目} {模块} 洞察", tags=["project","insi
 ### Step 1: 加载上下文（按入口模式分支）
 
 **所有模式共同前置**：
-```
-mem = memory_search(tags=["project"], query="{项目名} 架构 技术栈 代码风格", limit=30)
 
-# memory 降级策略
-if memory_search 连续失败 2 次:
-    → 走 @explorer 全量扫描模式（等同首次使用）
-    → 后续步骤不再尝试 memory 操作，跳过 Step 5 记忆更新
-    → 告知用户 "memory 不可用，本次使用一次性扫描"
-
-if mem 为空 or 新项目:
-    Agent(explorer) → 扫描项目结构、技术栈、关键文件、代码风格
-    # 存为结构化多条记录，非大块自由文本
-    memory_store("技术栈: {具体技术栈}", tags="project,architecture")
-    memory_store("目录结构: {关键目录}", tags="project,architecture")
-    memory_store("代码风格: {命名/日志/错误处理}", tags="project,convention")
-else:
-    从 mem 提取上下文
-
-# 加载与本次任务相关的模块规范
-conventions = memory_search(tags=["project","convention"], query="{涉及的模块/文件}", limit=10)
-
-# 加载相关模块的洞察（问题、风险）
-insights = memory_search(tags=["project","insight"], query="{涉及的模块/文件}", limit=10)
-```
+1. 执行 `memory_search(tags=["project"], query="{项目名} 架构 技术栈 代码风格", limit=30)`（加载模块规范和洞察，详见"渐进式记忆"和"洞察"章节）
+2. 如果 memory_search 连续失败 2 次 → 降级为 @explorer 全量扫描，后续跳过 Step 5，告知用户"memory 不可用"
+3. 如果返回空或新项目 → **纯初始化场景判定**：用户未给具体开发需求（如"第一次用"/"初始化"）→ 只执行本步扫描 + 存入 memory → 输出扫描结果模板 → **终止，不进入 Step 2-5**，提示用户提出开发需求
+4. 如果返回空但用户有具体开发需求 → 启动 @explorer 扫描，结果存为结构化多条记忆：
+   - `memory_store("技术栈: Python 3.11 + pytest + SQLite", tags="project,architecture")`
+   - `memory_store("目录结构: src/, tests/, config/", tags="project,architecture")`
+   - `memory_store("代码风格: snake_case命名, 中文docstring, type hints可选", tags="project,convention")`
+5. 加载模块规范：`memory_search(tags=["project","convention"], query="{涉及的模块/文件}", limit=10)`
+6. 加载模块洞察：`memory_search(tags=["project","insight"], query="{涉及的模块/文件}", limit=10)`
 
 **按入口模式额外执行**：
 
@@ -228,11 +216,11 @@ insights = memory_search(tags=["project","insight"], query="{涉及的模块/文
 |--------|---------|
 | quick | 一句话方案 + 涉及文件 → 🔒确认 |
 | normal | 改动文件 + 每文件改动摘要 + 依赖 → 🔒确认 |
-| full | 需求概要 → 🔒确认 → @oracle 拆解 task-plan → 🔒确认计划 |
+| full | 需求概要 → 🔒确认 → @oracle 拆解 task-plan（使用 `references/task-plan-template.md` 模板） → 🔒确认计划 |
 
 ### Step 3: 实现（确认后执行）
 
-**quick**：直接 Edit/Write 代码。
+**quick**：直接 Edit/Write 代码。目标路径不存在时：新增文件自动创建父目录；修改文件不存在则报错并询问用户。
 
 **normal/full**：按 task-plan 调度子 agent 实现（≤3 并行）。
 
@@ -288,37 +276,37 @@ insights = memory_search(tags=["project","insight"], query="{涉及的模块/文
 
 #### 约束注入
 
-@fixer/@oracle 执行时，从 memory 检索结果组装约束块：
-```
-# 组装逻辑（伪代码）
-constraints = "## 项目约束\n"
-constraints += "技术栈: " + (mem["architecture"].技术栈 or "未知，从代码推断") + "\n"
-constraints += "代码风格: " + (mem["convention"].代码风格 or "未知，保持一致") + "\n"
+@fixer/@oracle 执行时，组装以下约束块注入 prompt：
 
-# 只注入本次涉及的模块规范
-for conv in conventions.filter(涉及模块):
-    constraints += f"模块规范({conv.模块}): {conv.内容}\n"
-
-# 只注入已知风险
-for ins in insights.filter(涉及模块, type=issue|pitfall):
-    constraints += f"⚠️ 已知风险({ins.模块}): {ins.问题}\n"
-```
-
-输出示例：
 ```
 ## 项目约束
-技术栈: Python 3.11 + pytest + SQLite
-代码风格: snake_case命名, 中文docstring, type hints可选
-模块规范(analysis): 使用 @dataclass, 无 Pydantic
-⚠️ 已知风险(card_data): JSON 解析无编码 fallback
+技术栈: {从 memory 加载，如 "Python 3.11 + pytest + SQLite"，无则填"未知，从代码推断"}
+代码风格: {从 memory 加载，如 "snake_case命名, 中文docstring", 无则填"未知，保持一致"}
+模块规范: {仅本次涉及的模块，每条一行，如 "analysis: 使用 @dataclass, 无 Pydantic"}
+已知风险: {仅 issue/pitfall 类型，如 "card_data: JSON 解析无编码 fallback"，无则不输出此行}
+```
+
+#### 渐进式规范 — 存储示例
+
+每次从读写过的代码中提取规范（≤3条），格式和示例：
+
+```
+# 良好示例（一行说清一个规范点）
+"hs_analysis card: 使用 @dataclass，不使用 Pydantic"
+"fcli stores: 所有 SQL 用参数化查询($1,$2)，禁止字符串拼接"
+"api_client: 重试间隔 = retry_delay × (attempt + 1)，最大3次"
+
+# 去重策略：memory_search 返回前3条中，如果第1条的主题+模块与待存储内容相同，则 memory_update 而非新建
 ```
 
 #### Bug Fix 专项（按复杂度分级）
 
 **quick Bug Fix**（单点，≤2文件）：
-1. **根因分析**：现象→根因→方案（一句话）
-2. **实现**：禁止硬编码绕过、禁止吞异常
-3. **验证**：确认修复有效，无回归
+1. **快速 grep 同类**：用 Grep 搜索相似错误模式，发现≥2处同类问题 → 升级 full
+2. **根因分析**：现象→根因→方案（一句话）
+3. **🔒 一句话方案确认**：根因+方案 → 用户确认后才继续（唯一确认点）
+4. **实现**：禁止硬编码绕过、禁止吞异常
+5. **验证**：确认修复有效，无回归
 
 **normal/full Bug Fix**（完整 6 步）：
 1. **根因分析**：记录现象→根因→方案。不明确则标记后继续
@@ -356,7 +344,7 @@ full 额外:
   Agent(explorer) → 测试覆盖审计 → test-report.md → 🔒用户确认
 ```
 
-### Step 5: 记忆更新 + 渐进式规范 + 洞察
+### Step 5: 记忆更新 + 渐进式规范 + 洞察（详见同名章节）
 
 ```
 # 1. 基础记忆更新（full / 有重要发现）
@@ -380,6 +368,8 @@ full 额外:
 ---
 
 ## Git 操作
+
+> **插入点**：在 Step 4 验证通过后、Step 5 记忆更新前执行 Git 操作。quick/normal 在 Step 4 后本地 commit；full 在 Step 3 每个任务完成后按任务 commit。
 
 ### 环境检测
 
@@ -443,5 +433,23 @@ type: feat | fix | refactor | chore
 - 面向用户一律中文
 - 每次实现后更新 memory 中的架构信息（如有变化）
 - session 恢复时：读 task-plan.md 定位断点，memory 加载上下文，无需重新扫描
-- **纯初始化场景**（用户未给具体开发需求，只说"第一次用"/"初始化"）：只执行 Step 1 扫描并存入 memory，然后提示用户提出开发需求，不进入 Step 2-5
+- **纯初始化场景**：已在 Step 1 第 3 步处理（memory 为空 + 无具体开发需求 → 扫描后终止）
 - **session 断点恢复**：按 task-plan 中的任务状态判断：已完成→验证+继续下一；进行中→从当前任务重试；未开始→从该任务开始
+- **首次使用完成后输出格式**：
+  ```
+  项目扫描完成，已存入记忆：
+  - 技术栈: {具体技术栈}
+  - 目录结构: {关键目录}
+  - 代码风格: {命名/日志/错误处理}
+
+  请告诉我你要开发什么功能。
+  ```
+
+---
+
+## 附：资源文件
+
+| 文件 | 用途 |
+|------|------|
+| `references/task-plan-template.md` | full 模式的 task-plan 生成模板 |
+| `test-prompts.json` | 达尔文评估用的测试 prompt 集 |
