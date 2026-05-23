@@ -3,3 +3,7 @@ AGENTS.md
 
 # Web-research skill: local research data (not tracked)
 web-research/data/
+
+# OS artifacts
+.DS_Store
+**/.DS_Store
