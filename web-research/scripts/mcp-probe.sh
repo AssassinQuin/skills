@@ -27,9 +27,14 @@ done
 set -- "${_ARGS[@]+"${_ARGS[@]}"}"
 
 # ---- 工具 → 配置文件映射 ----
+# claude: 读取 ~/.claude.json (mcpServers key)，可选合并项目级 .mcp.json
+# opencode/cursor/trae/agents: 各自的用户级配置文件
+_project_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 case "$TOOL" in
     opencode) OPCODE_CONFIG="${OPCODE_CONFIG:-$HOME/.config/opencode/opencode.jsonc}" ;;
-    claude)   OPCODE_CONFIG="${OPCODE_CONFIG:-$HOME/.claude/claude.json}" ;;
+    claude)   OPCODE_CONFIG="${OPCODE_CONFIG:-$HOME/.claude.json}"
+              # 可选: 合并项目级 .mcp.json
+              CLAUDE_PROJECT_MCP="${_project_root}/.mcp.json" ;;
     cursor)   OPCODE_CONFIG="${OPCODE_CONFIG:-$HOME/.cursor/settings.json}" ;;
     trae)     OPCODE_CONFIG="${OPCODE_CONFIG:-$HOME/.trae/settings.json}" ;;
     agents)   OPCODE_CONFIG="${OPCODE_CONFIG:-$HOME/.agents/settings.json}" ;;
@@ -37,12 +42,18 @@ case "$TOOL" in
               TOOL="opencode"
               OPCODE_CONFIG="${OPCODE_CONFIG:-$HOME/.config/opencode/opencode.jsonc}" ;;
 esac
+# claude 的 MCP key 是 mcpServers（不是 mcp），导出标记供 Python 识别
+export CLAUDE_MCP_KEY=""
+export CLAUDE_PROJECT_MCP="${CLAUDE_PROJECT_MCP:-}"
+if [[ "$TOOL" == "claude" ]]; then
+    export CLAUDE_MCP_KEY="mcpServers"
+fi
 
 CACHE_DIR="${1:-$(dirname "$0")/../data}"
 CACHE_FILE="$CACHE_DIR/.mcp-cache-${TOOL}.json"
 mkdir -p "$CACHE_DIR"
 
-export CACHE_DIR CACHE_FILE OPCODE_CONFIG PROBE_TIMEOUT=12 MCP_TOOL="$TOOL"
+export CACHE_DIR CACHE_FILE OPCODE_CONFIG PROBE_TIMEOUT=20 MCP_TOOL="$TOOL"
 
 exec python3 << 'PYEOF'
 import json, hashlib, subprocess, sys, re, os, time, urllib.request, select
@@ -71,8 +82,7 @@ def _init_request(req_id=1):
 CACHE_DIR = Path(os.environ['CACHE_DIR'])
 CACHE_FILE = Path(os.environ['CACHE_FILE'])
 OPCODE_CONFIG = Path(os.environ['OPCODE_CONFIG'])
-PROBE_TIMEOUT = int(os.environ.get("PROBE_TIMEOUT", "12"))  # shell 侧统一来源
-CACHE_TTL = 3600    # 缓存有效期（秒）
+PROBE_TIMEOUT = int(os.environ.get("PROBE_TIMEOUT", "20"))
 
 
 def resolve_secrets(value):
@@ -96,6 +106,14 @@ def resolve_env(env_dict):
     for k, v in (env_dict or {}).items():
         resolved[k] = resolve_secrets(v)
     return resolved
+
+
+def normalize_cmd(cfg):
+    """标准化命令：支持 command(字符串)+args(数组) 和 command(数组) 两种格式"""
+    cmd = cfg.get("command", [])
+    if isinstance(cmd, str):
+        cmd = [cmd] + (cfg.get("args", []) or [])
+    return cmd
 
 
 def resolve_headers(headers_dict):
@@ -199,12 +217,14 @@ def _managed_proc(cmd, env):
 
 def probe_stdio(name, cfg):
     """探测 stdio MCP server — 走完整初始化 + tools/list"""
-    cmd = cfg.get("command", [])
+    cmd = normalize_cmd(cfg)
     if not cmd:
         return False, [], "no command"
 
     env = os.environ.copy()
-    env.update(resolve_env(cfg.get("environment", {})))
+    # 兼容 environment(opencode) 和 env(Claude Code)
+    env_overrides = cfg.get("environment", {}) or cfg.get("env", {})
+    env.update(resolve_env(env_overrides))
 
     try:
         with _managed_proc(cmd, env) as proc:
@@ -358,7 +378,7 @@ def probe_remote(name, cfg):
 
 def probe_docker_container(name, cfg):
     """探测已运行的 Docker container。返回 (bool, tools, err) 或 _NOT_DOCKER。"""
-    cmd = cfg.get("command", [])
+    cmd = normalize_cmd(cfg)
     if not cmd or cmd[0] != "docker":
         return _NOT_DOCKER
 
@@ -401,19 +421,32 @@ def read_mcp_config():
         }, indent=2, ensure_ascii=False))
         sys.exit(0)
     conf = parse_config(OPCODE_CONFIG)
-    mcp_cfg = conf.get("mcp", {})
+    # claude 用 mcpServers key，其他工具用 mcp key
+    mcp_key = os.environ.get("CLAUDE_MCP_KEY", "") or "mcp"
+    mcp_cfg = conf.get(mcp_key, {})
+    # claude: 合并项目级 .mcp.json（项目级优先，覆盖用户级同名 server）
+    project_mcp = os.environ.get("CLAUDE_PROJECT_MCP", "")
+    if project_mcp and Path(project_mcp).exists():
+        try:
+            proj_conf = parse_config(Path(project_mcp))
+            proj_servers = proj_conf.get("mcpServers", {})
+            # 项目级优先
+            merged = {**mcp_cfg, **proj_servers}
+            mcp_cfg = merged
+        except Exception as e:
+            print(f"WARN: 合并项目级 MCP 配置失败: {e}", file=sys.stderr)
     config_hash = get_config_hash(mcp_cfg)
     return mcp_tool, mcp_cfg, config_hash
 
 
 def check_cache(mcp_tool, config_hash):
-    """缓存命中则 exit。返回 True=命中退出，False=继续探测。"""
+    """缓存命中则 exit。仅当 config_hash 不变时有效，永不过期。"""
     if not CACHE_FILE.exists():
         return False
     try:
         cached = json.loads(CACHE_FILE.read_text())
-        age = (datetime.now(timezone.utc) - datetime.fromisoformat(cached.get("updated", "2000-01-01"))).total_seconds()
-        if cached.get("config_hash") == config_hash and age < CACHE_TTL:
+        if cached.get("config_hash") == config_hash:
+            age = (datetime.now(timezone.utc) - datetime.fromisoformat(cached.get("updated", "2000-01-01"))).total_seconds()
             print(f"[{mcp_tool}] 缓存命中: {CACHE_FILE.name} ({config_hash}, {(age/60):.0f}min old)", file=sys.stderr)
             sys.exit(0)
     except Exception:
@@ -427,7 +460,8 @@ def probe_single(name, cfg):
         return {"status": "unavailable", "type": "unknown", "tools": [], "error": "invalid config"}
 
     cfg_type = cfg.get("type", "local")
-    if cfg_type == "remote":
+    # remote/http → probe_remote; stdio/local/others → probe_stdio
+    if cfg_type in ("remote", "http"):
         ok, tools, err = probe_remote(name, cfg)
     else:
         docker_result = probe_docker_container(name, cfg)
@@ -443,8 +477,19 @@ def probe_single(name, cfg):
 
 
 def probe_all(mcp_cfg):
-    """探测全部 MCP server"""
-    return {name: probe_single(name, mcp_cfg[name]) for name in sorted(mcp_cfg.keys())}
+    """并发探测全部 MCP server"""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    names = sorted(mcp_cfg.keys())
+    results = {}
+    with ThreadPoolExecutor(max_workers=min(len(names), 8)) as pool:
+        futures = {pool.submit(probe_single, name, mcp_cfg[name]): name for name in names}
+        for future in as_completed(futures):
+            name = futures[future]
+            try:
+                results[name] = future.result()
+            except Exception as e:
+                results[name] = {"status": "unavailable", "type": "unknown", "tools": [], "error": str(e)[:80]}
+    return results
 
 
 def write_cache_and_report(mcp_tool, servers, mcp_cfg, config_hash):
