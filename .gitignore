@@ -2,7 +2,7 @@
 AGENTS.md
 
 # Web-research skill: local research data
-web-research/data/.mcp-cache.json
+web-research/data/.mcp-cache*.json
 
 # Nested independent git repos (not submodules)
 # Each is a standalone fork with upstream remotes
