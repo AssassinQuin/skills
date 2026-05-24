@@ -4,6 +4,17 @@ AGENTS.md
 # Web-research skill: local research data
 web-research/data/.mcp-cache.json
 
+# Nested independent git repos (not submodules)
+# Each is a standalone fork with upstream remotes
+# Update: cd into dir, then: git fetch upstream && git merge upstream/<branch> && git push origin <branch>
+darwin-skill/
+humanizer/
+planning-with-files/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+
 # OS artifacts
 .DS_Store
 **/.DS_Store

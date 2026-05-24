@@ -12,7 +12,7 @@ mkdir -p "$CACHE_DIR"
 
 # Step 1: 获取当前 MCP server 列表并 hash
 get_current_hash() {
-    claude mcp list 2>/dev/null | grep -oP '^[\w-]+' | sort -u | tr '\n' ',' | md5 | cut -c1-12
+    claude mcp list 2>/dev/null | grep -E -o '^[A-Za-z0-9_-]+' | sort -u | tr '\n' ',' | md5 | cut -c1-12
 }
 
 CURRENT_HASH=$(get_current_hash)
