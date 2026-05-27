@@ -27,10 +27,9 @@ done
 
 ## Nested Git Repos
 
-Three skills are nested git repos (NOT submodules) — changes inside them require separate git operations from within their directories:
+Two skills are nested git repos (NOT submodules) — changes inside them require separate git operations from within their directories:
 
 - `planning-with-files/` — branch: master, upstream: OthmanAdi/planning-with-files
-- `darwin-skill/` — branch: master, upstream: alchaincyf/darwin-skill
 - `humanizer/` — branch: main, upstream: blader/humanizer
 
 Update pattern for nested repos:
@@ -43,11 +42,11 @@ Other upstream skills (skill-seekers, huashu-nuwa, storytelling, prose-craft) ar
 ## Key Architecture Patterns
 
 - **Memory skill** (`memory/`): Cross-skill memory API with MCP tools (`memory_memory_*`). Three-tier isolation: project/shared/global. Must be loaded before calling any memory MCP tool.
-- **Darwin skill** (`darwin-skill/`): 8-dimension rubric for evaluating and hill-climbing optimization of SKILL.md files.
+- **Skill Evolver** (`skill-evolver/`): Evolution framework for SKILL.md optimization. Based on [darwin-skill](https://github.com/alchaincyf/darwin-skill) rubric concepts.
 
-## mattpocock/skills (13 hidden, 7 visible)
+## mattpocock/skills (6 hidden, 6 visible)
 
-13 skills sourced from [mattpocock/skills](https://github.com/mattpocock/skills) (104k stars). Visible: tdd, diagnose, caveman, handoff, to-prd, to-issues. Hidden: grill-with-docs, improve-codebase-architecture, prototype, triage, git-guardrails-claude-code, agent-browser. Hidden skills can still be invoked but don't clutter the skill list.
+12 skills sourced from [mattpocock/skills](https://github.com/mattpocock/skills) (104k stars). Visible: tdd, diagnose, caveman, handoff, to-prd, to-issues. Hidden: grill-with-docs, improve-codebase-architecture, prototype, triage, git-guardrails-claude-code, agent-browser. Hidden skills can still be invoked but don't clutter the skill list.
 - **Huashu-nuwa** (`huashu-nuwa/`): Generates perspective skills from research. Contains 8 example sub-skills in `examples/`.
 
 ## Docker / MCP Servers
