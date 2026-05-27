@@ -1,0 +1,22 @@
+{
+  "skill": "codemap",
+  "first_evolved": "2026-05-27",
+  "total_rounds": 1,
+  "total_score_delta": 17,
+  "avg_score_delta": 17,
+  "strategy_hits": {"S1+S2-merge": 1},
+  "audit_pass_rate": 1.0,
+  "audit_false_positive_rate": 0.5,
+  "deploy_pass_rate": 0.75,
+  "agent_failure_rate": 0.23,
+  "token_waste_rate": 0.38,
+  "history": [
+    {
+      "date": "2026-05-27",
+      "round": 1,
+      "score": "63.5→80.5",
+      "strategy": "S1+S2-merge",
+      "deltas": ["感知链", "事实漂移", "模板过重", "脚本兼容"]
+    }
+  ]
+}

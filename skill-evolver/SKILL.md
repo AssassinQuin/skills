@@ -99,18 +99,18 @@ Phase 1 信号收集 → 理解差距
 Phase 2 K=6 多策略探索 → 对比学习 → 选最优
   │
   ▼  ✓ 用户确认策略选择
-Phase 3 精准应用（完整改写目标段落，非打补丁）
+Phase 3 精准应用 + git commit
   │
   ▼  ✓ 用户确认改动内容
 Phase 4 独立审计（opus，新上下文，10项检查）
   │
   ▼  ✓ 用户确认审计结果
-Phase 5 部署验证（3-5个真实场景回测）
+Phase 5 部署验证 + 记录日志 + 更新指标
   │
   ▼  ✓ 用户确认部署结果
   │
   ├─ r < R → 以新版本为基线，回到 Phase 1
-  └─ r = R → 进化完成，合并到主分支
+  └─ r = R → 进化完成，git merge 到 main
 ```
 
 **刚性规则**：
@@ -118,6 +118,92 @@ Phase 5 部署验证（3-5个真实场景回测）
 - 用户说"不好" → 回退到上一关卡重新执行
 - 用户说"跳过" → 只能跳过本轮，不能跳过整个 Phase
 - 任何 Phase 失败 → revert git，记录失败原因，继续下一个 skill
+
+### Git 版本控制
+
+`~/.claude/skills/` 是 git 仓库。每次进化操作都在 git 上可追溯。
+
+**分支策略**：
+```
+main                        # 稳定版本
+  └─ evolve/{skill}/YYYYMMDD  # 进化工作分支
+```
+
+**Phase 级 git 操作**：
+
+| Phase | git 操作 | 目的 |
+|-------|---------|------|
+| Phase 0 | `git checkout -b evolve/{skill}/YYYYMMDD` | 创建工作分支 |
+| Phase 3 | `git add {skill}/SKILL.md && git commit -m "evolve {skill}: {策略}-R{轮次}"` | 保存改写结果 |
+| Phase 4 FAIL≥3 | `git revert HEAD` | 回滚到改写前 |
+| Phase 5 退化 | `git revert HEAD` | 立即回滚 |
+| Phase 5 通过 | 追加日志 + `git add {skill}/.evolve/ && git commit -m "log: {skill} R{轮次}"` | 记录指标 |
+| 收工 | `git checkout main && git merge evolve/{skill}/YYYYMMDD` | 合并到主分支 |
+
+**回滚命令**（任何阶段可用）：
+```bash
+# 查看进化历史
+cd ~/.claude/skills && git log --oneline --grep="evolve codemap"
+
+# 回滚到上一次进化前
+cd ~/.claude/skills && git revert HEAD
+
+# 回滚到指定版本
+cd ~/.claude/skills && git log --oneline {skill}/SKILL.md
+cd ~/.claude/skills && git checkout {commit-sha} -- {skill}/SKILL.md
+```
+
+### 进化日志与指标
+
+**日志位置**：`{skill}/.evolve/evolution-log.jsonl`（每个 skill 独立）
+
+**每轮追加一条 JSON 记录**：
+```json
+{
+  "ts": "2026-05-27T04:00:00Z",
+  "round": 1,
+  "strategy": "S1+S2-merge",
+  "skill": "codemap",
+  "score_before": 63.5,
+  "score_after": 80.5,
+  "delta": 17,
+  "audit_pass": 10,
+  "audit_total": 10,
+  "deploy_tests": [
+    {"name": "T1", "before": 9, "after": 9, "valid": true},
+    {"name": "T2", "before": 9, "after": 8, "valid": true}
+  ],
+  "deltas_fixed": ["Δ1-感知链", "Δ2-事实漂移"],
+  "commit": "abc123"
+}
+```
+
+**指标文件**：`{skill}/.evolve/metrics.json`（累积汇总）
+
+Phase 5 结束后自动更新：
+```bash
+# 读取现有 metrics.json，追加本轮数据，写回
+node -e "
+  const fs = require('fs');
+  const p = '{skill}/.evolve/metrics.json';
+  const m = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p)) : {};
+  m.total_rounds = (m.total_rounds || 0) + 1;
+  m.total_score_delta = (m.total_score_delta || 0) + {delta};
+  m.avg_score_delta = Math.round(m.total_score_delta / m.total_rounds * 10) / 10;
+  m.last_evolved = new Date().toISOString().split('T')[0];
+  fs.writeFileSync(p, JSON.stringify(m, null, 2));
+"
+```
+
+**关键指标**（Phase 0 时自动读取展示）：
+
+| 指标 | 来源 | 用途 |
+|------|------|------|
+| `total_rounds` | metrics.json | 该 skill 被进化了几轮 |
+| `avg_score_delta` | metrics.json | 平均每轮提升多少分 |
+| `last_evolved` | metrics.json | 上次进化时间（太久→可能需要重评） |
+| `audit_pass_rate` | metrics.json | 审计通过率（低→策略库可能有问题） |
+| `strategy_hits` | metrics.json | 哪些策略对该 skill 有效（指导后续选型） |
 
 ### 关卡合并策略
 
@@ -136,7 +222,13 @@ Phase 5 部署验证（3-5个真实场景回测）
    - 用户指定 → 直接使用
    - 用户未指定 → 扫描所有 skill 的 5 维评分，展示 TOP-10 低分列表
 
-2. 创建 git 分支：evolve/{skill}/YYYYMMDD
+2. 读取历史指标（如有）
+   - 读取 {skill}/.evolve/metrics.json
+   - 展示：上次进化时间、总轮数、平均提升、策略命中历史
+   - 如果 avg_score_delta < 5 或 total_rounds >= 5 → 提示"效率偏低，考虑 skill-creator 重写"
+
+3. 创建 git 分支：evolve/{skill}/YYYYMMDD
+   cd ~/.claude/skills && git checkout -b evolve/{skill}/YYYYMMDD
 
 3. 基线评估
    - 按 5 维 rubric 完整评分（维度5 必须跑子agent测试）
@@ -367,9 +459,13 @@ Step 2: 验证三个维度
         b. 成功场景不退化：之前 pass 的 prompt 仍然 pass 吗？
         c. 新场景可用：审计中用的新 prompt 也通过吗？
 
-Step 3: 记录结果
-        - 自动追加 trace 到 {skill}/traces.jsonl
-        - 记录到 evolution-log.jsonl
+Step 3: 记录日志 + 更新指标
+        a. 追加一条 JSON 到 {skill}/.evolve/evolution-log.jsonl
+        b. 更新 {skill}/.evolve/metrics.json（total_rounds, avg_score_delta, strategy_hits）
+        c. git add + commit:
+           cd ~/.claude/skills
+           git add {skill}/.evolve/ {skill}/SKILL.md
+           git commit -m "evolve {skill}: R{轮次} score {before}→{after}"
 ```
 
 ### ✓ 关卡 5：用户确认
@@ -417,9 +513,12 @@ Step 3: 记录结果
 | 无 traces + 无 usage | 纯评分驱动，提示积累数据 |
 | K=6 全部失败 | 转入 skill-creator 重写（传递 Δ + 失败模式 + 策略记录） |
 | 审计子 agent 不可用 | **中止本轮**，不可跳过审计（非降级为自审） |
-| 部署验证退化 | 立即 git revert |
+| 部署验证退化 | `cd ~/.claude/skills && git revert HEAD`，立即回滚 |
+| Phase 4 FAIL≥3 | `cd ~/.claude/skills && git revert HEAD`，回 Phase 2 换策略 |
 | 嵌套 git repo | 进入该目录执行 git 操作 |
-| R 轮全未通过 | 展示所有记录，用户决定重写或暂停 |
+| R 轮全未通过 | 展示所有记录 + metrics.json，用户决定重写或暂停 |
+| 想恢复旧版本 | `cd ~/.claude/skills && git log --oneline {skill}/SKILL.md` 找到目标 commit → `git checkout {sha} -- {skill}/SKILL.md` |
+| skill 目录无 .evolve | 自动创建 `.evolve/` + `evolution-log.jsonl` + `metrics.json` |
 
 ---
 
