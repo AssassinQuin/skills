@@ -15,33 +15,15 @@
 - 用户指定 → 直接使用
 - 用户未指定 → 扫描所有 skill 的 5 维评分，展示 TOP-10 低分列表
 
-### Step 2: Trace Collection（实证信号收集）
+### Step 2: Trace Collection（实证信号）
 
-**核心改进**：进化信号来自真实使用轨迹，而非纯 rubric 猜测。
+搜索 `~/.claude/projects/` 会话文件，提取目标 skill 的使用记录。保存到 `{skill}/.evolve/traces.jsonl`：
 
-```bash
-# 从 Claude Code 会话历史中提取目标 skill 的使用轨迹
-# 会话存储在 ~/.claude/projects/ 下的 JSONL 文件中
-# 搜索包含目标 skill 加载记录的会话
-```
-
-**Trace 提取规则**：
-1. 搜索 `~/.claude/projects/` 下的会话文件
-2. 找到加载目标 skill 的会话（搜索 skill name 关键词）
-3. 从会话中提取：
-   - 用户原始 prompt
-   - skill 被如何调用
-   - 执行结果（成功/失败/部分成功）
-   - 用户的后续反馈（修正、抱怨、手动告知）
-4. 保存到 `{skill}/.evolve/traces.jsonl`：
 ```json
 {"ts":"...", "user_prompt":"...", "action_taken":"...", "result":"success|failure|partial", "user_feedback":"..."}
 ```
 
-**Fallback（无可用 traces 时）**：
-- 无会话记录 → 标记 `"trace_source": "none"`，gap 分析退化为 rubric-only
-- 有 traces 但 <3 条 → 标记 `"trace_source": "sparse"`，rubric + traces 混合
-- ≥3 条 traces → `"trace_source": "empirical"`，traces 驱动
+**trace_source 判定**：≥3 条→`"empirical"`，1-2 条→`"sparse"`，0 条→`"none"`。无 traces 时 gap 分析退化为 rubric-only。
 
 ### Step 3: 读取历史指标
 
@@ -87,32 +69,17 @@ FI
 
 ### Step 6: 设计测试集（T_train / T_val 拆分）
 
-设计 5-8 个测试 prompt，**必须拆分为 T_train 和 T_val**：
-
+设计 5-8 个测试 prompt，保存到 `{skill}/.evolve/test-prompts.json`：
 ```json
 {
-  "T_train": [
-    {"id": "T1", "type": "happy", "prompt": "...", "expect": "..."},
-    {"id": "T2", "type": "complex", "prompt": "...", "expect": "..."},
-    {"id": "T3", "type": "failure", "prompt": "...", "expect": "..."},
-    {"id": "T4", "type": "edge", "prompt": "...", "expect": "..."}
-  ],
-  "T_val": [
-    {"id": "V1", "type": "novel", "prompt": "...", "expect": "..."},
-    {"id": "V2", "type": "adversarial", "prompt": "...", "expect": "..."}
-  ],
+  "T_train": [{"id":"T1","type":"happy","prompt":"...","expect":"..."}, ...],
+  "T_val": [{"id":"V1","type":"novel","prompt":"...","expect":"..."}, ...],
   "source": "agent-designed | trace-extracted | mixed"
 }
 ```
 
-**T_train**（60%，4 条）：用于 exploration 阶段的策略评分
-**T_val**（40%，2-3 条）：held-out，**仅在 deployment 阶段使用**，exploration 和 application 阶段不可见
-
-**优先从 traces 提取真实 prompt**：
-- traces ≥3 条 → 从中提取 T_train 和 T_val（真实用户 prompt 最有价值）
-- traces <3 条 → 主 agent 设计，但 T_val 必须包含 1 条"未在 SKILL.md 中显式提及"的场景
-
-保存到 `{skill}/.evolve/test-prompts.json`。
+**T_train**（60%，4 条）：exploration 评分用。**T_val**（40%，2-3 条）：held-out，仅 deployment 阶段可见。
+优先从 traces 提取真实 prompt。无 traces 时 T_val 必须含 1 条"SKILL.md 未显式提及"的场景。
 
 ### Step 7: 初始化 .evolve 目录
 
@@ -134,22 +101,11 @@ touch {skill}/.evolve/evolution-log.jsonl
 **差距报告格式**：
 ```markdown
 ## 差距报告：{skill-name}
-
-### 信号源
-- trace_source: empirical / sparse / none
-- traces 可用: N 条 (成功: X, 失败: Y, 部分: Z)
-
-### 擅长
-- ...
-### 失败模式（来自 traces）
-- 失败点1：...（出现 N 次）— 来自 trace 证据
-- 失败点2：... — 来自 rubric 分析
-### 评分短板交叉验证
-- 维度X得分Y → 与失败模式Z 相关
+信号源: trace_source={empirical/sparse/none}, traces={N条}
+### 失败模式
+- 失败点1：...（N 次，来源: trace/rubric）
 ### 差距描述 Δ
-- 该 skill 应能做到 [A] 但实际在 [B] 场景下失败
-- 根因分析：[C]
-- 证据类型：trace-empirical / rubric-inferred
+- 应做[A]但[B]场景失败 | 根因: [C] | 证据: trace-empirical/rubric-inferred
 ```
 
 ### Step 9: Checkpoint（CP-01）

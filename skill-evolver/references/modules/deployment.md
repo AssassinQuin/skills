@@ -13,52 +13,23 @@ IF 不满足: 输出 [PRE-CHECK-FAIL] + 缺失项
 
 ## 执行步骤
 
-### Step 1: T_train 回归测试（子 agent）
+### Step 1: T_train 回归测试（sonnet 子 agent）
 
-sonnet 子 agent 用 `T_train` 测试改写后的 skill。
-同时加载 traces.jsonl 中的失败场景追加测试。
+用 T_train 测试改写后的 skill + traces.jsonl 失败场景。子 agent 只能用 T_train。
 
-Prompt 模板见 [deployer-template.md](prompts/deployer-template.md)。
+### Step 2: T_val Held-out 验证（独立 opus 子 agent）
 
-**关键约束**：子 agent 只能用 T_train，不可见 T_val。
+独立 opus agent 在全新上下文中读取 SKILL.md + T_val，模拟执行每个 T_val prompt，输出通过率。Prompt 模板见 [deployer-template.md](prompts/deployer-template.md)。
 
-### Step 2: T_val Held-out 验证（独立子 agent，opus）
+### Step 3: 退化判定
 
-**核心改进**：T_val 是 exploration 和 application 阶段从未见过的测试 prompt，提供客观的泛化评估。
+| 指标 | 阈值 | 进步 | 部分进步 | 退化 |
+|------|------|------|---------|------|
+| T_train 回归 | ≥基线 | ≥基线+10% | ≥基线 | <基线 |
+| T_val 泛化 | ≥60% | ≥80% | ≥60% | <60% |
+| Trace 失败改善 | ≥50% | ≥70% | ≥50% | <50% |
 
-```
-独立 opus 子 agent 执行：
-1. 读取改写后的 SKILL.md
-2. 读取 T_val（仅 test-prompts.json 中的 "T_val" 数组）
-3. 对每个 T_val prompt 模拟执行
-4. 判定 PASS/PARTIAL/FAIL
-5. 输出 T_val 通过率
-```
-
-**T_val 不可见规则**：
-- exploration 子 agent 不可见 T_val
-- application 主 agent 不可见 T_val
-- 只有 deployment 阶段的 opus 验证 agent 可见 T_val
-
-### Step 3: 四维验证
-
-a. **T_train 回归**：通过率 ≥80%（不可低于基线的 T_train 通过率）
-b. **T_val 泛化**：通过率 ≥60%（客观指标，不可主观打分）
-c. **失败场景改善**：≥50% 的 trace 失败场景得到改善
-d. **成功场景不退化**：基线通过的场景仍通过
-
-**退化判定**（改进版）：
-
-| 指标 | 进步 | 部分进步 | 退化 |
-|------|------|---------|------|
-| T_train 通过率 | ≥基线+10% | ≥基线 | <基线 |
-| T_val 通过率 | ≥80% | ≥60% | <60% |
-| Trace 失败改善 | ≥70% | ≥50% | <50% |
-
-**综合判定**：
-- 进步：T_train ≥基线 AND T_val ≥60% AND 失败改善 ≥50% → 接受
-- 部分进步：T_train ≥基线 AND (T_val <60% OR 失败改善 <50%) → 接受但记录限制
-- 退化：T_train <基线 → 回滚
+**综合**：进步(全部达标)→接受；部分进步(T_train达标但T_val或trace不达标)→接受并记录限制；退化(T_train<基线)→回滚。
 
 ### Step 4: Token 追踪 + 效率计算
 

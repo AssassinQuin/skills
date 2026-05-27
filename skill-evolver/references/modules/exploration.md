@@ -18,30 +18,9 @@ IF 任一不满足:
 
 ### S0: 动态策略（Trace-Driven，优先级最高）
 
-**核心改进**：从真实失败模式生成针对性策略，而非仅使用固定 S1-S6。
+**生成条件**：`trace_source == "empirical"` → 强制生成；`sparse` → 建议生成；`none` → 跳过。
 
-**生成条件**：
-- `trace_source == "empirical"`（≥3 条 traces）→ **强制生成 S0**
-- `trace_source == "sparse"`（1-2 条 traces）→ 建议生成 S0
-- `trace_source == "none"` → 跳过 S0，仅用 S1-S6
-
-**生成方法**：
-1. 从 traces.jsonl 提取所有 failure/partial 类型的轨迹
-2. 分析失败模式（归类：路由错误、标签缺失、内容过长、边界遗漏等）
-3. 为每种失败模式生成一个针对性策略描述
-4. 合并为一个 S0 策略文件，格式同 S1-S6
-
-```
-S0 示例（来自 memory skill 的真实失败）：
-策略名：Trace-Driven Tag Enforcement + Output Compression
-诊断信号：100/100 条记忆无 tags；Phase 3 输出 281K 字符
-核心操作：
-  1. 将标签规则从当前位置移到紧邻存储操作处（消除 340 行跨度）
-  2. Phase 3 加载加入硬上限：limit≤20, 总输出≤2000字符
-  3. 存储操作前增加强制标签检查（缺一拒绝）
-```
-
-**S0 的优势**：论文的策略也是每轮根据任务决策轴动态生成的。S0 是对这一点的工程化近似。
+**生成方法**：从 traces.jsonl 提取 failure/partial 轨迹 → 归类失败模式 → 合并为一个策略文件（格式同 S1-S6）。
 
 ### S1-S6: 固定策略矩阵（保留，作为多样性保障）
 
@@ -82,9 +61,7 @@ IF remaining < 70K:
 - **不用 Write/Edit 写文件**
 - **不在响应中返回完整候选**
 
-**关键约束**：
-- 所有子 agent **只能使用 T_train 测试**（不可见 T_val）
-- T_val 在 exploration 阶段是 sealed 的
+**关键约束**：子 agent 只能用 T_train，不可见 T_val。
 
 **子 agent 超时保护**：
 ```
@@ -104,9 +81,7 @@ IF remaining < 70K:
 ### Step 2: 按需检索 + 评分（仅用 T_train）
 
 - `ctx_search(queries=["完整候选"], source="{skill}-S{k}")` 按需检索
-- **评分只使用 T_train**（T_val 不可见）
-- 逐个评分 + 用 T_train 测试
-- 标记 τ+(success) 和 τ-(failure)
+- 评分只用 T_train。标记 τ+/τ-。
 - **不要一次拉取所有候选到主 context**
 
 ### Step 3: 对比学习（Δr 提取）
@@ -118,11 +93,6 @@ IF remaining < 70K:
 - Δr = {+段} \ {=段}，按出现频率排序
 
 详见 [evolution-strategies.md](../evolution-strategies.md) 的"对比学习详细操作"。
-
-**论文对比**：
-- 论文：Δ_r = φ(τ+) \ φ(τ-)，高奖励 vs 低奖励**轨迹**的对比
-- 本实现：Δr = 成功候选 vs 失败候选**版本**的对比
-- 区别：论文对比的是部署轨迹，我们对比的是策略产出。不够理想但实用。
 
 ### Step 4: 选最优
 

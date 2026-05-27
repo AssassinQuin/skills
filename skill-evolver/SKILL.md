@@ -21,14 +21,7 @@ allowed-tools:
 > 进化信号优先来自真实部署中的成败轨迹；无轨迹时退化为 rubric 分析。
 > [SkillEvolver](https://arxiv.org/abs/2605.10500) + [darwin-skill](https://github.com/alchaincyf/darwin-skill)
 
-## 与论文的定位差异
-
-| 方面 | 论文 SkillEvolver | 本框架 |
-|------|-------------------|--------|
-| 反馈信号 | 始终来自部署失败 | **优先**来自轨迹，退化时用 rubric |
-| 评估 | avg@5 客观通过率 | T_train 通过率 + T_val held-out 验证 |
-| 策略 | 每轮动态生成 | S0(动态) + S1-S6(固定)，S0 优先 |
-| Agent 架构 | 双 Agent（进化者≠使用者） | 子 agent 隔离 + 独立 opus 审计/部署验证 |
+**与论文差异**：见 [references/paper-comparison.md](references/paper-comparison.md)
 
 ## 决策入口
 
@@ -105,34 +98,16 @@ deployment ── Read references/modules/deployment.md
 
 **渐进式披露**：每个模块的详细指令在 `references/modules/` 中。进入时 **必须 Read 对应文件**。
 
-## T_train / T_val 拆分（反过拟合核心机制）
+## T_train / T_val 拆分（反过拟合）
 
-```
-test-prompts.json:
-  T_train (60%, 4条) — exploration 评分 + deployment 回归
-  T_val   (40%, 2-3条) — 仅 deployment 阶段可见，held-out 验证
-
-可见性规则：
-  baseline:      设计 T_train + T_val
-  exploration:   仅 T_train（子 agent 不可见 T_val）
-  application:   仅 T_train（主 agent 不可见 T_val）
-  audit:         仅 T_val（Overfit 检查）
-  deployment:    T_train（回归）+ T_val（泛化），独立 opus agent 执行
-```
+`test-prompts.json` 拆为 T_train(60%) + T_val(40%)。可见性规则：**exploration/application 不可见 T_val**，仅 deployment 的独立 opus agent 可见。
 
 ## 策略矩阵：S0 + S1-S6
 
-| 策略 | 来源 | 优先级 |
-|------|------|--------|
-| **S0: 动态策略** | traces.jsonl 失败模式分析 | **最高**（有 traces 时） |
-| S1: 指令精化 | 固定 | 基础 |
-| S2: 工作流重组 | 固定 | 基础 |
-| S3: 边界增强 | 固定 | 基础 |
-| S4: 上下文优化 | 固定 | 基础 |
-| S5: 范式转换 | 固定 | 基础 |
-| S6: 拆分/合并 | 固定 | 基础 |
-
-S0 生成条件：`trace_source == "empirical"`（≥3 条 traces）时强制生成。
+| 策略 | 来源 | 条件 |
+|------|------|------|
+| **S0: 动态策略** | traces.jsonl 失败模式 | trace_source=="empirical"时强制 |
+| S1-S6 | [evolution-strategies.md](references/evolution-strategies.md) | 始终 |
 
 ## 关卡合并规则
 
