@@ -1,8 +1,23 @@
 {
-  "total_rounds": 0,
-  "total_score_delta": 0,
-  "avg_score_delta": 0,
-  "last_evolved": null,
-  "strategy_hits": {},
-  "history": []
+  "total_rounds": 1,
+  "total_score_delta": 24,
+  "avg_score_delta": 24,
+  "last_evolved": "2026-05-27",
+  "strategy_hits": {
+    "S5+S1+S3-merge": 1
+  },
+  "total_token_actual": 82000,
+  "total_token_budget": 100000,
+  "avg_token_efficiency": 0.82,
+  "total_agent_failures": 0,
+  "history": [
+    {
+      "round": 1,
+      "date": "2026-05-27",
+      "strategy": "S5+S1+S3-merge",
+      "score_before": 58,
+      "score_after": 82,
+      "delta": 24
+    }
+  ]
 }
