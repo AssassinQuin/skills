@@ -1,0 +1,9 @@
+{
+  "last_evolved": null,
+  "total_rounds": 0,
+  "avg_score_delta": 0,
+  "strategy_hits": {},
+  "fallback_count": 0,
+  "avg_token_efficiency": 0,
+  "avg_T_val_pass_rate": 0
+}

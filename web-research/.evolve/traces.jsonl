@@ -1,0 +1,2 @@
+{"ts":"2026-05-27","user_prompt":"优化 web-research 为什么我获取的信息感觉都很简陋而且，内容质量很差","action_taken":"使用 web-research skill 进行调研","result":"partial","user_feedback":"获取的信息很简陋，内容质量很差，感觉浅","failure_mode":"shallow_results_low_information_density"}
+{"ts":"2026-05-27","user_prompt":"调研信息质量差","action_taken":"执行完整调研流程","result":"failure","user_feedback":"内容质量很差，怀疑是MCP服务问题还是skill设计问题","failure_mode":"output_quality_insufficient_not_deep_enough"}
