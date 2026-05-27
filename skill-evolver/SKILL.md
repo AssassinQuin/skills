@@ -30,7 +30,7 @@ allowed-tools:
 | "进化 X skill" | A: 完整进化 | baseline → exploration → application → audit → deployment |
 | "审计 X" | B: 快速审计 | audit（独立执行） |
 | "评估 X 质量" | C: 质量评估 | baseline（仅评估 + 轨迹收集） |
-| "进化 skill-evolver" | D: 自我进化 | 完整进化，基线用本文件，策略应用于 SKILL.md + references/ |
+| "进化 skill-evolver" | D: 自我进化 | 适配模块 [self-evolution.md](references/modules/self-evolution.md) |
 | "优化所有 skills" | E: 批量 | baseline 筛选 → 逐个完整进化 |
 | "查看进化历史" | F: 只读 | 读 `{skill}/.evolve/evolution-log.jsonl` |
 | "重写 skill" | 跳过 | 直接 skill-creator |
