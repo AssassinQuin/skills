@@ -1,0 +1,11 @@
+{
+  "total_rounds": 1,
+  "total_score_delta": 19,
+  "avg_score_delta": 19,
+  "last_evolved": "2026-05-27",
+  "strategy_hits": {"S4+S1-merge": 1},
+  "total_token_actual": 65000,
+  "total_token_budget": 100000,
+  "avg_token_efficiency": 0.65,
+  "total_agent_failures": 0
+}
