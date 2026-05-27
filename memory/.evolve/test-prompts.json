@@ -1,0 +1,32 @@
+[
+  {
+    "id": "T1",
+    "type": "happy",
+    "prompt": "记住 skills 仓库用 symlink 分发到 6 个工具目录",
+    "expect": "应触发 Phase 4A，精炼内容，推断 scope=project + type=convention，展示确认后存储"
+  },
+  {
+    "id": "T2",
+    "type": "complex",
+    "prompt": "加载记忆",
+    "expect": "应触发 Phase 3，执行三级检索，输出结构化摘要而非原始 JSON，总输出 <2000 字符"
+  },
+  {
+    "id": "T3",
+    "type": "failure",
+    "prompt": "记忆 之前那个 bug 修了没",
+    "expect": "应触发 Phase 1 语义搜索，找到相关记忆后输出精炼摘要，而非 dump 全部记忆"
+  },
+  {
+    "id": "T4",
+    "type": "edge",
+    "prompt": "以后所有项目都用 SSH clone，不要 HTTPS",
+    "expect": "应推断 scope=global + type=preference，内容精炼到 ≤120 字符"
+  },
+  {
+    "id": "T5",
+    "type": "maintenance",
+    "prompt": "清理记忆",
+    "expect": "应触发 Phase 6，执行去重+质量分析+过期清理，而非仅展示操作菜单"
+  }
+]
