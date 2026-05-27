@@ -1,11 +1,11 @@
 {
   "last_evolved": "2026-05-27",
-  "total_rounds": 1,
-  "avg_score_delta": 22,
-  "strategy_hits": {"S1+S4": 1},
+  "total_rounds": 2,
+  "avg_score_delta": 19.75,
+  "strategy_hits": {"S1+S4": 1, "S0+S3+S4": 1},
   "fallback_count": 0,
-  "avg_token_efficiency": 0.7,
+  "avg_token_efficiency": 0.78,
   "avg_T_val_pass_rate": 1.0,
   "avg_trace_improvement_rate": 1.0,
-  "trace_source_distribution": {"sparse": 1}
+  "trace_source_distribution": {"sparse": 1, "empirical": 1}
 }
