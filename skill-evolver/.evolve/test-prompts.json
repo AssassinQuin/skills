@@ -1,0 +1,32 @@
+[
+  {
+    "id": "T1",
+    "type": "happy",
+    "prompt": "进化 codemap skill",
+    "expect": "正确执行 Phase 0-5 完整流程，生成进化后 SKILL.md + evolution-log + metrics"
+  },
+  {
+    "id": "T2",
+    "type": "complex",
+    "prompt": "优化所有 skills",
+    "expect": "扫描所有 skill 评分，排序，逐个进化，跳过高分 skill"
+  },
+  {
+    "id": "T3",
+    "type": "failure",
+    "prompt": "进化 brainstorm skill（模拟子 agent 全部 403 权限拒绝）",
+    "expect": "检测到 ctx_index 失败，降级到主 agent 直接执行，记录失败信号"
+  },
+  {
+    "id": "T4",
+    "type": "failure",
+    "prompt": "审计 codemap（模拟审计误报场景）",
+    "expect": "审计 prompt 包含 BEFORE/AFTER 标记，审计 agent 正确区分两个版本"
+  },
+  {
+    "id": "T5",
+    "type": "edge",
+    "prompt": "进化 skill-evolver（自我进化）",
+    "expect": "正确处理自我引用，基线使用本文件，策略应用于 SKILL.md + references/"
+  }
+]
