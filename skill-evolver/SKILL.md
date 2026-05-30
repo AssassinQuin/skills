@@ -65,6 +65,8 @@ allowed-tools:
 | 4 | 指令精度 | 20 | 静态分析 |
 | 5 | 实测效果 | 35 | **子 agent 客观测试**（T_train 通过率） |
 
+**失效模式诊断**（FM1-FM7）：评估时按 [failure-modes.md](references/failure-modes.md) 分类风险，audit 报告标注 FM 编号。
+
 D5 客观化：D5 = (T_train_pass / T_train_total) × 10
 总分 = Σ(维度分 × 权重) / 10。改进后必须严格高于改进前。
 

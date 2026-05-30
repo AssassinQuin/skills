@@ -226,6 +226,33 @@ Read('{skill_dir}/data/.mcp-cache-claude.json')                → 获取 availa
 
 步骤5: 写入 raw/sources-index.md（URL级状态表）
   | URL | 状态 | 工具 | 主题 |
+
+步骤6: 生成手动抓取报告（仅 failed_final[] 非空时）
+  IF failed_final[] 非空:
+    → 写入 raw/manual-fetch-needed.md，格式：
+    ```
+    # 🔧 MCP 无法访问的页面 — 需手动获取
+
+    > 共 {N} 个页面 MCP 工具无法提取内容。请手动访问以下 URL，
+    > 复制页面内容后粘贴给模型，模型会自动索引并纳入调研。
+
+    | # | URL | 标题/描述 | 所属主题 | 失败原因 |
+    |---|-----|----------|---------|---------|
+    | 1 | {url} | {搜索结果标题或摘要} | {主题} | {403/timeout/DNS等} |
+
+    ## 使用方法
+
+    1. 点击上表中的 URL，在浏览器中打开
+    2. 复制页面正文内容（不需要导航栏/广告/评论区）
+    3. 在 Claude Code 中输入：
+       ```
+       /web-research-continue
+       请处理以下手动获取的内容：{粘贴内容}
+       来源URL: {对应的URL}
+       ```
+    4. 模型会自动将内容索引进知识库，继续调研流程
+    ```
+    → 向用户展示报告摘要：`⚠️ {N} 个页面 MCP 无法访问，已生成 raw/manual-fetch-needed.md，可手动获取后继续`
 ```
 
 #### 3.3.3 Agent 分配与执行
@@ -319,6 +346,7 @@ Read('{skill_dir}/data/.mcp-cache-claude.json')                → 获取 availa
 | C3: Agent 分配 | ≥3 主题时是否使用了子 agent？ | 标注违规，继续 |
 | C4: 降级日志 | 所有 MCP 失败已记录？ | 补记录 |
 | C5: 降级链完整性 | 每次失败沿降级链执行完毕？ | 补执行 |
+| C6: 手动抓取报告 | failed_final 非空时 `raw/manual-fetch-needed.md` 已生成？ | 立即补写 |
 
 ### 3.8 预算
 
@@ -382,7 +410,8 @@ Read('{skill_dir}/data/.mcp-cache-claude.json')                → 获取 availa
 └── raw/
     ├── agent-1.md     # 🔴 R4: 必须存在
     ├── agent-2.md
-    └── sources-index.md  # 🔴 R3: 降级日志
+    ├── sources-index.md      # 🔴 R3: 降级日志
+    └── manual-fetch-needed.md # MCP 无法访问的页面列表（可选，仅失败时生成）
 ```
 
 >150行时按主题拆分。Memory: `{主题}研究: {关键发现}。详情: {路径}`, tags: `global,reference`
@@ -403,3 +432,4 @@ Read('{skill_dir}/data/.mcp-cache-claude.json')                → 获取 availa
 | 🔴 中文输出违规 | Phase 3/4 检查点拦截，退回改写 |
 | 🔴 Agent 未 spawn | Phase 3 检查点拦截 |
 | 🔴 Raw 未写入 | Phase 3 检查点拦截，立即补写 |
+| 用户手动提交内容 | 用 `ctx_index(content=用户内容, source="{url}")` 索引 → 告知用户内容已纳入，可继续调研或重新触发 Phase 3 |
