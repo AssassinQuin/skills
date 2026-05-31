@@ -114,7 +114,7 @@ DIGGING ──→ INCUBATING ──→ CAPTURING ──→ FORGING ──→ SHI
 
 ### 碰撞 agent prompt
 
-并行 spawn 3 个 sonnet agent（互不可见）：
+并行 spawn 3 个 agent（互不可见），`subagent_type: "brainstorm-collider"`：
 
 ```
 你是一个直觉非常敏锐的人。你拿到两样东西：一个人的处境，和另一个完全不相关的人的体验。
@@ -236,7 +236,7 @@ ta最想喊的：{想喊的一句话}
 
 ### 深度挖掘（可选）
 
-对碰撞存活 + 材料验证后的方向，spawn 1-2 个 sonnet agent 深挖具体化：
+对碰撞存活 + 材料验证后的方向，spawn 1-2 个 sonnet agent（`subagent_type: "brainstorm-collider"`）深挖具体化：
 ```
 核心方向：{碰撞画面+碰撞验证结论}
 外部材料：{已有内容/搜索结果摘要}

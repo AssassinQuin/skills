@@ -168,7 +168,7 @@ description: |
 
 ### Phase 1: 多源信息采集（并行Agent Swarm）
 
-启动6个并行subagent，每个负责不同信息维度。
+启动6个并行subagent（`subagent_type: "researcher"`），每个负责不同信息维度。
 
 #### 6个Agent的任务分配
 
@@ -378,7 +378,7 @@ Phase 2提炼完成后，暂停展示提炼摘要给用户确认：
 
 ### Phase 4: 质量验证
 
-生成Skill后，用子agent执行3项测试（独立于主agent，避免自评偏差）：
+生成Skill后，用子agent（`subagent_type: "reviewer"`）执行3项测试（独立于主agent，避免自评偏差）：
 
 #### 4.1 已知测试（Sanity Check）
 选3个此人公开表态过的问题，**spawn子agent带着新Skill回答**，对比实际立场。
@@ -418,7 +418,7 @@ Phase 2提炼完成后，暂停展示提炼摘要给用户确认：
 
 Phase 4 验证通过后，自动启动双Agent精炼，进一步提升Skill可操作性：
 
-**并行启动两个Agent：**
+**并行启动两个Agent（`subagent_type: "reviewer"`）：**
 
 **Agent A（auto-skill-optimizer视角）**：
 - 对SKILL.md执行8维度结构评估（工作流清晰度、边界条件、检查点设计、指令具体性等）
