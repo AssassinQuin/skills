@@ -1,32 +1,14 @@
-[
-  {
-    "id": "T1",
-    "type": "happy",
-    "prompt": "进化 codemap skill",
-    "expect": "正确执行 Phase 0-5 完整流程，生成进化后 SKILL.md + evolution-log + metrics"
-  },
-  {
-    "id": "T2",
-    "type": "complex",
-    "prompt": "优化所有 skills",
-    "expect": "扫描所有 skill 评分，排序，逐个进化，跳过高分 skill"
-  },
-  {
-    "id": "T3",
-    "type": "failure",
-    "prompt": "进化 brainstorm skill（模拟子 agent 全部 403 权限拒绝）",
-    "expect": "检测到 ctx_index 失败，降级到主 agent 直接执行，记录失败信号"
-  },
-  {
-    "id": "T4",
-    "type": "failure",
-    "prompt": "审计 codemap（模拟审计误报场景）",
-    "expect": "审计 prompt 包含 BEFORE/AFTER 标记，审计 agent 正确区分两个版本"
-  },
-  {
-    "id": "T5",
-    "type": "edge",
-    "prompt": "进化 skill-evolver（自我进化）",
-    "expect": "正确处理自我引用，基线使用本文件，策略应用于 SKILL.md + references/"
-  }
-]
+{
+  "T_train": [
+    {"id": "T1", "type": "流程完整性", "prompt": "进化 neat-freak skill", "expect": "走完整 baseline→exploration→application→audit→deployment 流程"},
+    {"id": "T2", "type": "模式路由", "prompt": "审计 neat-freak", "expect": "走模式 B（快速审计），不触发完整流程"},
+    {"id": "T3", "type": "痛点驱动", "prompt": "优化 brainstorm skill，痛点是碰撞孵化阶段经常生成重复画面，缺少约束引导", "expect": "走 Mode A-优化（痛点捕获+聚焦进化），痛点保存到 .evolve/pain-points.jsonl"},
+    {"id": "T4", "type": "防退化", "prompt": "进化 web-research skill（已有2轮历史）", "expect": "baseline 阶段读取历史痛点，deployment 阶段验证历史痛点未回归"}
+  ],
+  "T_val": [
+    {"id": "V1", "type": "边界场景", "prompt": "进化 skill-evolver（自我进化）", "expect": "走模式 D，使用副本隔离，痛点机制同样生效"},
+    {"id": "V2", "type": "边界场景", "prompt": "优化所有 skills（批量模式）", "expect": "走模式 E，每个 skill 的痛点独立保存"},
+    {"id": "V3", "type": "回归检测", "prompt": "连续进化同一 skill 3轮", "expect": "每轮 deployment 检查历史痛点是否仍通过，退化时自动回滚"}
+  ],
+  "source": "meta-designed"
+}
