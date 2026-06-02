@@ -1,15 +1,23 @@
 {
-  "total_rounds": 1,
-  "total_score_delta": 24,
-  "avg_score_delta": 24,
-  "last_evolved": "2026-05-27",
+  "total_rounds": 2,
+  "total_score_delta": 35,
+  "avg_score_delta": 17.5,
+  "last_evolved": "2026-06-02",
   "strategy_hits": {
-    "S5+S1+S3-merge": 1
+    "S5+S1+S3-merge": 1,
+    "S2+S3-merge": 1
   },
-  "total_token_actual": 82000,
-  "total_token_budget": 100000,
-  "avg_token_efficiency": 0.82,
+  "total_token_actual": 170000,
+  "total_token_budget": 200000,
+  "avg_token_efficiency": 0.85,
   "total_agent_failures": 0,
+  "avg_T_val_pass_rate": 1.0,
+  "pain_point_stats": {
+    "total": 4,
+    "resolved": 4,
+    "regressed": 0,
+    "wontfix": 0
+  },
   "history": [
     {
       "round": 1,
@@ -18,6 +26,14 @@
       "score_before": 58,
       "score_after": 82,
       "delta": 24
+    },
+    {
+      "round": 2,
+      "date": "2026-06-02",
+      "strategy": "S2+S3-merge",
+      "score_before": 77,
+      "score_after": 88,
+      "delta": 11
     }
   ]
 }
