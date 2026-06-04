@@ -95,9 +95,10 @@ IF 不满足: 输出 [PRE-CHECK-FAIL] + 缺失项
 ### Step 6: Git Commit（CP-04）
 
 ```bash
-cd ~/.claude/skills
-git add {skill}/.evolve/ {skill}/SKILL.md
-git commit -m "evolve {skill}: deploy-r{r}-score-{before}-{after}"
+# 使用 git -C 代替 cd，避免路径硬编码
+GIT_SKILLS_ROOT=$(git rev-parse --show-toplevel)
+git -C "${GIT_SKILLS_ROOT}" add {skill}/.evolve/ {skill}/SKILL.md
+git -C "${GIT_SKILLS_ROOT}" commit -m "evolve {skill}: deploy-r{r}-score-{before}-{after}"
 ```
 
 ## 关卡：部署结果确认（与 audit 合并确认）
@@ -126,7 +127,8 @@ git commit -m "evolve {skill}: deploy-r{r}-score-{before}-{after}"
 ## 退化处理
 
 ```bash
-cd ~/.claude/skills && git revert HEAD
+GIT_SKILLS_ROOT=$(git rev-parse --show-toplevel)
+git -C "${GIT_SKILLS_ROOT}" revert HEAD
 ```
 
 ## 局部回滚

@@ -24,11 +24,25 @@ ELSE IF remaining < 10K:
   → 终止 [BUDGET-ABORT]
 ```
 
-### Step 1: 准备
+### Step 1: 准备（路径感知）
 
 ```bash
-cp {skill}/SKILL.md {skill}/SKILL.md.before
+# 路径解析：git show 需要相对 git root 的路径，不是相对 cwd
+SKILL_DIR="{skill}"  # 如 "novel-setup"
+GIT_REL=$(cd "${SKILL_DIR}" && git ls-files SKILL.md)  # git-root 相对路径
+BEFORE_PATH="/tmp/${SKILL_DIR}-before.md"
+
+# BEFORE 副本从上一 commit 取（改写前的版本）
+git show "HEAD~1:${GIT_REL}" > "${BEFORE_PATH}"
+
+# 回退：如果 HEAD~1 不存在（首轮进化），复制当前版本
+if [ ! -s "${BEFORE_PATH}" ]; then
+  cp "${SKILL_DIR}/SKILL.md" "${BEFORE_PATH}"
+fi
 ```
+
+**注意**：BEFORE 副本始终写 `/tmp/`，不用 skill 目录内（避免路径嵌套问题）。
+所有后续路径引用必须用绝对路径：`{cwd}/{skill}/SKILL.md` 和 `/tmp/{skill}-before.md`。
 
 ### Step 2: 构造审计 prompt
 
@@ -37,8 +51,8 @@ cp {skill}/SKILL.md {skill}/SKILL.md.before
 
 Prompt 中必须标记：
 ```
-文件 A (BEFORE): {绝对路径}/SKILL.md.before — 原始版本
-文件 B (AFTER): {绝对路径}/SKILL.md — 改写后版本
+文件 A (BEFORE): /tmp/{skill}-before.md — 原始版本（绝对路径）
+文件 B (AFTER): {cwd}/{skill}/SKILL.md — 改写后版本（绝对路径）
 
 先读 BEFORE，再读 AFTER，对比时始终引用标记名。
 ```
@@ -67,7 +81,7 @@ Prompt 中必须标记：
 ### Step 4: 审计后清理
 
 ```bash
-rm {skill}/SKILL.md.before
+rm /tmp/{skill}-before.md
 ```
 
 ### Step 5: 保存审计报告
