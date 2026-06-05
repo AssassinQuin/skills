@@ -29,7 +29,7 @@
 
 读取 `{skill}/.evolve/metrics.json`，展示：
 - 上次进化时间、总轮数、平均提升、策略命中历史
-- 如果 `avg_score_delta < 5` 或 `total_rounds >= 5` → 提示"效率偏低，考虑 skill-creator 重写"
+- 如果 `avg_score_delta < 0.5` 或 `total_rounds >= 5` → 提示"效率偏低，考虑 skill-creator 重写"
 - 如果 `avg_token_efficiency < 0.4` → 提示"token 浪费严重，建议优化 prompt 精简度"
 - 如果 `fallback_count >= 2` → 提示"ctx_index 稳定性问题"
 
@@ -50,22 +50,23 @@ FI
 
 ### Step 5: 基线评估
 
-按 5 维 rubric 评分。维度 1-4 静态分析，维度 5 客观测试。
+按 5 维 Rubric 评分。**每个维度 0-10 分**，加权平均得总分（0-10）。
 
-**校准锚点（每个维度 3 档）**：
+**公式**：`Score = D1×0.10 + D2×0.20 + D3×0.15 + D4×0.20 + D5×0.35`
+
+**校准锚点（每个维度 3 档，0-10 分）**：
 
 | 维度 | 优秀(8-10) | 合格(5-7) | 不合格(0-4) |
 |------|-----------|----------|------------|
-| D1 Frontmatter | name + description 50-100字 + 触发词 8-15个 + 版本号 + 适用模型 | name + description + 触发词，缺版本号 | 缺 name 或 description 或无触发词 |
-| D2 工作流 | 步骤有前置条件 + checkpoint + fallback + token 预估 | 步骤清晰但缺 fallback 或 token 预估 | 步骤模糊或缺失关键阶段 |
-| D3 边界/安全 | 有输入校验 + 输出兜底 + 错误恢复 + 并发保护 | 有部分校验但缺错误恢复 | 无边界处理 |
-| D4 指令精度 | 每个动词可直接执行 + 有参数默认值 + 有示例 | 多数指令清晰但部分模糊 | 大量模糊动词 |
-| D5 实测效果 | **T_train 通过率 ≥80% + T_val 通过率 ≥60%** | T_train 通过率 60-79% | 通过率 <60% |
+| D1 Frontmatter (10%) | name + description 50-100字 + 触发词 8-15个 + 版本号 + 适用模型 | name + description + 触发词，缺版本号 | 缺 name 或 description 或无触发词 |
+| D2 工作流 (20%) | 步骤有前置条件 + checkpoint + fallback + token 预估 | 步骤清晰但缺 fallback 或 token 预估 | 步骤模糊或缺失关键阶段 |
+| D3 边界/安全 (15%) | 有输入校验 + 输出兜底 + 错误恢复 + 并发保护 | 有部分校验但缺错误恢复 | 无边界处理 |
+| D4 指令精度 (20%) | 每个动词可直接执行 + 有参数默认值 + 有示例 | 多数指令清晰但部分模糊 | 大量模糊动词 |
+| D5 实测效果 (35%) | **T_train 通过率 ≥80%** | T_train 通过率 60-79% | 通过率 <60% |
 
-**D5 客观化改进**：
-- D5 不再是主观评分，而是子 agent 执行 T_train 后的实际通过率
-- 公式：D5 = (T_train_pass / T_train_total) × 10
-- 如果有 T_val（来自 traces），D5 = (T_train_rate × 0.6 + T_val_rate × 0.4) × 10
+**D5 客观化**：
+- D5 = (T_train_pass / T_train_total) × 10
+- 子 agent 执行 T_train，统计实际通过率
 
 ### Step 6: 设计测试集（T_train / T_val 拆分）
 

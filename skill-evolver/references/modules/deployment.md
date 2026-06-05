@@ -66,10 +66,10 @@ IF 不满足: 输出 [PRE-CHECK-FAIL] + 缺失项
   "skill": "{skill}",
   "strategy": "S0+S5-merge",
   "trace_source": "empirical|sparse|none",
-  "score_before": 39.5,
-  "score_after": 75,
-  "delta": 35.5,
-  "dimensions": {"D1": 8, "D2": 8, "D3": 8, "D4": 8, "D5": 8},
+  "score_before": 7.2,
+  "score_after": 8.5,
+  "delta": 1.3,
+  "dimensions": {"D1": 8, "D2": 9, "D3": 8, "D4": 8, "D5": 9},
   "T_train_pass_rate": 0.80,
   "T_val_pass_rate": 0.67,
   "trace_improvement_rate": 0.75,
@@ -86,6 +86,12 @@ IF 不满足: 输出 [PRE-CHECK-FAIL] + 缺失项
   "rollback_count": 0
 }
 ```
+
+**评分字段说明**：
+- `dimensions`: D1-D5 各 0-10（原始分，未加权）
+- `score_before/after`: 加权平均 = D1×0.10 + D2×0.20 + D3×0.15 + D4×0.20 + D5×0.35（0-10）
+- `delta`: score_after - score_before（正值=进步）
+- `audit_pass/audit_total`: 审计清单通过计数（与 Rubric 分数无关）
 
 **更新 metrics.json**：同原逻辑，额外追踪：
 - `avg_T_val_pass_rate`

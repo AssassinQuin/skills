@@ -48,5 +48,5 @@ exploration 模块的 K=6 策略探索子 agent 使用。
 | `{strategy_name}` | S1-S6 策略名 |
 | `{strategy_guide}` | 从 evolution-strategies.md 提取对应段 |
 | `{delta_description}` | baseline 模块的差距报告 |
-| `{baseline_score}` | baseline 模块的基线总分 |
+| `{baseline_score}` | baseline 模块的基线总分（0-10 加权平均） |
 | `{k}` | 1-6 |
