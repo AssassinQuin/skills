@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-# evolve.sh — skill-evolver 标准化操作脚本
-# 用法: source evolve-ops.sh && <command>
-# 命令: score, metrics-init, metrics-update, pp-create, pp-resolve, pp-regress, git-setup, git-checkpoint
+# evolve.sh — skill-evolver 标准化操作 + 流程控制
+# 用法: source evolve.sh && <command>
 
 set -euo pipefail
 
 # ============ 评分计算 ============
-# 用法: score D1 D2 D3 D4 D5
-# 输出: 加权总分(0-10)
+# 公式唯一定义于此。其他文件引用本命令。
 score() {
   local d1="${1:?D1 required (0-10)}"
   local d2="${2:?D2 required (0-10)}"
@@ -15,19 +13,16 @@ score() {
   local d4="${4:?D4 required (0-10)}"
   local d5="${5:?D5 required (0-10)}"
 
-  # 验证范围
   for d in "$d1" "$d2" "$d3" "$d4" "$d5"; do
     if (( $(echo "$d < 0 || $d > 10" | bc -l) )); then
       echo "ERROR: dimension $d out of range [0,10]" >&2; return 1
     fi
   done
 
-  # Score = D1×0.10 + D2×0.20 + D3×0.15 + D4×0.20 + D5×0.35
   echo "scale=1; ($d1*0.10 + $d2*0.20 + $d3*0.15 + $d4*0.20 + $d5*0.35)" | bc
 }
 
 # ============ Metrics 更新 ============
-# 用法: metrics-update <skill_dir> <round> <strategy> <score_before> <score_after> <d1> <d2> <d3> <d4> <d5> [T_train_rate] [T_val_rate]
 metrics-update() {
   local dir="${1:?skill dir required}"
   local round="$2" strategy="$3" before="$4" after="$5"
@@ -39,7 +34,6 @@ metrics-update() {
     echo '{"total_rounds":0,"history":[]}' > "$metrics"
   fi
 
-  # 用 jq 更新
   local delta
   delta=$(echo "scale=1; $after - $before" | bc)
   local date
@@ -65,7 +59,6 @@ metrics-update() {
 }
 
 # ============ Pain Points CRUD ============
-# 创建: pp-create <skill_dir> <id> <description> <symptom> <source> <round>
 pp-create() {
   local dir="${1:?skill dir}" id="$2" desc="$3" symptom="$4" source="$5" round="$6"
   local ts
@@ -75,14 +68,12 @@ pp-create() {
   echo "{\"id\":\"$id\",\"skill\":\"$(basename "$dir")\",\"description\":$(echo "$desc" | jq -Rs .),\"symptom\":$(echo "$symptom" | jq -Rs .),\"source\":\"$source\",\"status\":\"open\",\"created_at\":\"$ts\",\"resolved_at\":null,\"resolved_by\":null,\"round\":$round,\"regression_count\":0}" >> "$pp"
 }
 
-# 解决: pp-resolve <skill_dir> <id> <resolved_by>
 pp-resolve() {
   local dir="${1:?skill dir}" id="$2" resolved_by="$3"
   local ts
   ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   local pp="$dir/.evolve/pain-points.jsonl"
 
-  # 原地更新 status + resolved_at + resolved_by
   local tmp
   tmp=$(mktemp)
   while IFS= read -r line; do
@@ -92,7 +83,6 @@ pp-resolve() {
   mv "$tmp" "$pp"
 }
 
-# 回归: pp-regress <skill_dir> <id>
 pp-regress() {
   local dir="${1:?skill dir}" id="$2"
   local pp="$dir/.evolve/pain-points.jsonl"
@@ -107,7 +97,6 @@ pp-regress() {
 }
 
 # ============ Git 操作 ============
-# git-setup <skill_name> — 创建 evolve 分支
 git-setup() {
   local skill="${1:?skill name required}"
   local branch="evolve/${skill}/$(date +%Y%m%d)"
@@ -123,7 +112,6 @@ git-setup() {
   echo "Branch: $branch"
 }
 
-# git-checkpoint <message> — 标准 commit
 git-checkpoint() {
   local msg="${1:?commit message required}"
   git add -A
@@ -131,7 +119,6 @@ git-checkpoint() {
 }
 
 # ============ 验证 ============
-# verify-metrics <skill_dir> — 检查 metrics.json 评分一致性
 verify-metrics() {
   local dir="${1:?skill dir}"
   local metrics="$dir/.evolve/metrics.json"
@@ -140,7 +127,6 @@ verify-metrics() {
     echo "ERROR: $metrics not found" >&2; return 1
   fi
 
-  # 检查所有 score 在 0-10 范围
   local invalid
   invalid=$(jq '[.history[].score_before, .history[].score_after, .last_round.score] | map(select(. < 0 or . > 10)) | length' "$metrics")
 
@@ -150,4 +136,78 @@ verify-metrics() {
   fi
 
   echo "OK: All scores in [0,10] range"
+}
+
+# ============ 流程控制（新增） ============
+
+# 前置条件检查：验证阶段可执行
+phase-check() {
+  local phase="${1:?phase required: baseline|exploration|application|audit|deployment}"
+  local dir="${2:?skill dir required}"
+  local evolve_dir="$dir/.evolve"
+
+  case "$phase" in
+    baseline)
+      [ -f "$dir/SKILL.md" ] || { echo "ERROR: SKILL.md not found in $dir" >&2; return 1; }
+      ;;
+    exploration)
+      [ -f "$evolve_dir/.baseline.marker" ] || { echo "ERROR: baseline phase not completed" >&2; return 1; }
+      ;;
+    application)
+      [ -f "$evolve_dir/.exploration.marker" ] || [ -f "$evolve_dir/.quick-fix.marker" ] || \
+        { echo "ERROR: exploration or quick-fix phase not completed" >&2; return 1; }
+      ;;
+    audit)
+      git diff --quiet HEAD 2>/dev/null && \
+        { echo "ERROR: no uncommitted changes to audit (commit first)" >&2; return 1; }
+      ;;
+    deployment)
+      [ -f "$evolve_dir/.audit.marker" ] || { echo "ERROR: audit phase not completed" >&2; return 1; }
+      ;;
+    *)
+      echo "ERROR: unknown phase '$phase'" >&2; return 1
+      ;;
+  esac
+  echo "OK: $phase preconditions met"
+}
+
+# 阶段开始：写标记文件
+phase-start() {
+  local phase="${1:?phase required}"
+  local dir="${2:?skill dir required}"
+  local evolve_dir="$dir/.evolve"
+
+  mkdir -p "$evolve_dir"
+  echo "{\"phase\":\"$phase\",\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "$evolve_dir/.$phase.marker"
+  echo "Phase started: $phase"
+}
+
+# Quick Fix 判定
+quick-fix-check() {
+  local dir="${1:?skill dir required}"
+  local pp="$dir/.evolve/pain-points.jsonl"
+
+  if [ ! -f "$pp" ] || [ ! -s "$pp" ]; then
+    echo "FULL_EVOLUTION"
+    return 0
+  fi
+
+  local open_count
+  open_count=$(grep -c '"status":"open"' "$pp" 2>/dev/null || true)
+
+  if [ "$open_count" -eq 0 ]; then
+    echo "FULL_EVOLUTION"
+    return 0
+  fi
+
+  # 有 open 痛点 → 检查是否可走 Quick Fix
+  # 判定标准：有明确痛点描述 + 用户直接提供了痛点
+  local has_user_stated
+  has_user_stated=$(grep -c '"source":"user-stated"' "$pp" 2>/dev/null || true)
+
+  if [ "$has_user_stated" -gt 0 ]; then
+    echo "QUICK_FIX_OK"
+  else
+    echo "FULL_EVOLUTION"
+  fi
 }

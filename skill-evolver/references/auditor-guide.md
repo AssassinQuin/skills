@@ -8,7 +8,7 @@ Phase 4 审计时读取本文件。
 
 **必须用全新上下文子 agent（model=opus）**。只给子 agent：
 - 原始 SKILL.md
-- 补丁后的 SKILL.md
+- 改写后的 SKILL.md
 - 本文件
 
 **不给**：Phase 1-3 的分析结果、进化过程记录、信号数据、测试 prompt。
@@ -73,7 +73,7 @@ Phase 4 审计时读取本文件。
 
 **过拟合信号**：
 - T_val 通过率显著低于 T_train（差距 >30%）
-- 补丁中出现对 T_train prompt 关键词的硬匹配
+- 改写中出现对 T_train prompt 关键词的硬匹配
 - 无 T_val 时至少 1 个自创新 prompt 表现出改善
 
 ---

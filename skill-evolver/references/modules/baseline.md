@@ -1,136 +1,79 @@
 # Module: Baseline（基线评估 + 差距理解 + 轨迹收集）
 
-合并原 Phase 0 + Phase 1 + Trace Collection。前置条件：无。预估 token：~12K。
-
-## 关卡合并规则
-
-与差距确认合并（关卡 baseline+gap）：
-- 合并条件：首次进化 / 无 traces / 快速模式
-- 拆分条件：有 traces 且用户要求逐步确认（拆为两次独立确认）
+前置条件：无。预估 token：~14K。
 
 ## 执行步骤
 
-### Step 1: 确认进化范围
+### Step 1: 确认进化范围 + 脚本初始化
+
+```bash
+source scripts/evolve.sh
+phase-start baseline {skill_dir}
+```
 
 - 用户指定 → 直接使用
 - 用户未指定 → 扫描所有 skill 的 5 维评分，展示 TOP-10 低分列表
 
 ### Step 2: Trace Collection（实证信号）
 
-搜索 `~/.claude/projects/` 会话文件，提取目标 skill 的使用记录。保存到 `{skill}/.evolve/traces.jsonl`：
+搜索 `~/.claude/projects/` 会话文件，提取目标 skill 的使用记录。保存到 `.evolve/traces.jsonl`。
 
-```json
-{"ts":"...", "user_prompt":"...", "action_taken":"...", "result":"success|failure|partial", "user_feedback":"..."}
-```
-
-**trace_source 判定**：≥3 条→`"empirical"`，1-2 条→`"sparse"`，0 条→`"none"`。无 traces 时 gap 分析退化为 rubric-only。
+trace_source 判定：≥3 条→`empirical`，1-2 条→`sparse`，0 条→`none`。
 
 ### Step 3: 读取历史指标 + 痛点收集
 
-读取 `{skill}/.evolve/metrics.json`，展示：
-- 上次进化时间、总轮数、平均提升、策略命中历史
-- 如果 `avg_score_delta < 0.5` 或 `total_rounds >= 5` → 提示"效率偏低，考虑 skill-creator 重写"
+读取 `.evolve/metrics.json`，按 [constants.md](../constants.md) 中的效率告警阈值检查。
 
-**痛点写入（Mode G 时）**：
-- 如果用户提供了痛点描述 → 用 `pp-create` 写入 `{skill}/.evolve/pain-points.jsonl`
-- source="user-stated"，status="open"
-- 如果 `avg_token_efficiency < 0.4` → 提示"token 浪费严重，建议优化 prompt 精简度"
-- 如果 `fallback_count >= 2` → 提示"ctx_index 稳定性问题"
+**痛点写入（Mode G 时）**：用户提供痛点 → `pp-create` 写入 `.evolve/pain-points.jsonl`，source="user-stated"。
 
-### Step 4: 创建 git 分支（含并发冲突检测）
+### Step 4: 创建 git 分支
 
 ```bash
-cd ~/.claude/skills
-existing=$(git branch --list 'evolve/{skill}/*' | tr -d ' ')
-IF -n "$existing"; THEN
-  → 终止 baseline 模块
-  → 记录日志：{"event":"conflict_detected","branch":"$existing","ts":"..."}
-  → 输出："[CONFLICT] 检测到未完成的进化分支: $existing"
-  → 输出："请先完成或删除该分支：git branch -D $existing"
-ELSE
-  git checkout -b evolve/{skill}/$(date +%Y%m%d)
-FI
+git-setup {skill_name}
 ```
 
 ### Step 5: 基线评估
 
-按 5 维 Rubric 评分。**每个维度 0-10 分**，加权平均得总分（0-10）。
+按 5 维 Rubric 评分。评分权重和锚点见 [constants.md](../constants.md)。
 
-**公式**：`Score = D1×0.10 + D2×0.20 + D3×0.15 + D4×0.20 + D5×0.35`
-
-**校准锚点（每个维度 3 档，0-10 分）**：
-
-| 维度 | 优秀(8-10) | 合格(5-7) | 不合格(0-4) |
-|------|-----------|----------|------------|
-| D1 Frontmatter (10%) | name + description 50-100字 + 触发词 8-15个 + 版本号 + 适用模型 | name + description + 触发词，缺版本号 | 缺 name 或 description 或无触发词 |
-| D2 工作流 (20%) | 步骤有前置条件 + checkpoint + fallback + token 预估 | 步骤清晰但缺 fallback 或 token 预估 | 步骤模糊或缺失关键阶段 |
-| D3 边界/安全 (15%) | 有输入校验 + 输出兜底 + 错误恢复 + 并发保护 | 有部分校验但缺错误恢复 | 无边界处理 |
-| D4 指令精度 (20%) | 每个动词可直接执行 + 有参数默认值 + 有示例 | 多数指令清晰但部分模糊 | 大量模糊动词 |
-| D5 实测效果 (35%) | **T_train 通过率 ≥80%** | T_train 通过率 60-79% | 通过率 <60% |
-
-**D5 客观化**：
-- D5 = (T_train_pass / T_train_total) × 10
-- 子 agent 执行 T_train，统计实际通过率
+**每个维度 0-10 分**。总分由 `score` 命令计算：
+```bash
+score D1 D2 D3 D4 D5
+```
 
 ### Step 6: 设计测试集（T_train / T_val 拆分）
 
-设计 5-8 个测试 prompt，保存到 `{skill}/.evolve/test-prompts.json`：
-```json
-{
-  "T_train": [{"id":"T1","type":"happy","prompt":"...","expect":"..."}, ...],
-  "T_val": [{"id":"V1","type":"novel","prompt":"...","expect":"..."}, ...],
-  "source": "agent-designed | trace-extracted | mixed"
-}
-```
-
-**T_train**（60%，4 条）：exploration 评分用。**T_val**（40%，2-3 条）：held-out，仅 deployment 阶段可见。
-优先从 traces 提取真实 prompt。无 traces 时 T_val 必须含 1 条"SKILL.md 未显式提及"的场景。
+设计 5-8 个测试 prompt，保存到 `.evolve/test-prompts.json`。
+- T_train(60%)：exploration 评分用
+- T_val(40%)：held-out，仅 deployment 可见
 
 ### Step 7: 初始化 .evolve 目录
 
 ```bash
 mkdir -p {skill}/.evolve/audit-reports
-touch {skill}/.evolve/evolution-log.jsonl
 ```
 
 ### Step 8: 差距分析
 
 **痛点推断写入**：
-- traces 中同一失败点 >=3 次 → 用 `pp-create` 写入，source="trace-inferred"
-- 基线评分连续 2 轮某维度 <=4 → 用 `pp-create` 写入，source="audit-found"
+- traces 中同一失败点 >= 3 次 → `pp-create`，source="trace-inferred"
+- 连续 2 轮某维度 <= 4 → `pp-create`，source="audit-found"
 
-**信号收集**（按优先级取第一个有数据的）：
-
-| 优先级 | 信号源 | 读取方式 | 优先级理由 |
-|--------|--------|---------|-----------|
-| 1 | `traces.jsonl` | `{skill}/.evolve/traces.jsonl` | 真实失败是最佳信号（论文核心） |
-| 2 | `.stats/usage.jsonl` | skill-stats 格式 | 使用频率反映真实需求 |
-| 3 | 基线评分 | Step 5 的 5 维评分（始终可用） | 退化为规范分析 |
-
-**差距报告格式**：
-```markdown
-## 差距报告：{skill-name}
-信号源: trace_source={empirical/sparse/none}, traces={N条}
-### 失败模式
-- 失败点1：...（N 次，来源: trace/rubric）
-### 差距描述 Δ
-- 应做[A]但[B]场景失败 | 根因: [C] | 证据: trace-empirical/rubric-inferred
-```
-
-### Step 9: Checkpoint（CP-01）
+### Step 9: Quick Fix 判定
 
 ```bash
-cd ~/.claude/skills
-git add {skill}/.evolve/ {skill}/.evolve/traces.jsonl
-git commit --allow-empty -m "evolve {skill}: baseline+gap-r{r}"
+quick-fix-check {skill_dir}
+```
+
+- `QUICK_FIX_OK` → 跳过 exploration，直接 application
+- `FULL_EVOLUTION` → 进入 exploration 模块
+
+### Step 10: Checkpoint（CP-01）
+
+```bash
+git-checkpoint "evolve {skill}: baseline+gap-r{r}"
 ```
 
 ## 关卡：用户确认
 
-展示：
-1. trace_source 状态（empirical/sparse/none）
-2. 基线评分 + 差距报告
-3. T_train/T_val 拆分结果
-4. token 预算分配（总计 100K，baseline ~12K，剩余 ~88K）
-
-用户确认后进入 exploration 模块。
+展示：trace_source + 基线评分 + 差距报告 + Quick Fix 判定结果。
