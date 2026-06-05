@@ -1,11 +1,11 @@
 {
-  "total_rounds": 3,
-  "avg_score_delta": 1.8,
+  "total_rounds": 4,
+  "avg_score_delta": 1.3,
   "avg_T_val_pass_rate": 1,
   "last_round": {
-    "date": "2026-06-04",
-    "strategy": "S2",
-    "score": 9
+    "date": "2026-06-05",
+    "strategy": "S2+S1+S4",
+    "score": 7.8
   },
   "strategies_used": [
     "S4",
@@ -14,6 +14,6 @@
     "S2"
   ],
   "fallback_count": 0,
-  "pain_points_resolved": 5,
+  "pain_points_resolved": 11,
   "pain_points_open": 0
 }
