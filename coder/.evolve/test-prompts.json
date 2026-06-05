@@ -1,0 +1,63 @@
+{
+  "T_train": [
+    {
+      "id": "T1",
+      "type": "happy",
+      "prompt": "在 Python 项目中重构 utils 模块，拆分文件组织",
+      "expect": "检测 Python → 加载 python-tooling + python-editing-rules → 路由到重构路径 → ruff format 验证",
+      "skill_context": "Python 项目重构"
+    },
+    {
+      "id": "T2",
+      "type": "happy",
+      "prompt": "先诊断这个 Go 金额 bug，修完后补测试，再简化代码",
+      "expect": "识别多 skill 编排需求 → diagnose→修复→tdd→simplify 串联 → 每步有验证门控",
+      "skill_context": "多 skill 串联编排"
+    },
+    {
+      "id": "T3",
+      "type": "happy",
+      "prompt": "给 Python API 的 auth 模块写单元测试",
+      "expect": "检测 Python → 加载 python-tooling → 委托 tdd + unit-testing-best-practices，注入 pytest+parametrize 上下文",
+      "skill_context": "Python 写测试"
+    },
+    {
+      "id": "T4",
+      "type": "happy",
+      "prompt": "修复 Python 数据处理脚本的类型错误",
+      "expect": "检测 Python → 加载 python-tooling → 委托 diagnose → pyright 定位 → 最小修复 → pytest 验证",
+      "skill_context": "Python 修 bug"
+    },
+    {
+      "id": "T5",
+      "type": "happy",
+      "prompt": "简化 Go award 包的重复逻辑，同时确保测试覆盖不变",
+      "expect": "检测 Go → 委托 simplify + 并行验证保护测试 → simplify 完成后自动跑验证链",
+      "skill_context": "单 skill 委托 + 验证门控"
+    }
+  ],
+  "T_val": [
+    {
+      "id": "V1",
+      "type": "novel",
+      "prompt": "审查这个 Python PR，然后自动修复发现的问题",
+      "expect": "多 skill 串联：code-review → 诊断问题 → 自动修复 → ruff check 验证。应有明确的编排计划",
+      "skill_context": "多 skill 串联编排（审查+修复）"
+    },
+    {
+      "id": "V2",
+      "type": "novel",
+      "prompt": "我要写一份 Python 编码规范文档",
+      "expect": "不应激活 coder 的编码流程（非编码任务），应明确拒绝并建议其他路径",
+      "skill_context": "边界场景：文档任务"
+    },
+    {
+      "id": "V3",
+      "type": "novel",
+      "prompt": "在 Rust 项目中实现用户认证",
+      "expect": "检测到不支持的语言 → 退出并提示'不支持的语言'",
+      "skill_context": "边界场景：不支持的语言"
+    }
+  ],
+  "source": "agent-designed"
+}

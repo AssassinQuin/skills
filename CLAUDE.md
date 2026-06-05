@@ -42,6 +42,7 @@ Other upstream skills (skill-seekers, huashu-nuwa, storytelling, prose-craft) ar
 ## Key Architecture Patterns
 
 - **Memory skill** (`memory/`): Cross-skill memory API with MCP tools (`memory_memory_*`). Three-tier isolation: project/shared/global. Must be loaded before calling any memory MCP tool.
+- **Coder** (`coder/`): Multi-language coding orchestrator. Auto-detects project language (Go, Python) and loads language-specific context from `references/`. Evolved from the former `go-coder` (score 9.0/10). Language knowledge lives in `references/{lang}-*.md` files.
 - **Skill Evolver** (`skill-evolver/`): Evolution framework for SKILL.md optimization. Based on [darwin-skill](https://github.com/alchaincyf/darwin-skill) rubric concepts. Includes FM1-FM7 failure mode diagnostics in `references/failure-modes.md`.
 
 ## mattpocock/skills (6 hidden, 6 visible)
