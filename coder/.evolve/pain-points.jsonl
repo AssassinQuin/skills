@@ -14,3 +14,6 @@
 {"id":"PP-14","skill":"coder","description":"踩坑/经验未持久化到 memory MCP，跨会话丢失，重复踩坑","symptom":"Python 项目的 venv 激活问题在多个会话重复遇到，每次都从头排查","source":"user-stated","status":"resolved","created_at":"2026-06-05T05:00:00+08:00","resolved_at":"2026-06-05T05:30:00+08:00","resolved_by":"S2","round":5,"regression_count":0}
 {"id":"PP-15","skill":"coder","description":"不同语言的流程细节差异内联在 SKILL.md 中，但通用骨架和语言细节耦合","symptom":"Go 和 Python 的注入参数表占 30+ 行且结构重复","source":"user-stated","status":"resolved","created_at":"2026-06-05T05:00:00+08:00","resolved_at":"2026-06-05T05:30:00+08:00","resolved_by":"S4","round":5,"regression_count":0}
 {"id":"PP-16","skill":"coder","description":"执行任务时缺少洞察发现能力，只做用户要求的事","symptom":"修 bug 时不主动发现相邻代码的同类问题，用户需要再次要求","source":"user-stated","status":"resolved","created_at":"2026-06-05T05:00:00+08:00","resolved_at":"2026-06-05T05:30:00+08:00","resolved_by":"S1","round":5,"regression_count":0}
+{"id":"PP-17","skill":"coder","description":"遇到MCP/框架层错误时跳过根因分析直接打补丁
+","symptom":"TypeError后只修报错点，不问为什么这个工具特殊/其他工具为什么不报错
+","source":"user-stated","status":"open","created_at":"2026-06-05T09:34:33Z","resolved_at":null,"resolved_by":null,"round":6,"regression_count":0}
