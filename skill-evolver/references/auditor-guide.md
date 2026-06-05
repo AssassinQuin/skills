@@ -1,4 +1,4 @@
-# 独立审计详细指南 — Phase 4
+# 独立审计指南 — 5 维评分制
 
 Phase 4 审计时读取本文件。
 
@@ -15,86 +15,95 @@ Phase 4 审计时读取本文件。
 
 ---
 
-## 逐项检查方法
+## 5 维评分（唯一评分标准）
 
-### 1. Framing（问题定义）
-- 读 SKILL.md 前 3 段
-- 检查：是否清楚说明解决什么问题、为谁、什么场景用
-- FAIL：开头直接跳到步骤，没有问题定义
+每个维度 0-10 分，加权平均得总分。每个维度对应 2-3 个检查项。
 
-### 2. Literals（字面量正确性）
-- 提取所有文件路径、命令、URL、参数名
-- 检查：路径存在？命令合法？参数名与实际一致？
-- FAIL：路径指向不存在的文件、命令拼写错误
+### D1 Frontmatter (10%) — Framing + X-ref
 
-### 3. Script bloat（脚本膨胀）
-- 列出所有引用的 scripts/ 文件
-- 检查：每个 script 是否在流程中被实际调用？有无重复功能？
-- FAIL：引用了未使用的 script，或新引入了不必要的 script
+**检查项**：
+- 读 SKILL.md 前 3 段：是否清楚说明解决什么问题、为谁、什么场景用
+- 收集所有 `[text](path)` 引用：文件是否存在？路径正确？
 
-### 4. Untraceable imperative（模糊指令）
-- 搜索泛化动词：处理、优化、分析、生成、检查、调整、确保
-- 检查：每个泛化动词后是否有具体操作步骤或参数
-- FAIL："处理一下边界情况"（没有具体方法）
+**评分**：
+- 8-10: name + description 完整 + 触发词覆盖 + 所有引用可达
+- 5-7: 基本完整但缺版本号或个别引用断裂
+- 0-4: 缺关键元数据或多处引用不可达
 
-### 5. Shape-bake（过度硬化）
-- 检查输出格式要求
-- 检查：是否在不需要固定格式的地方硬编码了格式？
-- FAIL：所有场景都要求 JSON，但有些场景用户需要 Markdown
+### D2 Workflow (20%) — Coverage + Silent-bypass
 
-### 6. Coverage（场景覆盖）
-- 对比 frontmatter description 声明的功能
-- 检查：每个声明功能是否都有对应流程步骤
-- FAIL：description 说"支持批量处理"但流程只有单文件
+**检查项**：
+- 对比 frontmatter description 声明的功能：每个功能是否有对应流程
+- 模拟执行每个步骤：是否有步骤可在不报错的情况下被跳过
 
-### 7. X-ref（交叉引用）
-- 收集所有 `[text](path)` 引用
-- 检查：文件是否存在？路径正确？
-- FAIL：引用 `references/advanced.md` 但文件不存在
+**评分**：
+- 8-10: 全场景覆盖 + 关键步骤有强制校验 + 有 fallback
+- 5-7: 主流程覆盖但缺部分边界或 fallback
+- 0-4: 声明场景无流程或关键步骤可被静默跳过
 
-### 8. Under-abstraction（重复逻辑）
-- 寻找相同或非常相似的步骤/指令出现 2+ 次
-- 检查：是否可以提取为变量或共用段落
-- FAIL：3 个步骤都写了"如果失败则回滚 git"
+### D3 Boundary (15%) — Script-bloat + Shape-bake
 
-### 9. Silent-bypass（静默跳过）
-- 模拟执行每个步骤
-- 检查：是否有步骤可在不报错的情况下被跳过
-- FAIL："如果找不到配置文件就跳过"，但后续步骤依赖配置
+**检查项**：
+- 列出所有引用的 scripts/ 文件：每个是否被实际调用？
+- 检查输出格式要求：是否在不需要固定格式的地方硬编码了格式？
 
-### 10. Overfit（过拟合检查 — T_val held-out 验证）
+**评分**：
+- 8-10: 无不必要脚本 + 格式灵活适应场景
+- 5-7: 轻微膨胀或个别过度硬化
+- 0-4: 明显膨胀或格式阻碍灵活性
 
-这是防止"补丁只对训练 prompt 有效"的关键检查。
+### D4 Precision (20%) — Literals + Untraceable + Under-abstraction
+
+**检查项**：
+- 提取所有文件路径、命令、URL、参数名：路径存在？命令合法？
+- 搜索泛化动词（处理、优化、分析、生成、检查、调整、确保）：是否有具体步骤？
+- 寻找相同或非常相似的步骤/指令出现 2+ 次：是否可提取？
+
+**评分**：
+- 8-10: 所有指令可直接执行 + 无重复逻辑
+- 5-7: 多数清晰但部分模糊或有轻微重复
+- 0-4: 大量模糊动词或字面错误
+
+### D5 Empirical (35%) — Overfit (T_val held-out 验证)
 
 **检查方法**：
-1. 读取 test-prompts.json 中的 **T_val** 数组（exploration 阶段从未见过的 prompt）
+1. 读取 test-prompts.json 中的 **T_val** 数组
 2. 对每个 T_val prompt 模拟执行改写后的 skill
-3. 如果 T_val 通过率 <60% 但 T_train 通过率 ≥80% → 过拟合信号
-4. 检查补丁内容是否只针对 T_train 的特定措辞做了特殊处理
+3. T_val 通过率 ≥80% → 8-10；60-79% → 5-7；<60% → 0-4
 
-**FAIL 信号**：
-- T_val 通过率显著低于 T_train 通过率（差距 >30%）
-- 补丁中出现了对 T_train prompt 关键词的硬匹配（如"当用户说 XXX 时..."）
-- 补丁只在某个狭窄场景生效，但 description 声明了更广的范围
+**过拟合信号**：
+- T_val 通过率显著低于 T_train（差距 >30%）
+- 补丁中出现对 T_train prompt 关键词的硬匹配
+- 无 T_val 时至少 1 个自创新 prompt 表现出改善
 
-**通过标准**：T_val 通过率 ≥60%，或在无 T_val 时至少 1 个自创新 prompt 表现出改善。
+---
+
+## 误报防护规则
+
+以下变化 **不应** 扣分：
+1. BEFORE 中存在的功能，AFTER 中仍存在 → 不扣 D2 Coverage 分
+2. BEFORE 中的模糊指令被 AFTER 精化 → 不扣 D4 Untraceable 分（这是改进）
+3. AFTER 新增了 BEFORE 没有的边界处理 → 不扣 D3 Script-bloat 分（这是增强）
+4. 格式变化不影响功能语义 → 不扣 D3 Shape-bake 分
+5. AFTER 比 BEFORE 短 → 不扣 D2 Coverage 分（压缩是改进）
 
 ---
 
 ## 审计报告格式
 
 ```markdown
-## Audit Report: {skill-name} Round {N}
+## Audit Report: {skill-name} R{round}
 
-| # | Check | Result | Note |
-|---|-------|--------|------|
-| 1 | Framing | PASS | - |
-| 2 | Literals | FAIL | 路径 `scripts/xxx.py` 不存在 |
-| ... | ... | ... | ... |
-| 10 | Overfit | PASS | 新prompt测试通过 |
+| 维度 | Score | Evidence |
+|------|-------|----------|
+| D1 Frontmatter (10%) | X | ... |
+| D2 Workflow (20%) | X | ... |
+| D3 Boundary (15%) | X | ... |
+| D4 Precision (20%) | X | ... |
+| D5 Empirical (35%) | X | ... |
 
-**Summary**: X/10 PASS, Y FAIL
-**Verdict**: PASS / NEEDS-FIX / REJECT
+**Score**: X.X/10 (加权平均)
+**Verdict**: PASS (>基线且无<5) / NEEDS-FIX / REJECT
 ```
 
 保存到 `.evolve/audit-reports/{skill}-R{round}.md`

@@ -37,20 +37,17 @@ audit 模块的 opus 审计子 agent 使用。
 3. 按以下 10 项清单逐项检查
 4. 每项必须有具体证据，不写空泛评语
 
-## 审计清单（10 项）
+## 审计清单（5 维 0-10 评分）
 
-| # | 检查项 | 判定标准 |
-|---|--------|---------|
-| 1 | Framing | 问题定义准确？范围不过宽不过窄？ |
-| 2 | Literals | 路径、命令、参数字面正确可执行？ |
-| 3 | Script bloat | 无不必要的脚本或重复代码？ |
-| 4 | Untraceable imperative | 无模糊动词（"分析""优化""处理"），都有具体步骤？ |
-| 5 | Shape-bake | 格式没有过度硬化到阻碍灵活性？ |
-| 6 | Coverage | 声明的每个使用场景都有对应流程？ |
-| 7 | X-ref | 所有引用的文件路径都可达？ |
-| 8 | Under-abstraction | 无大段重复逻辑？ |
-| 9 | Silent-bypass | 关键步骤不可被跳过？有强制校验？ |
-| 10 | Overfit | 对新 prompt 测试仍有效？ |
+| 维度 | 权重 | 检查项 |
+|------|------|--------|
+| D1 Frontmatter | 10% | Framing（问题/范围准确？）+ X-ref（引用路径可达？） |
+| D2 Workflow | 20% | Coverage（声明场景都有流程？）+ Silent-bypass（关键步骤可被跳过？） |
+| D3 Boundary | 15% | Script-bloat（无不必要脚本？）+ Shape-bake（格式不过度硬化？） |
+| D4 Precision | 20% | Literals（字面正确？）+ Untraceable（无模糊动词？）+ Under-abstraction（无重复逻辑？） |
+| D5 Empirical | 35% | Overfit（T_val held-out 验证通过？） |
+
+**每个维度评 0-10 分**。总分 = D1×0.10 + D2×0.20 + D3×0.15 + D4×0.20 + D5×0.35（0-10）
 
 ## 误报防护规则（关键）
 
@@ -64,15 +61,14 @@ audit 模块的 opus 审计子 agent 使用。
 **判定门槛**：每个 FAIL 必须附带 BEFORE 和 AFTER 的具体段落引用作为证据。
 无具体引用的 FAIL 视为无效。
 
-## Overfit 检查增强（#10 特殊要求）
+## Overfit 检查增强（D5 维度要求）
 
-**必须使用 T_val（held-out 测试集）验证过拟合**：
+**必须使用 T_val（held-out 测试集）验证 D5 分数**：
 
 1. 读取 {test_prompts_path}
 2. 只使用 "T_val" 数组中的 prompt（不可用 T_train）
 3. 对每个 T_val prompt 模拟执行改写后的 skill
-4. 如果 T_val 全部通过 → Overfit PASS
-5. 如果 T_val 有失败但 T_train 全部通过 → Overfit FAIL（过拟合信号）
+4. T_val 全部通过 → D5 = 8-10；部分通过 → D5 = 5-7；多数失败 → D5 = 0-4
 
 如果没有 T_val（trace_source == "none"），则用 1 个你自创的新 prompt 测试。
 
@@ -86,15 +82,17 @@ audit 模块的 opus 审计子 agent 使用。
 - AFTER: {after_lines} 行 (预期: 较短)
 - 标记状态: ✅ 正常 / ⚠️ [MARKER WARNING] ...
 
-### 审计结果
-| # | Check | Result | Evidence |
-|---|-------|--------|----------|
-| 1 | Framing | PASS/FAIL | [BEFORE 段落] vs [AFTER 段落]，具体差异 |
-| ... | ... | ... | ... |
-| 10 | Overfit | PASS/FAIL | T_val 测试结果：V1=PASS, V2=PASS |
+### 5 维评分
+| 维度 | Score | Evidence |
+|------|-------|----------|
+| D1 Frontmatter (10%) | X | ... |
+| D2 Workflow (20%) | X | ... |
+| D3 Boundary (15%) | X | ... |
+| D4 Precision (20%) | X | ... |
+| D5 Empirical (35%) | X | T_val 测试结果：V1=PASS, V2=PASS |
 
-Summary: X/10 PASS, Y FAIL
-Verdict: PASS / NEEDS-FIX / REJECT
+**Score**: X.X/10 (加权平均)
+**Verdict**: PASS / NEEDS-FIX / REJECT
 ```
 
 ## 禁止

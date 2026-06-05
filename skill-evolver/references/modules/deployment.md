@@ -78,8 +78,7 @@ IF 不满足: 输出 [PRE-CHECK-FAIL] + 缺失项
   "actual_tokens": 86000,
   "token_efficiency": 0.86,
   "agent_failure_count": 0,
-  "audit_pass": 10,
-  "audit_total": 10,
+  "audit_score": 9.0,
   "deploy_tests": [{"id": "T1", "result": "PASS"}, ...],
   "val_tests": [{"id": "V1", "result": "PASS"}, ...],
   "deltas_fixed": ["F1", "F2"],
@@ -91,7 +90,7 @@ IF 不满足: 输出 [PRE-CHECK-FAIL] + 缺失项
 - `dimensions`: D1-D5 各 0-10（原始分，未加权）
 - `score_before/after`: 加权平均 = D1×0.10 + D2×0.20 + D3×0.15 + D4×0.20 + D5×0.35（0-10）
 - `delta`: score_after - score_before（正值=进步）
-- `audit_pass/audit_total`: 审计清单通过计数（与 Rubric 分数无关）
+- `audit_score`: 审计产出的加权平均分（0-10），同一条评分标准
 
 **更新 metrics.json**：同原逻辑，额外追踪：
 - `avg_T_val_pass_rate`
@@ -121,7 +120,7 @@ git -C "${GIT_SKILLS_ROOT}" commit -m "evolve {skill}: deploy-r{r}-score-{before
 本轮总结：
 - 策略：S{k}
 - 评分：{before} → {after}（Δ +{N}）
-- 审计：{X}/10 PASS
+- 审计：{audit_score}/10
 - T_val：{pass_rate}（客观泛化指标）
 - 回滚：{rollback_count} 次
 ```

@@ -1,6 +1,6 @@
 # Module: Audit（独立审计）
 
-前置条件（完整进化）：application checkpoint 已通过 + SKILL.md 已改写。
+前置条件（完整进化）：application checkpoint 已通过 + SKILL.md 已改写 + 基线 Score 已知。
 前置条件（快速审计模式 B）：仅需目标 SKILL.md 存在。
 
 **此模块可独立执行（模式 B）。**
@@ -63,20 +63,21 @@ Prompt 中必须标记：
 3. AFTER 新增了 BEFORE 没有的边界处理 → 不应 FAIL "Script bloat"（这是增强）
 4. 格式变化不影响功能语义 → 不应 FAIL "Shape-bake"
 
-### Step 3: 10 项审计清单
+### Step 3: 5 维审计评分（0-10）
 
-| # | 检查项 | 要点 |
-|---|--------|------|
-| 1 | Framing | 问题/范围准确定义？ |
-| 2 | Literals | 路径/命令/参数字面正确？ |
-| 3 | Script bloat | 不必要的 scripts？ |
-| 4 | Untraceable imperative | 模糊指令→具体步骤？ |
-| 5 | Shape-bake | 格式过度硬化？ |
-| 6 | Coverage | 声明场景都有流程？ |
-| 7 | X-ref | 引用路径可达？ |
-| 8 | Under-abstraction | 重复逻辑？ |
-| 9 | Silent-bypass | 关键步骤可被跳过？ |
-| 10 | Overfit | 新 prompt 测试仍有效？ |
+每个维度对应 2-3 个检查项，综合评定 0-10 分：
+
+| 维度 | 权重 | 检查项 | 评分锚点 |
+|------|------|--------|----------|
+| D1 Frontmatter | 10% | Framing（问题/范围准确？）+ X-ref（引用路径可达？） | 8+: 元数据完整 + 所有引用可达；5-7: 部分缺失；0-4: 缺关键元数据 |
+| D2 Workflow | 20% | Coverage（声明场景都有流程？）+ Silent-bypass（关键步骤可被跳过？） | 8+: 全覆盖 + 有强制校验；5-7: 部分场景缺流程；0-4: 关键步骤可跳过 |
+| D3 Boundary | 15% | Script-bloat（不必要的脚本？）+ Shape-bake（格式过度硬化？） | 8+: 无膨胀 + 格式灵活；5-7: 轻微膨胀；0-4: 明显膨胀或过度硬化 |
+| D4 Precision | 20% | Literals（字面正确？）+ Untraceable（无模糊动词？）+ Under-abstraction（无重复？） | 8+: 全部可执行 + 无重复；5-7: 部分模糊；0-4: 大量模糊/错误 |
+| D5 Empirical | 35% | Overfit（T_val held-out 验证） | 8+: T_val ≥80%；5-7: 60-79%；0-4: <60% |
+
+**总分**：`Score = D1×0.10 + D2×0.20 + D3×0.15 + D4×0.20 + D5×0.35`
+
+**门控**：Score > 基线 Score，且无单项 < 5。否则 NEEDS-FIX。
 
 ### Step 4: 审计后清理
 
@@ -91,22 +92,20 @@ rm /tmp/{skill}-before.md
 ## 关卡：审计结果确认（与 deployment 合并确认）
 
 ```
-审计结果：X/10 PASS
-- FAIL ≤2：修复 → 重审失败项
-- FAIL ≥3：git reset HEAD~1 → 回 exploration 换策略
+审计结果：Score = X.X/10
+- Score > 基线 且 无单项 < 5：通过 → 修复低分项（可选）→ deployment
+- Score ≤ 基线 或 有单项 < 5：git reset HEAD~1 → 回 exploration 换策略
 ```
 
 **Fallback 矩阵**：
 
 | 场景 | 处理 |
 |------|------|
-| opus 审计超时(>120s) | 降级简化审计(sonnet, 3项) |
-| 简化审计也失败 | 主 agent 极速审计(仅 Literals) |
-| 完整审计 FAIL≥3 | git reset HEAD~1 |
-| 简化审计 FAIL≥2(满分3) | git reset HEAD~1 |
+| opus 审计超时(>120s) | 降级简化审计(sonnet, D4+D5) |
+| 简化审计也失败 | 主 agent 极速审计(仅 D4 Precision) |
+| 有维度 < 5 | git reset HEAD~1 |
+| Score ≤ 基线 | git reset HEAD~1 |
 | 修复后重审仍不通过 | 终止本轮 |
-
-FAIL 阈值按满分等比缩放（完整10项→FAIL≥3，简化3项→FAIL≥2，极速1项→FAIL≥1）。
 
 ## Token 预估
 
