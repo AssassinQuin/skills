@@ -25,11 +25,15 @@
 
 **trace_source 判定**：≥3 条→`"empirical"`，1-2 条→`"sparse"`，0 条→`"none"`。无 traces 时 gap 分析退化为 rubric-only。
 
-### Step 3: 读取历史指标
+### Step 3: 读取历史指标 + 痛点收集
 
 读取 `{skill}/.evolve/metrics.json`，展示：
 - 上次进化时间、总轮数、平均提升、策略命中历史
 - 如果 `avg_score_delta < 0.5` 或 `total_rounds >= 5` → 提示"效率偏低，考虑 skill-creator 重写"
+
+**痛点写入（Mode G 时）**：
+- 如果用户提供了痛点描述 → 用 `pp-create` 写入 `{skill}/.evolve/pain-points.jsonl`
+- source="user-stated"，status="open"
 - 如果 `avg_token_efficiency < 0.4` → 提示"token 浪费严重，建议优化 prompt 精简度"
 - 如果 `fallback_count >= 2` → 提示"ctx_index 稳定性问题"
 
@@ -90,6 +94,10 @@ touch {skill}/.evolve/evolution-log.jsonl
 ```
 
 ### Step 8: 差距分析
+
+**痛点推断写入**：
+- traces 中同一失败点 >=3 次 → 用 `pp-create` 写入，source="trace-inferred"
+- 基线评分连续 2 轮某维度 <=4 → 用 `pp-create` 写入，source="audit-found"
 
 **信号收集**（按优先级取第一个有数据的）：
 

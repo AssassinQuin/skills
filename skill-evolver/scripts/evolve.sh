@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# evolve-ops.sh — skill-evolver 标准化操作脚本
+# evolve.sh — skill-evolver 标准化操作脚本
 # 用法: source evolve-ops.sh && <command>
 # 命令: score, metrics-init, metrics-update, pp-create, pp-resolve, pp-regress, git-setup, git-checkpoint
 
