@@ -117,3 +117,4 @@ CRUD：`pp-create` / `pp-resolve` / `pp-regress`
 8. T_train/T_val 隔离 — exploration 不可见 T_val
 9. R ratchet — 只保留有改进的版本
 10. 脚本驱动 — 阶段入口必须 phase-check + phase-start
+11. 重构优先补丁 — 检测到膨胀时强制大重构，不走补丁路径（见 baseline Step 8b）
