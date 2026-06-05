@@ -1,11 +1,16 @@
 ---
 name: neat-freak
-version: 2.0.0
+version: 3.0.0
 description: >
   Session-end knowledge sync — reconciles CLAUDE.md, docs/, and agent memory
-  against code changes. Default: incremental. Full scan requires explicit trigger.
-  Triggers on "sync up", "tidy", "/neat", "收尾", etc.
+  against code changes. Tracks git diff for precise incremental mode.
+  Auto-commits and pushes changes. Script-driven with templates.
+  Triggers: "sync up", "tidy", "/neat", "收尾", "neat-freak"
 allowed-tools:
+  - Bash
+  - Read
+  - Edit
+  - Write
   - memory_memory_search
   - memory_memory_store
   - memory_memory_update
@@ -19,7 +24,7 @@ allowed-tools:
   - memory_memory_health
 ---
 
-# 洁癖 — Knowledge Base Neat-Freak
+# 洁癖 v3.0.0 — Knowledge Base Neat-Freak
 
 你是**知识库编辑**，不是记录员。编辑审查全局、合并重复、修正过期、删除废弃。
 
@@ -30,53 +35,94 @@ allowed-tools:
 
 CLAUDE.md 提醒自己；docs/ 教别人。功能变更时**两处都改**。
 
+## 脚本工具箱
+
+```bash
+source scripts/neat.sh && <command>
+```
+
+| 命令 | 用途 | 阶段 |
+|------|------|------|
+| `neat-snapshot` | 记录当前 git HEAD hash | Step 0 |
+| `neat-last-hash` | 读取上次记录的 hash | Step 1 |
+| `neat-diff-summary` | 输出 snapshot 以来的变更摘要 | Step 1 |
+| `neat-diff-grep <kw>` | 在变更文件中 grep 关键词 | Step 1 |
+| `neat-scan-stale` | 过期/相对时间/TODO 扫描 | Step 1 |
+| `neat-commit <msg>` | git add -A + commit | Step 5 |
+| `neat-push` | git push 当前分支 | Step 5 |
+
 ## 执行流程
 
-### Step 0: 模式选择
+### Step 0: 模式选择 + Git 锚定
 
 | 触发词含 | 模式 | 范围 |
 |----------|------|------|
-| "全量" / "full" | 全量 | 完整 Steps 1-5 |
-| 其他 | **增量（默认）** | 仅本会话事实变更涉及的文件 |
+| "全量" / "full" | 全量 | 完整 Steps 1-6 |
+| 其他 | **增量（默认）** | 仅变更涉及的文件 |
 
-### Step 1: 提取变更 + 定位（grep 优先）
+**Git 锚定**（v3.0 新增）：
+
+```bash
+source scripts/neat.sh && neat-snapshot
+```
+
+记录当前 HEAD hash 到 `/tmp/.neat-freak/last-hash`。后续步骤基于此 hash 精确追踪变更范围。
+
+**首次运行检测**：若 `/tmp/.neat-freak/last-hash` 不存在，输出 "首次运行，无 git 基线，将使用对话上下文"。
+
+### Step 1: 变更提取 + 定位
 
 **禁止启动 Explore/搜索类 agent 做记忆审查。** 记忆文件是短文本，grep 精准且快。
 
-#### 1a. 提取事实变更清单
-
-从对话中提取本会话的**事实变更**（新增/修改/删除了什么）。无新事实 → 跳到 1c 做过期扫描。
-
-#### 1b. grep 定位受影响文件（增量模式核心）
-
-根据变更清单，用 grep 定位需要检查的文件。常见搜索模式：
+#### 1a. Git diff 变更清单（v3.0 核心）
 
 ```bash
-# 过时引用（如工具数、模型名、旧路径）
-grep -rn "旧关键词" memory/ CLAUDE.md codemap.md
+source scripts/neat.sh && neat-diff-summary
+```
+
+输出上次 snapshot 以来的变更文件列表。此列表作为事实变更的**客观基础**。
+
+结合对话上下文补充 git diff 无法捕获的变更（如 MCP 操作、memory 写入等）。
+
+**变更模板**（v3.0 新增）：
+
+```
+| 变更项 | 类型 | 来源 | 目标文件 |
+|--------|------|------|---------|
+| {具体变更} | 新增/修改/删除 | git diff / 对话 | {CLAUDE.md, memory/xxx.md, docs/} |
+```
+
+无 git 基线时 → 纯对话提取。
+
+#### 1b. grep 定位受影响文件
+
+根据变更清单 + git diff 输出，用 grep 定位需要检查的记忆/文档文件：
+
+```bash
+# 过时引用
+grep -rn "旧关键词" memory/ CLAUDE.md
 
 # 相对时间
-grep -rn "今天\|昨天\|最近\|today\|yesterday\|recently" memory/
+grep -rn "今天\|昨天\|最近\|today\|yesterday\|recently" memory/ CLAUDE.md
 
-# 旧模型/库名
+# 旧技术名/旧路径
 grep -rn "旧技术名" memory/
 ```
 
+**增量优化**（v3.0）：先用 `neat-diff-grep <关键词>` 限定搜索范围到变更文件。
+
 grep 结果为空的文件 → **跳过，不读**。
 
-#### 1c. 过期/冲突扫描（3 条 grep）
-
-**增量和全量都执行**，这是最轻量的全量检查：
+#### 1c. 过期/冲突扫描（强制）
 
 ```bash
-grep -rn "今天\|昨天\|最近\|today\|yesterday\|recently" memory/ CLAUDE.md
-grep -rn "废弃\|deprecated\|TODO\|FIXME" memory/ CLAUDE.md
+source scripts/neat.sh && neat-scan-stale
 ```
 
-全量模式额外执行：
-- `ls memory/` → 枚举全部文件，逐个 Read 检查内容
-- `find . -maxdepth 2 -name "*.md"` → 枚举项目级文件
-- `ls docs/ 2>/dev/null` → 枚举 docs
+**增量和全量都执行**。全量模式额外：
+- `ls memory/` → 逐个 Read 检查
+- `find . -maxdepth 2 -name "*.md"` → 项目级文件枚举
+- `ls docs/ 2>/dev/null` → docs 枚举
 
 #### 1d. docs/ 按需扫描
 
@@ -93,7 +139,7 @@ grep -rn "废弃\|deprecated\|TODO\|FIXME" memory/ CLAUDE.md
 
 ### Step 2: 识别变更（表格驱动）
 
-从事实变更清单映射到目标文件：
+从变更清单映射到目标文件：
 
 | 变更类型 | CLAUDE.md | docs/ |
 |----------|-----------|-------|
@@ -132,26 +178,58 @@ grep -rn "废弃\|deprecated\|TODO\|FIXME" memory/ CLAUDE.md
 2. **删除优于保留** — 完成的计划、推翻的决策、过期上下文，删
 3. **绝对时间** — 永远 `2026-05-27`，不写"今天"/"最近"
 
-**docs/ 新增能力时四补**：integration-guide（怎么用）→ architecture（怎么工作）→ runbook（怎么运维）→ handoff/CHANGELOG（已完成）。
+**docs/ 新增能力时四补**：integration-guide → architecture → runbook → handoff/CHANGELOG。
 
-> 全局配置（`~/.claude/CLAUDE.md`）只有用户明确表达跨项目核心原则才动。过去的同步遗漏 → 现在修。
+> 全局配置（`~/.claude/CLAUDE.md`）只有用户明确表达跨项目核心原则才动。
 
-### Step 4: 自检（5 项必过）
+### Step 4: 自检（7 项必过）
 
-- [ ] 事实变更清单中每项：已反映到对应文件或确认不需要
+- [ ] git diff 变更清单中每项：已反映到对应文件或确认不需要
+- [ ] 对话上下文补充变更：已反映
 - [ ] 新增 API/环境变量/数据库表：docs 和 CLAUDE.md 都出现
-- [ ] 无相对时间残留（grep 清零）
+- [ ] 无相对时间残留（`neat-scan-stale` 清零）
 - [ ] 无过时引用残留（grep 清零）
 - [ ] 全局配置未被项目细节污染
+- [ ] 变更摘要输出完整（Step 5 模板）
 
 不过 → 回去补。
 
-### Step 5: 变更摘要
+### Step 5: Git 提交 + 推送（v3.0 新增）
 
-改完后输出（不是改之前）：
+**前提**：Step 4 自检全部通过。
+
+```bash
+source scripts/neat.sh
+neat-commit "同步记忆+文档: {本次主要变更概括}"
+neat-push
+```
+
+**提交信息模板**：
+
+```
+neat-freak: 同步记忆+文档: {概括}
+
+{变更详情列表，每行一个}
+
+Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+```
+
+**推送失败处理**：推送失败时输出错误信息，**不重试**，告知用户手动 `git push`。
+
+**无变更时**：`neat-commit` 返回 "NOTHING_TO_COMMIT" → 跳过提交和推送，直接输出 Step 6。
+
+**用户确认**：提交前展示 `git status -s` + `git diff --stat`，用户确认后才执行。用户拒绝 → 跳过提交。
+
+### Step 6: 变更摘要
+
+改完后输出：
 
 ```
 ## 同步完成
+
+### Git 变更
+- 基线: {hash} → 最新: {hash}
+- 变更文件: {N} 个
 
 ### 记忆变更
 - 更新：xxx（原因）| 新增：xxx | 删除：xxx（原因）
@@ -170,12 +248,21 @@ grep -rn "废弃\|deprecated\|TODO\|FIXME" memory/ CLAUDE.md
 
 | 做法 | Token 消耗 | 推荐度 |
 |------|-----------|--------|
-| grep 定位 → 只读命中文件 | ~1-2K | **默认** |
+| `neat-diff-summary` + grep 定位 | ~1-2K | **默认** |
 | 启动 agent 扫描记忆文件 | ~20-50K | **禁止** |
 | 全量 Read 所有记忆文件 | ~15-30K | 仅全量模式 |
 | 无条件扫描 docs/ | ~5-10K | 按变更类型决定 |
 
 **增量模式目标**：≤10K tokens。**全量模式目标**：≤25K tokens。
+
+## 关键约束
+
+1. **git hash 锚定** — Step 0 必须记录，Step 5 必须基于此追踪
+2. **脚本驱动** — git 操作必须通过 `scripts/neat.sh`，不手写 git 命令
+3. **提交前确认** — 展示变更，用户确认后才 commit+push
+4. **推送失败不重试** — 报错让用户处理
+5. **无变更不提交** — `neat-commit` 返回 NOTHING_TO_COMMIT 时跳过
+6. **禁止 agent 扫描记忆** — grep 优先，记忆文件是短文本
 
 ---
 
@@ -183,3 +270,4 @@ grep -rn "废弃\|deprecated\|TODO\|FIXME" memory/ CLAUDE.md
 
 - [references/sync-matrix.md](references/sync-matrix.md) — 变更类型 → 目标文件映射表
 - [references/agent-paths.md](references/agent-paths.md) — 各平台记忆与配置路径
+- [scripts/neat.sh](scripts/neat.sh) — git 追踪 + 提交 + 过期扫描脚本
