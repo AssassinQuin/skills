@@ -60,6 +60,10 @@ metrics-update() {
 
 # ============ Pain Points CRUD ============
 pp-create() {
+  if [ $# -lt 6 ]; then
+    echo "Usage: pp-create <skill_dir> <id> <desc> <symptom> <source> <round>" >&2
+    return 1
+  fi
   local dir="${1:?skill dir}" id="$2" desc="$3" symptom="$4" source="$5" round="$6"
   local ts
   ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
