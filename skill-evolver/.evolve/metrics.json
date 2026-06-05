@@ -1,18 +1,19 @@
 {
-  "total_rounds": 2,
-  "avg_score_delta": 1.7,
+  "total_rounds": 3,
+  "avg_score_delta": 1.5,
   "avg_T_val_pass_rate": 1.0,
   "last_round": {
-    "date": "2026-06-02",
-    "strategy": "S2+S3-merge",
-    "score": 8.8
+    "date": "2026-06-05",
+    "strategy": "S1+S4",
+    "score": 9.0
   },
   "strategies_used": [
     "S5+S1+S3-merge",
-    "S2+S3-merge"
+    "S2+S3-merge",
+    "S1+S4"
   ],
   "fallback_count": 0,
-  "pain_points_resolved": 4,
+  "pain_points_resolved": 7,
   "pain_points_open": 0,
   "history": [
     {
@@ -30,6 +31,14 @@
       "score_before": 7.7,
       "score_after": 8.8,
       "delta": 1.1
+    },
+    {
+      "round": 3,
+      "date": "2026-06-05",
+      "strategy": "S1+S4",
+      "score_before": 8.8,
+      "score_after": 9.0,
+      "delta": 0.2
     }
   ]
 }
