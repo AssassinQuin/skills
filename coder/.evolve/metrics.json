@@ -1,20 +1,21 @@
 {
-  "total_rounds": 5,
+  "total_rounds": 7,
   "avg_score_delta": 1.05,
   "avg_T_val_pass_rate": 1,
   "last_round": {
-    "date": "2026-06-05",
-    "strategy": "Quick-Fix-PP17",
-    "score": 7.5
+    "date": "2026-06-07",
+    "strategy": "S2+S4+S5-synthesis",
+    "score": 7.45
   },
   "strategies_used": [
     "S4",
     "S3",
     "S1",
     "S2",
-    "Quick-Fix"
+    "Quick-Fix",
+    "S2+S4+S5-synthesis"
   ],
   "fallback_count": 0,
-  "pain_points_resolved": 12,
+  "pain_points_resolved": 15,
   "pain_points_open": 0
 }

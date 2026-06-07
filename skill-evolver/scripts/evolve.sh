@@ -68,8 +68,15 @@ pp-create() {
   local ts
   ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   local pp="$dir/.evolve/pain-points.jsonl"
+  mkdir -p "$(dirname "$pp")"
 
-  echo "{\"id\":\"$id\",\"skill\":\"$(basename "$dir")\",\"description\":$(echo "$desc" | jq -Rs .),\"symptom\":$(echo "$symptom" | jq -Rs .),\"source\":\"$source\",\"status\":\"open\",\"created_at\":\"$ts\",\"resolved_at\":null,\"resolved_by\":null,\"round\":$round,\"regression_count\":0}" >> "$pp"
+  # printf 比 echo 安全（不解释转义序列）
+  local desc_json symptom_json
+  desc_json=$(printf '%s' "$desc" | jq -Rs .)
+  symptom_json=$(printf '%s' "$symptom" | jq -Rs .)
+
+  printf '{"id":"%s","skill":"%s","description":%s,"symptom":%s,"source":"%s","status":"open","created_at":"%s","resolved_at":null,"resolved_by":null,"round":%s,"regression_count":0}\n' \
+    "$id" "$(basename "$dir")" "$desc_json" "$symptom_json" "$source" "$ts" "$round" >> "$pp"
 }
 
 pp-resolve() {
@@ -78,48 +85,72 @@ pp-resolve() {
   ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   local pp="$dir/.evolve/pain-points.jsonl"
 
-  local tmp
-  tmp=$(mktemp)
-  while IFS= read -r line; do
-    echo "$line" | jq --arg id "$id" --arg by "$resolved_by" --arg ts "$ts" \
-      'if .id == $id then .status = "resolved" | .resolved_at = $ts | .resolved_by = $by else . end' >> "$tmp"
-  done < "$pp"
-  mv "$tmp" "$pp"
+  [ -f "$pp" ] || { echo "ERROR: $pp not found" >&2; return 1; }
+
+  # --slurp 一次性读取所有行，-c '.[]' 逐条输出回 JSONL
+  jq --arg id "$id" --arg by "$resolved_by" --arg ts "$ts" \
+    --slurp -c '.[] | if .id == $id then .status = "resolved" | .resolved_at = $ts | .resolved_by = $by else . end' \
+    "$pp" > "${pp}.tmp" && mv "${pp}.tmp" "$pp"
 }
 
 pp-regress() {
   local dir="${1:?skill dir}" id="$2"
   local pp="$dir/.evolve/pain-points.jsonl"
 
-  local tmp
-  tmp=$(mktemp)
-  while IFS= read -r line; do
-    echo "$line" | jq --arg id "$id" \
-      'if .id == $id then .status = "regressed" | .regression_count += 1 else . end' >> "$tmp"
-  done < "$pp"
-  mv "$tmp" "$pp"
+  [ -f "$pp" ] || { echo "ERROR: $pp not found" >&2; return 1; }
+
+  jq --arg id "$id" \
+    --slurp -c '.[] | if .id == $id then .status = "regressed" | .regression_count += 1 else . end' \
+    "$pp" > "${pp}.tmp" && mv "${pp}.tmp" "$pp"
 }
 
 # ============ Git 操作 ============
+
+# 检测 skill 所在的 git repo root。不在 skill_dir 内时返回空。
+_git-root() {
+  local dir="${1:?directory required}"
+  git -C "$dir" rev-parse --show-toplevel 2>/dev/null || echo ""
+}
+
 git-setup() {
   local skill="${1:?skill name required}"
+  local skill_dir="${2:-.}"
   local branch="evolve/${skill}/$(date +%Y%m%d)"
+  local git_root
+  git_root=$(_git-root "$skill_dir")
+
+  if [ -z "$git_root" ]; then
+    echo "WARN: $skill_dir is not in a git repo. Operating in CWD." >&2
+    git_root="$(pwd)"
+  fi
+
   local existing
-  existing=$(git branch --list "$branch" | tr -d ' ')
+  existing=$(git -C "$git_root" branch --list "$branch" | tr -d ' ')
 
   if [ -n "$existing" ]; then
-    echo "ERROR: Branch $branch already exists. Delete first: git branch -D $branch" >&2
+    echo "ERROR: Branch $branch already exists in $git_root. Delete first: git -C $git_root branch -D $branch" >&2
     return 1
   fi
 
-  git checkout -b "$branch"
+  git -C "$git_root" checkout -b "$branch"
+  echo "Repo: $git_root"
   echo "Branch: $branch"
 }
 
 git-checkpoint() {
   local msg="${1:?commit message required}"
-  git add -A
-  git commit -m "$msg"
+  local skill_dir="${2:-.}"
+  local git_root
+  git_root=$(_git-root "$skill_dir")
+
+  if [ -z "$git_root" ]; then
+    echo "WARN: No git repo detected for $skill_dir. Operating in CWD." >&2
+    git_root="$(pwd)"
+  fi
+
+  git -C "$git_root" add -A
+  git -C "$git_root" commit -m "$msg"
+  echo "Committed to repo: $git_root"
 }
 
 # ============ 验证 ============
@@ -142,6 +173,70 @@ verify-metrics() {
   echo "OK: All scores in [0,10] range"
 }
 
+# ============ Silent-bypass 检测 ============
+# 检查 skill 是否被实际调用，而非仅存在于 SKILL.md 中
+silent-bypass-check() {
+  local dir="${1:?skill dir required}"
+  local skill_name
+  skill_name=$(basename "$dir")
+  local evolve_dir="$dir/.evolve"
+  local issues=0
+
+  echo "=== Silent-bypass Check: $skill_name ==="
+
+  # Check 1: SKILL.md 有触发词但无执行标记
+  if [ -f "$dir/SKILL.md" ]; then
+    local has_triggers
+    has_triggers=$(grep -c "Trigger:" "$dir/SKILL.md" 2>/dev/null || echo "0")
+    local has_markers
+    has_markers=$(find "$evolve_dir" -name "*.marker" 2>/dev/null | wc -l | tr -d ' ')
+
+    if [ "$has_triggers" -gt 0 ] && [ "$has_markers" -eq 0 ]; then
+      echo "WARN: Skill has triggers but no execution markers. Never evolved?" >&2
+      issues=$((issues + 1))
+    fi
+  fi
+
+  # Check 2: 约束是否只有文字声明，无执行层保障
+  if [ -f "$dir/SKILL.md" ]; then
+    local hard_constraints
+    hard_constraints=$(grep -cE "(硬约束|不可跳过|MUST|mandatory)" "$dir/SKILL.md" 2>/dev/null || echo "0")
+    local script_enforced
+    script_enforced=$(grep -c "phase-check\|AskUserQuestion\|silent-bypass" "$dir/SKILL.md" 2>/dev/null || echo "0")
+
+    if [ "$hard_constraints" -gt "$script_enforced" ]; then
+      echo "WARN: $((hard_constraints - script_enforced)) constraint(s) declared but not script-enforced" >&2
+      issues=$((issues + 1))
+    fi
+  fi
+
+  # Check 3: 阶段标记完整性（缺中间阶段 = 可能被跳过）
+  if [ -d "$evolve_dir" ]; then
+    local markers
+    markers=$(ls "$evolve_dir"/.*.marker 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$markers" -gt 0 ] && [ "$markers" -lt 3 ]; then
+      echo "WARN: Only $markers phase markers found (expected 5 for full evolution). Phases may have been skipped." >&2
+      issues=$((issues + 1))
+    fi
+  fi
+
+  # Check 4: evolution-log 存在但无 round 记录
+  if [ -f "$evolve_dir/evolution-log.jsonl" ]; then
+    local rounds
+    rounds=$(wc -l < "$evolve_dir/evolution-log.jsonl" | tr -d ' ')
+    if [ "$rounds" -eq 0 ]; then
+      echo "WARN: evolution-log.jsonl exists but has no round records" >&2
+      issues=$((issues + 1))
+    fi
+  fi
+
+  if [ "$issues" -eq 0 ]; then
+    echo "OK: No silent-bypass signals detected"
+  else
+    echo "FOUND: $issues silent-bypass signal(s)"
+  fi
+}
+
 # ============ 流程控制（新增） ============
 
 # 前置条件检查：验证阶段可执行
@@ -162,8 +257,15 @@ phase-check() {
         { echo "ERROR: exploration or quick-fix phase not completed" >&2; return 1; }
       ;;
     audit)
-      git diff --quiet HEAD 2>/dev/null && \
-        { echo "ERROR: no uncommitted changes to audit (commit first)" >&2; return 1; }
+      local git_root
+      git_root=$(_git-root "$dir")
+      if [ -n "$git_root" ]; then
+        git -C "$git_root" diff --quiet HEAD 2>/dev/null && \
+          { echo "ERROR: no uncommitted changes to audit in $git_root (commit first)" >&2; return 1; }
+      else
+        git diff --quiet HEAD 2>/dev/null && \
+          { echo "ERROR: no uncommitted changes to audit (commit first)" >&2; return 1; }
+      fi
       ;;
     deployment)
       [ -f "$evolve_dir/.audit.marker" ] || { echo "ERROR: audit phase not completed" >&2; return 1; }

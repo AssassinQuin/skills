@@ -2,9 +2,11 @@
 name: skill-evolver
 version: "5.0"
 description: >
-  Skill 自进化框架。脚本驱动 + 渐进披露 + 双路径。v5: 冷知识合并到模块、约束去重。
+  Skill 自进化框架。基于 SkillEvolver 论文(arXiv:2605.10500)实现。
+  脚本驱动 + 渐进披露 + 双路径 + 部署接地审计。v5: 冷知识合并到模块、约束去重。
   Trigger: "进化 X skill", "审计 X", "评估 X 质量", "进化 skill-evolver",
   "优化所有 skills", "查看进化历史", "重写 skill", "优化 X，痛点 Y", "优化 X skill".
+origin-paper: references/origin-paper-SkillEvolver.docx
 allowed-tools:
   - Read
   - Write
@@ -40,7 +42,14 @@ baseline → [quick-fix] → exploration → application → audit → deploymen
                                   └── r < R 继续 ──── 退化回滚 ←┘
 ```
 
-每阶段：`Read references/modules/{phase}.md` → `phase-check` + `phase-start` → 执行 → 用户确认。
+每阶段：`Read references/modules/{phase}.md` → `phase-check` + `phase-start` → 执行 → **AskUserQuestion 等待用户确认**。
+
+**硬约束（不可跳过）**：每个 phase 完成后必须调用 `AskUserQuestion` 展示结果并等待用户确认，收到确认后才可进入下一 phase。确认点：
+- baseline → 展示基线评分 + 痛点表 → 等待确认
+- exploration → 展示候选策略评分 → 等待确认
+- application → 展示修改文件列表 + diff 摘要 → 等待确认
+- audit → 展示审计报告 → 等待确认
+- deployment → 展示最终评分对比 → 等待确认
 
 ## 子 Agent
 
@@ -76,14 +85,17 @@ CRUD：`pp-create` / `pp-resolve` / `pp-regress`
 | `score D1..D5` | 加权总分 |
 | `metrics-update` | 更新 metrics.json |
 | `pp-create/resolve/regress` | 痛点 CRUD（pp-resolve 解锁 addressed→resolved，pp-regress 标记回归） |
-| `git-setup / git-checkpoint` | 分支管理 |
+| `git-setup / git-checkpoint` | 分支管理（自动检测 skill repo） |
 | `phase-check / phase-start` | 阶段门控 |
 | `quick-fix-check` | Quick Fix 判定 |
+| `silent-bypass-check` | 检测 skill 是否被实际调用（论文核心） |
 | `verify-metrics` | 评分验证 |
 
 ## Git
 
 分支：`evolve/{skill}/YYYYMMDD`。BEFORE 写 `/tmp/`。
+
+**重要**：`git-setup <skill_name> <skill_dir>` 和 `git-checkpoint <msg> <skill_dir>` 必须传入 skill 目录路径。脚本自动检测 skill 所在 git repo 并锚定操作。
 
 | 时机 | Checkpoint |
 |------|-----------|
@@ -118,3 +130,7 @@ CRUD：`pp-create` / `pp-resolve` / `pp-regress`
 9. R ratchet — 只保留有改进的版本
 10. 脚本驱动 — 阶段入口必须 phase-check + phase-start
 11. 重构优先补丁 — 检测到膨胀时强制大重构，不走补丁路径（见 baseline Step 8b）
+12. Workspace 隔离 — 审计 agent prompt 必须声明"不可搜索或引用 training traces（evolution-log/traces.jsonl），仅凭 BEFORE 副本 + 改写后的 SKILL.md 评估"
+13. Silent-bypass 检测 — 审计清单增加："SKILL.md 的关键指令是否被实际执行，还是被绕过？" 审计 agent 必须检查进化轮次的执行日志确认关键约束被遵守
+14. Git repo 锚定 — `git-setup` / `git-checkpoint` 必须传入 skill_dir 参数，脚本自动检测 skill 所在 git repo 并用 `git -C` 操作
+15. 用户确认门控 — 每个 phase 结尾必须 `AskUserQuestion` 等待确认。脚本层 `.marker` 文件仅记录状态，不替代确认

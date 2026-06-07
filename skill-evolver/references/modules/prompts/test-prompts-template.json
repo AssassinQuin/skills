@@ -1,0 +1,78 @@
+{
+  "_说明": "标准化测试 prompt 模板。每个进化轮次应根据 skill 功能填充具体内容。",
+  "_评估维度": "路由准确性 / 步骤可执行性 / 输出格式 / 约束满足 / 边界处理",
+  "_评分": "PASS(全部5项) / PARTIAL(3-4项) / FAIL(<=2项)",
+  "skill_name": "{skill_name}",
+  "created_at": "{date}",
+  "round": {round},
+
+  "T_train": [
+    {
+      "id": "T1",
+      "type": "核心功能",
+      "prompt": "{用户会说的触发输入}",
+      "expected_action": "{SKILL.md 路由表匹配的动作}",
+      "expected_steps": ["{步骤1}", "{步骤2}"],
+      "constraints": ["{必须满足的硬约束}"]
+    },
+    {
+      "id": "T2",
+      "type": "核心功能",
+      "prompt": "",
+      "expected_action": "",
+      "expected_steps": [],
+      "constraints": []
+    },
+    {
+      "id": "T3",
+      "type": "边界场景",
+      "prompt": "",
+      "expected_action": "",
+      "expected_steps": [],
+      "constraints": []
+    },
+    {
+      "id": "T4",
+      "type": "边界场景",
+      "prompt": "",
+      "expected_action": "",
+      "expected_steps": [],
+      "constraints": []
+    }
+  ],
+
+  "T_val": [
+    {
+      "id": "V1",
+      "type": "泛化测试",
+      "prompt": "{不同于 T_train 的变体输入}",
+      "expected_action": "",
+      "expected_steps": [],
+      "constraints": []
+    },
+    {
+      "id": "V2",
+      "type": "泛化测试",
+      "prompt": "",
+      "expected_action": "",
+      "expected_steps": [],
+      "constraints": []
+    },
+    {
+      "id": "V3",
+      "type": "异常处理",
+      "prompt": "{应触发 fallback 的异常输入}",
+      "expected_action": "",
+      "expected_steps": [],
+      "constraints": []
+    }
+  ],
+
+  "metrics": {
+    "T_train_total": 0,
+    "T_train_pass": 0,
+    "T_val_total": 0,
+    "T_val_pass": 0,
+    "T_val_pass_rate": 0.0
+  }
+}

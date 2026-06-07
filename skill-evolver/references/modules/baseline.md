@@ -90,10 +90,17 @@ phase-start baseline {skill_dir}
 搜索 `~/.claude/projects/` 会话文件，提取使用记录。保存到 `.evolve/traces.jsonl`。
 trace_source：≥3→empirical，1-2→sparse，0→none。
 
-### Step 3: 历史指标 + 痛点
+### Step 3: 历史指标 + 痛点 + 部署反馈
 
 读 metrics.json，按效率告警阈值检查。
 Mode G 时：用户提供痛点 → `pp-create`，source="user-stated"。
+
+**Deployment-Grounded Learning（论文核心闭环）**：
+- 检查 `.evolve/deployment-traces.jsonl` 是否存在
+- 存在 → 读取上次部署后的实际使用反馈，提取失败模式
+- 失败模式加入 trace_source，权重高于 traces.jsonl 的历史 trace
+- 标记 trace_source 为 "deployment-grounded"
+- 清空 deployment-traces.jsonl（已消费）
 
 ### Step 4: Git 分支
 

@@ -15,6 +15,31 @@ phase-start audit {skill_dir}
 - 不继承任何进化过程信息
 - Prompt 模板见 [auditor-template.md](prompts/auditor-template.md)
 
+## Contamination Controls（论文 Layer 1 + Layer 2）
+
+**Layer 1: T_train/T_val 拆分**（已有）
+- 审计只用 T_val，不用 T_train
+
+**Layer 2: Workspace 白名单**（新增）
+构造 auditor prompt 时，主 agent 只传递以下文件路径：
+- BEFORE 副本
+- AFTER 副本（改写后 SKILL.md）
+- test-prompts.json（仅 T_val 部分）
+- audit.md rubric
+
+**禁止传递**：evolution-log.jsonl、traces.jsonl、metrics.json、pain-points.jsonl。
+主 agent 在调用 auditor 子 agent 前，必须执行 `silent-bypass-check {skill_dir}` 验证无绕过信号。
+
+## 信息泄露检测（论文 Contamination Check）
+
+审计报告返回后，主 agent 检查报告中是否包含：
+1. 对"策略 S{k}"或"Δ"的引用 → 泄露训练信号
+2. 对 pain-points 内容的引用 → 泄露修复意图
+3. 对 evolution-log 历史记录的引用 → 泄露进化方向
+4. 对 T_train 测试 prompt 的直接引用 → 泄露训练集
+
+发现任何一项 → 在报告中标记 `[CONTAMINATION WARNING]`，该维度扣 2 分。
+
 ## 执行步骤
 
 ### Step 1: BEFORE 副本
@@ -67,9 +92,14 @@ rm /tmp/{skill}-before.md
 
 **检查**：frontmatter 声明的功能是否都有流程；关键步骤是否可被静默跳过。
 
-- 8-10: 全覆盖 + 强制校验 + fallback
-- 5-7: 主流程覆盖但缺边界
-- 0-4: 声明场景无流程或关键步骤可跳过
+**Silent-bypass 检测（必查）**：
+1. SKILL.md 中标记为"必须"或"硬约束"的步骤，是否有执行层保障（脚本/确认机制），还是仅靠文字声明？
+2. 历史进化轮次中，是否有 phase 被跳过的记录？（对比 `.evolve/*.marker` 时间戳）
+3. 关键约束（如"用户确认"、"路径锚定"）是否可被 agent 忽略而不触发任何错误？
+
+- 8-10: 全覆盖 + 强制校验 + fallback + silent-bypass 无死角
+- 5-7: 主流程覆盖但缺边界，或 silent-bypass 存在理论可能但未被利用
+- 0-4: 声明场景无流程或关键步骤可被静默跳过（silent-bypass 已实际发生）
 
 ## D3 Boundary (15%) — Script-bloat + Shape-bake
 

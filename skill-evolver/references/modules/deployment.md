@@ -75,6 +75,22 @@ git-checkpoint "evolve {skill}: deploy-r{r}-score-{before}-{after}"
 - **r < R** → 回 exploration
 - **r = R** → `git checkout main && git merge`
 
+### Step 8: Deployment Feedback 收集（Deployment-Grounded Learning）
+
+部署后的实际使用反馈 → 反哺下一轮进化。
+
+**机制**：
+1. 部署完成后，在 `.evolve/` 下创建 `deployment-traces.jsonl`
+2. 后续会话中使用该 skill 时，记录以下信息：
+   ```json
+   {"ts":"...", "trigger":"用户输入匹配的触发词", "success":true/false,
+    "failure_point":"失败环节（如有）", "user_correction":"用户是否手动纠正"}
+   ```
+3. 下一轮 baseline 的 Step 3 读取此文件作为 trace_source
+4. 形成闭环：**部署 → 使用反馈 → 下一轮进化输入**
+
+**最低要求**：即使没有自动化 hook，主 agent 在下次进化启动时应手动检查上次部署后的会话记录，提取使用问题。
+
 ## 退化处理
 
 | 场景 | 操作 |

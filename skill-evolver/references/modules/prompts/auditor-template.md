@@ -29,6 +29,27 @@ audit 模块的 opus 审计子 agent 使用。
 - 文件 A（标记为 BEFORE）：{before_path} — 原始版本（行数：{before_lines}）
 - 文件 B（标记为 AFTER）：{after_path} — 改写后版本（行数：{after_lines}）
 
+## 文件访问白名单（Contamination Controls Layer 2）
+
+**你只能读取以下文件**：
+- {before_path}（BEFORE 副本）
+- {after_path}（改写后 SKILL.md）
+- {test_prompts_path}（仅 T_val 部分）
+- {audit_rubric_path}（审计评分标准）
+
+**你绝对不可读取以下文件**（违反将导致审计无效）：
+- .evolve/evolution-log.jsonl（进化历史 — 包含 T_train 信息）
+- .evolve/traces.jsonl（执行轨迹 — 包含训练信号）
+- .evolve/metrics.json（累积指标 — 可泄露改进方向）
+- .evolve/pain-points.jsonl（痛点 — 包含修复意图）
+- .evolve/test-prompts.json 的 T_train 部分（训练集）
+
+**信息泄露自检**：审计完成后，检查你的报告是否包含：
+1. 任何对"策略"或"Δ"的引用 → 你可能泄露了训练信息
+2. 任何对 pain-points 的引用 → 你不应知道痛点内容
+3. 任何对 evolution-log 的引用 → 你不应知道进化历史
+如果发现以上任何一项，在报告中标注 `[CONTAMINATION WARNING]`。
+
 先读 BEFORE，再读 AFTER，对比时始终引用 BEFORE/AFTER 标记名。
 
 ## 审计方法
@@ -111,3 +132,4 @@ audit 模块的 opus 审计子 agent 使用。
 | `{before_lines}` | BEFORE 文件行数（主 agent 预填） |
 | `{after_lines}` | AFTER 文件行数（主 agent 预填） |
 | `{test_prompts_path}` | .evolve/test-prompts.json（仅 T_val 部分） |
+| `{audit_rubric_path}` | references/modules/audit.md |
