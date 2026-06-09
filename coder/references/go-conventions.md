@@ -25,6 +25,21 @@ main.go → cmd/ (http | task) → controller/ → logic/ → dao/ → MySQL
 - `model/dto/` — 手写，层间传输对象
 - `consts/` — 常量定义
 
+## GoFrame 工具链
+
+| 命令 | 生成内容 | 何时使用 |
+|------|---------|---------|
+| `gf gen ctrl` | `api/{module}/{module}.go` 接口 + `internal/controller/` handler 桩 | API 定义变更后 |
+| `gf gen service` | `internal/service/*.go` 接口 | logic 层新增方法后 |
+| `gf gen dao` | `internal/dao/` + `internal/model/entity/` + `internal/model/do/` | 数据库 schema 变更后 |
+| `make dao` / `make ctrl` / `make service` | Makefile 封装的上述命令 | 同上，优先用 make |
+
+**关键规则**：`api/{module}/{module}.go`、`internal/service/`、`internal/dao/`、`internal/model/entity/`、`internal/model/do/` 均为自动生成文件，**禁止手动编辑**。只手动编写：
+- `api/{module}/v1/*.go` — API 请求/响应定义
+- `internal/logic/` — 业务逻辑实现
+- `internal/controller/*.go` — handler 方法体（桩自动生成，方法体手写）
+- `internal/model/dto/` — 层间传输对象
+
 ## 代码模式
 
 - **事务**：`g.DB().Transaction(ctx, func(ctx, tx) { ... })`，禁止自动提交

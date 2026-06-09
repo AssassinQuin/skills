@@ -1,11 +1,11 @@
 {
-  "total_rounds": 7,
-  "avg_score_delta": 1.05,
+  "total_rounds": 8,
+  "avg_score_delta": 1.02,
   "avg_T_val_pass_rate": 1,
   "last_round": {
-    "date": "2026-06-07",
+    "date": "2026-06-09",
     "strategy": "S2+S4+S5-synthesis",
-    "score": 7.45
+    "score": 8.0
   },
   "strategies_used": [
     "S4",
@@ -16,6 +16,6 @@
     "S2+S4+S5-synthesis"
   ],
   "fallback_count": 0,
-  "pain_points_resolved": 15,
+  "pain_points_resolved": 18,
   "pain_points_open": 0
 }
