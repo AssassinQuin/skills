@@ -1,6 +1,6 @@
 ---
 name: coder
-version: "2.1"
+version: "2.2"
 description: 多语言编码元技能。检测语言→探测工具链→加载上下文→编排skill链→执行→审查→总结→持久化经验。触发词：写代码、实现、重构、修复、修改、coder、编码、开发、debug、新增。
 agent-compatible: true
 allowed-tools:
@@ -79,8 +79,10 @@ allowed-tools:
 | 新功能 | 单 skill | tdd |
 | 修 bug | 单 skill | diagnose |
 | 审查代码 | 单 skill | code-review |
+| 审计代码 | 委托子 agent | 加载 `references/code-audit-protocol.md` → 子 agent 隔离审计 → 结构化报告 → 不确定项逐个确认 |
 | 诊断+修复+补测试 | 串联 | diagnose → 修复 → tdd |
 | 审查+修复 | 串联 | code-review → diagnose → 修复 |
+| 审计+修复 | 串联 | 子 agent 审计 → 逐项确认 → diagnose → 修复 |
 | 混合/不明确 | 交互确认 | 列出 ≤3 候选路径 |
 
 串联编排协议、委托验收标准见 `references/core-protocols.md`。
@@ -132,11 +134,23 @@ allowed-tools:
 
 ## 审查门控（验证通过后）
 
-| 复杂度 | 审查行为 |
+### Layer 1: 自审（所有路径，主 agent 内执行）
+
+| 复杂度 | 自审范围 |
 |--------|---------|
 | 简单 | 跳过 |
-| 标准 | 自审清单（风格/副作用/测试覆盖） |
-| 复杂 | 委托 neat-freak skill（若未安装则委托 code-review skill） |
+| 标准 | 风格一致性、明显副作用、测试覆盖存在性 |
+| 复杂 | 标准范围 + 委托 neat-freak skill（若未安装则委托 code-review skill） |
+
+### Layer 2: 深度审计（可选，用户触发或完整路径自动触发）
+
+委托子 agent 加载 `references/code-audit-protocol.md` 执行隔离审计：
+1. 子 agent 接收：改动文件列表 + 复杂度标签 + 项目语言
+2. 子 agent 执行：分类审计（按代码类型差异化）→ 测试反模式检测 → 注释完整性 → 不确定项收集
+3. 子 agent 返回：结构化 JSON 报告（findings + uncertainties）
+4. 主 agent 处理：逐个向用户确认不确定项，汇总汇报
+
+**用户可直接触发**：意图为"审计代码"/"review diff"/"code audit"时，跳过执行路径，直接进入 Layer 2。
 
 ## 汇报
 
@@ -156,6 +170,7 @@ allowed-tools:
 | 用户修正（用户纠正过做法 ≥1 次） | "修正: {原始做法} → {正确做法}" |
 | 新发现（项目特有模式/陷阱/配置） | "发现: {语言/框架} 中 {模式} 的规律" |
 | 工具链发现（新探测到的构建命令） | "环境: {工具} 关键命令: {命令列表}" |
+| 审计发现（深度审计中的非代码问题模式） | "审计: {代码类型} 常见问题: {模式描述}" |
 
 ### 2. 展示总结
 
