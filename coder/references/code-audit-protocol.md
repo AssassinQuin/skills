@@ -205,7 +205,7 @@
 ### 输出兜底（最低保障）
 
 无论审计结果如何，报告必须包含：
-- 至少 1 个 finding（若代码无问题，记为 positive_note）
+- 至少 1 个 finding 或 positive_note（若代码质量优秀，total_findings 可为 0 并说明检查结果）
 - 每个 finding 必须有 `check_id`（对应上述检查项编号）和 `location`（文件:行号）
 - 不确定项必须标注 `confidence` 和 `impact`
 - 测试审计和注释审计各至少 1 项评估

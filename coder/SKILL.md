@@ -1,7 +1,7 @@
 ---
 name: coder
 version: "2.2"
-description: 多语言编码元技能。检测语言→探测工具链→加载上下文→编排skill链→执行→审查→总结→持久化经验。触发词：写代码、实现、重构、修复、修改、coder、编码、开发、debug、新增。
+description: 多语言编码元技能。检测语言→探测工具链→加载上下文→编排skill链→执行→审查→深度审计→总结→持久化经验。触发词：写代码、实现、重构、修复、修改、coder、编码、开发、debug、新增、审计代码、review diff。
 agent-compatible: true
 allowed-tools:
   - Read
@@ -146,11 +146,11 @@ allowed-tools:
 
 委托子 agent 加载 `references/code-audit-protocol.md` 执行隔离审计：
 1. 子 agent 接收：改动文件列表 + 复杂度标签 + 项目语言
-2. 子 agent 执行：分类审计（按代码类型差异化）→ 测试反模式检测 → 注释完整性 → 不确定项收集
+2. 子 agent 执行（建议按此顺序，非强制）：分类审计（按代码类型差异化）→ 测试反模式检测 → 注释完整性 → 不确定项收集
 3. 子 agent 返回：结构化 JSON 报告（findings + uncertainties）
 4. 主 agent 处理：逐个向用户确认不确定项，汇总汇报
 
-**用户可直接触发**：意图为"审计代码"/"review diff"/"code audit"时，跳过执行路径，直接进入 Layer 2。
+**用户可直接触发**：意图为"审计代码"/"review diff"/"code audit"时，跳过执行路径，直接进入 Layer 2。审计报告标注 `[基于未验证代码]`（若代码未经完整路径验证）。
 
 ## 汇报
 
