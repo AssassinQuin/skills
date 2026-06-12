@@ -1,0 +1,13 @@
+{
+  "T_train": [
+    "找一个做 TDD 的 skill",
+    "搜索 code review 相关的 skill，我主要用 Go 和 Python",
+    "有没有好用的部署 skill？要兼容 Claude Code",
+    "skill-evolver 和 darwin-skill 哪个好？帮我对比一下"
+  ],
+  "T_val": [
+    "找一个处理 PDF 的 skill",
+    "帮我找一个写 API 文档的 skill，最好支持 OpenAPI",
+    "有没有做安全审计的 skill"
+  ]
+}
