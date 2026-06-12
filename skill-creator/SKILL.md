@@ -317,22 +317,6 @@ Do not include any other fields in YAML frontmatter.
 
 Write instructions for using the skill and its bundled resources.
 
-**Quality Guardrails** — verify these before finalizing SKILL.md:
-
-*3 Completeness Principles* (every section must satisfy these):
-1. **可计数验收** — use countable criteria, not vague instructions. "逐个处理" → "处理数必须等于总数". "保持简洁" → "输出不超过 N 行".
-2. **Checkpoint 阻断** — every multi-step flow has intermediate outputs. No step can be skipped by jumping to the conclusion.
-3. **失败路径定义** — every branch has an explicit else/failure path. If you don't write it, the model's default else is "skip".
-
-*7 Anti-Patterns to Avoid*:
-1. **约束衰减** — rules weaken as conversation grows. Mitigation: hard constraints in frontmatter + self-check markers ("每次输出前自检此条")
-2. **工具漂移** — model silently switches to preferred tools. Mitigation: explicit tool priority table with degradation rules
-3. **输出膨胀** — model produces excessive output, consuming context. Mitigation: explicit output limits (max lines, forbidden patterns)
-4. **依赖链断裂** — step counts don't match between stages. Mitigation: assert-style counts ("已完成数 == 应完成数")
-5. **并行孤岛** — parallel agents produce contradictory results. Mitigation: merge rules with dedup + consistency checks
-6. **触发模糊** — skill triggers incorrectly on edge cases. Mitigation: explicit "DO NOT trigger" section + ambiguity handling
-7. **幻觉填充** — model fabricates when tools return nothing. Mitigation: "无来源 = 不输出" rule + "UNABLE TO ASSESS" escape hatch
-
 ### Step 5: Packaging a Skill
 
 Once development of the skill is complete, it must be packaged into a distributable .skill file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:

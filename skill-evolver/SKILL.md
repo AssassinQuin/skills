@@ -1,11 +1,13 @@
 ---
 name: skill-evolver
-version: "5.0"
+version: "6.0"
 description: >
   Skill 自进化框架。基于 SkillEvolver 论文(arXiv:2605.10500)实现。
-  脚本驱动 + 渐进披露 + 双路径 + 部署接地审计。v5: 冷知识合并到模块、约束去重。
+  命令驱动 + 脚本强制 + 渐进披露 + 双路径 + 部署接地审计。
+  v6: 范式转换——文档式→命令驱动，脚本强制调用，轻量验证模式。
   Trigger: "进化 X skill", "审计 X", "评估 X 质量", "进化 skill-evolver",
-  "优化所有 skills", "查看进化历史", "重写 skill", "优化 X，痛点 Y", "优化 X skill".
+  "优化所有 skills", "查看进化历史", "重写 skill", "优化 X，痛点 Y", "优化 X skill",
+  "验证 X skill".
 origin-paper: references/origin-paper-SkillEvolver.docx
 allowed-tools:
   - Read
@@ -15,9 +17,10 @@ allowed-tools:
   - Glob
   - Grep
   - Agent
+user-invocable: true
 ---
 
-# Skill Evolver v5
+# Skill Evolver v6
 
 ## 决策入口
 
@@ -31,25 +34,56 @@ allowed-tools:
 | "优化所有 skills" | E | baseline 筛选 → 逐个 Mode A |
 | "查看进化历史" | F | 读 `.evolve/evolution-log.jsonl` |
 | "重写 skill" | 跳过 | 直接 skill-creator |
+| "验证 X" / 编辑 SKILL.md 后 | H | `skill-validate` 轻量质量检查 |
 
 痛点：`pp-create` → `.evolve/pain-points.jsonl` → `quick-fix-check` 判定路径。
 
-## 流程
+## 流程（命令驱动）
 
 ```
 baseline → [quick-fix] → exploration → application → audit → deployment
-                                  ↑                            │
-                                  └── r < R 继续 ──── 退化回滚 ←┘
+                              ↑                            │
+                              └── r < R 继续 ──── 退化回滚 ←┘
 ```
 
-每阶段：`Read references/modules/{phase}.md` → `phase-check` + `phase-start` → 执行 → **AskUserQuestion 等待用户确认**。
+### Phase 入口（强制 Bash 命令，不可跳过）
 
-**硬约束（不可跳过）**：每个 phase 完成后必须调用 `AskUserQuestion` 展示结果并等待用户确认，收到确认后才可进入下一 phase。确认点：
-- baseline → 展示基线评分 + 痛点表 → 等待确认
-- exploration → 展示候选策略评分 → 等待确认
-- application → 展示修改文件列表 + diff 摘要 → 等待确认
-- audit → 展示审计报告 → 等待确认
-- deployment → 展示最终评分对比 → 等待确认
+每个 Phase 开始时，**必须按顺序执行以下 Bash 命令**：
+
+```bash
+# 1. 前置条件检查（失败 = 停止）
+source /Users/ganjie/.claude/skills/skill-evolver/scripts/evolve.sh && phase-check <phase> <skill_dir>
+# 2. 开始标记
+source /Users/ganjie/.claude/skills/skill-evolver/scripts/evolve.sh && phase-start <phase> <skill_dir>
+```
+
+然后：`Read references/modules/<phase>.md` → 按模块步骤执行。
+
+**脚本等价操作必须用脚本**（禁止手动替代）：
+
+| 操作 | 脚本命令 | 必用 Phase |
+|------|---------|-----------|
+| 评分 | `score D1 D2 D3 D4 D5` | baseline, audit, deployment |
+| 痛点创建 | `pp-create <dir> <id> <desc> <symptom> <source> <round>` | baseline |
+| 痛点解决 | `pp-resolve <dir> <id> <by>` | audit, deployment |
+| 痛点回归 | `pp-regress <dir> <id>` | audit |
+| 指标更新 | `metrics-update <dir> <round> <strategy> <before> <after> <d1>..<d5> <t_train> <t_val>` | deployment |
+| Git 分支 | `git-setup <name> <dir>` | baseline |
+| Git 提交 | `git-checkpoint <msg> <dir>` | 各 Phase 末尾 |
+| Quick Fix | `quick-fix-check <dir>` | baseline |
+| 绕过检测 | `silent-bypass-check <dir>` | audit |
+| 质量验证 | `verify-metrics <dir>` | audit |
+| 轻量检查 | `skill-validate <dir>` | Mode H / 编辑后 |
+
+### 确认点
+
+| Phase | 展示内容 | 确认后 |
+|-------|---------|--------|
+| baseline | 基线评分 + 痛点表 + Quick Fix 判定 | → exploration |
+| exploration | 候选策略排名 + 对比分析 | → application |
+| application | 修改文件列表 + diff 摘要 | → audit |
+| audit | 审计报告 | → deployment |
+| deployment | 最终评分对比 + T_val 结果 | → merge to main |
 
 ## 子 Agent
 
@@ -64,45 +98,26 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。
 
 ## 评分
 
-5 维（D1-D5），各 0-10。权重、门控阈值、效率告警见 [baseline.md](references/modules/baseline.md)。
+5 维 D1-D5，各 0-10。`score D1 D2 D3 D4 D5` 是唯一评分方式。
 
-`score D1 D2 D3 D4 D5` 计算加权总分。门控：Score > 基线 且 无维度 < 5。
+权重：D1×10% + D2×20% + D3×15% + D4×20% + D5×35%。门控：Score > 基线 且 无维度 < 5。
+
+详细阈值、Token 预算、T_train/T_val 参数见 [baseline.md](references/modules/baseline.md)。
 
 ## 痛点
 
-文件：`{skill}/.evolve/pain-points.jsonl`
-
-状态：open → addressed → resolved。回归 → regressed。`regression_count >= 2` → wontfix。
-
-CRUD：`pp-create` / `pp-resolve` / `pp-regress`
-
-## 脚本
-
-`source scripts/evolve.sh && <command>`
-
-| 命令 | 用途 |
-|------|------|
-| `score D1..D5` | 加权总分 |
-| `metrics-update` | 更新 metrics.json |
-| `pp-create/resolve/regress` | 痛点 CRUD（pp-resolve 解锁 addressed→resolved，pp-regress 标记回归） |
-| `git-setup / git-checkpoint` | 分支管理（自动检测 skill repo） |
-| `phase-check / phase-start` | 阶段门控 |
-| `quick-fix-check` | Quick Fix 判定 |
-| `silent-bypass-check` | 检测 skill 是否被实际调用（论文核心） |
-| `verify-metrics` | 评分验证 |
+文件：`{skill}/.evolve/pain-points.jsonl`。状态流转：open → addressed → resolved。回归 → regressed。`regression_count >= 2` → wontfix。
 
 ## Git
 
 分支：`evolve/{skill}/YYYYMMDD`。BEFORE 写 `/tmp/`。
 
-**重要**：`git-setup <skill_name> <skill_dir>` 和 `git-checkpoint <msg> <skill_dir>` 必须传入 skill 目录路径。脚本自动检测 skill 所在 git repo 并锚定操作。
-
 | 时机 | Checkpoint |
 |------|-----------|
-| baseline | CP-01: `git-setup` |
-| exploration | CP-02: `git-checkpoint` |
-| application | CP-03: `git-checkpoint` |
-| deployment | CP-04: `git-checkpoint` |
+| baseline | CP-01: `git-setup <name> <dir>` |
+| exploration | CP-02: `git-checkpoint <msg> <dir>` |
+| application | CP-03: `git-checkpoint <msg> <dir>` |
+| deployment | CP-04: `git-checkpoint <msg> <dir>` |
 | audit 失败 | `git reset HEAD~1` → CP-02 |
 | 部署退化 | `git revert HEAD` → CP-03 |
 | 收工 | `git checkout main && git merge` |
@@ -111,26 +126,22 @@ CRUD：`pp-create` / `pp-resolve` / `pp-regress`
 
 | 文件 | 用途 |
 |------|------|
-| `evolution-log.jsonl` | 每轮 JSON（dimensions + score + pain_points） |
+| `evolution-log.jsonl` | 每轮 JSON |
 | `metrics.json` | 累积指标 |
 | `test-prompts.json` | T_train(60%) + T_val(40%) |
 | `traces.jsonl` | 使用轨迹 |
 | `pain-points.jsonl` | 跨轮痛点 |
+| `deployment-traces.jsonl` | 部署反馈 |
 
-## 约束
+## 约束（8 条）
 
-1. 路径锚定 — 子 agent 绝对路径 + ls 验证
-2. 审计隔离 — BEFORE 副本 + 全新上下文 opus
-3. 子 agent 不重试 — 超时标记 N/A
-4. 渐进披露 — 模块按需加载
-5. Token 硬上限 — 单轮 ≤100K
-6. 写入集中 — 主 agent 写，子 agent 不写
-7. 完整改写 — 不打补丁
-8. T_train/T_val 隔离 — exploration 不可见 T_val
-9. R ratchet — 只保留有改进的版本
-10. 脚本驱动 — 阶段入口必须 phase-check + phase-start
-11. 重构优先补丁 — 检测到膨胀时强制大重构，不走补丁路径（见 baseline Step 8b）
-12. Workspace 隔离 — 审计 agent prompt 必须声明"不可搜索或引用 training traces（evolution-log/traces.jsonl），仅凭 BEFORE 副本 + 改写后的 SKILL.md 评估"
-13. Silent-bypass 检测 — 审计清单增加："SKILL.md 的关键指令是否被实际执行，还是被绕过？" 审计 agent 必须检查进化轮次的执行日志确认关键约束被遵守
-14. Git repo 锚定 — `git-setup` / `git-checkpoint` 必须传入 skill_dir 参数，脚本自动检测 skill 所在 git repo 并用 `git -C` 操作
-15. 用户确认门控 — 每个 phase 结尾必须 `AskUserQuestion` 等待确认。脚本层 `.marker` 文件仅记录状态，不替代确认
+1. **命令驱动** — Phase 入口必须通过 Bash 执行 `phase-check` + `phase-start`
+2. **脚本等价优先** — 有脚本命令的操作禁止手动替代（评分、痛点、Git、指标）
+3. **路径锚定** — 子 agent 绝对路径 + ls 验证
+4. **审计隔离** — BEFORE 副本 + 全新上下文 opus + 禁止引用 training traces
+5. **写入集中** — 主 agent 写，子 agent 只读
+6. **完整改写** — 不打补丁；T_train/T_val 隔离
+7. **R ratchet** — 只保留有改进的版本；退化回滚
+8. **膨胀检测** — SKILL.md > 200 行 or total_rounds >= 4 → 强制重构
+
+已合并到约束/脚本的旧约束：渐进披露(→模块按需加载)、Token上限(→baseline.md)、子agent不重试(→exploration.md)、重构优先补丁(→约束8)、silent-bypass(→脚本命令)、Git锚定(→git-setup参数)、用户确认(→确认点表格)、workspace隔离(→约束4)

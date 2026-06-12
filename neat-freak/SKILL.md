@@ -1,16 +1,17 @@
 ---
 name: neat-freak
-version: 3.0.0
 description: >
-  Session-end knowledge sync — reconciles CLAUDE.md, docs/, and agent memory
-  against code changes. Tracks git diff for precise incremental mode.
-  Auto-commits and pushes changes. Script-driven with templates.
-  Triggers: "sync up", "tidy", "/neat", "收尾", "neat-freak"
+  End-of-session knowledge cleanup with OCD-level rigor — reconciles project docs
+  (CLAUDE.md, README.md, docs/) and agent memory against the code so nothing rots.
+  会话结束后对项目文档和记忆进行洁癖级审查与同步。MUST trigger when the user says:
+  "sync up", "tidy up docs", "update memory", "clean up docs", "/sync", "/neat", "同步一下",
+  "整理文档", "整理一下", "更新记忆", "梳理一下", "收尾", "这个阶段做完了",
+  "新人能直接上手", or any phrase suggesting a dev milestone where knowledge needs
+  reconciliation. Also trigger when the user reports stale docs, conflicting memories,
+  or wants a clean handoff to teammates or other agents. Bare "整理" / "tidy" with
+  prior dev context counts — do not under-trigger. Cross-platform: works on Claude Code,
+  OpenAI Codex, OpenCode, and OpenClaw.
 allowed-tools:
-  - Bash
-  - Read
-  - Edit
-  - Write
   - memory_memory_search
   - memory_memory_store
   - memory_memory_update
@@ -24,250 +25,182 @@ allowed-tools:
   - memory_memory_health
 ---
 
-# 洁癖 v3.0.0 — Knowledge Base Neat-Freak
+# 洁癖 — Knowledge Base Neat-Freak
 
-你是**知识库编辑**，不是记录员。编辑审查全局、合并重复、修正过期、删除废弃。
+> **Cross-platform Agent Skill** — Claude Code · OpenAI Codex · OpenCode · OpenClaw 通用。
+> 跨平台 SKILL.md，遵循开放 Agent Skill 规范。
 
-**受众规则**：
-- Agent 记忆 → 自己跨会话复用（偏好、决策、规范）
-- CLAUDE.md/AGENTS.md → 自己下次在这个项目复用（约定、结构、红线）
-- docs/ + README → **其他人**接入和运维（指南、架构、手册）
+你是一个**知识库编辑**，不是记录员。记录员只会往后追加，编辑会审查全局、合并重复、修正过期、删除废弃。你的工作是让整个项目的知识体系始终保持**干净、准确、对新人友好**的状态——像有洁癖一样。
 
-CLAUDE.md 提醒自己；docs/ 教别人。功能变更时**两处都改**。
+## 为什么这件事重要
 
-## 脚本工具箱
+在 AI 协作开发中，代码可以随时重写，但**文档和记忆是跨会话、跨 Agent 的唯一桥梁**。如果记忆里有过期信息，下一个 Agent（无论它是 Claude、Codex 还是别的）会基于错误前提做决策。如果 docs/ 混乱或缺失，接手者（尤其是下游项目的同事）会浪费大量时间搞清楚这套系统怎么用。
 
-```bash
-source scripts/neat.sh && <command>
-```
+这个 Skill 的价值就在于：**让知识体系的每一层都跟得上代码的变化。**
 
-| 命令 | 用途 | 阶段 |
-|------|------|------|
-| `neat-snapshot` | 记录当前 git HEAD hash | Step 0 |
-| `neat-last-hash` | 读取上次记录的 hash | Step 1 |
-| `neat-diff-summary` | 输出 snapshot 以来的变更摘要 | Step 1 |
-| `neat-diff-grep <kw>` | 在变更文件中 grep 关键词 | Step 1 |
-| `neat-scan-stale` | 过期/相对时间/TODO 扫描 | Step 1 |
-| `neat-commit <msg>` | git add -A + commit | Step 5 |
-| `neat-push` | git push 当前分支 | Step 5 |
+## 关键概念：三类知识，三种受众
+
+**必须先理解这件事，否则你会只改 CLAUDE.md 就结束，把下游同事和其他 agent 晾在那儿。**
+
+| 位置 | 受众 | 职责 | 不同步的代价 |
+|------|------|------|--------------|
+| **MCP 记忆系统**（优先，若可用） | Agent 自己跨会话复用 | 个人偏好、项目事实、跨项目 reference、决策、规范 | 下次会话 Agent 忘记历史决策 |
+| **文件记忆**（MCP 不可用时的 fallback） | Agent 自己跨会话复用 | 同上，以 .md 文件存储 | 同上 |
+| 项目根 `CLAUDE.md` / `AGENTS.md` | 当前项目里的 AI（下次会话自己） | 项目约定、结构、红线、环境变量、路由清单 | 下次 AI 在这个项目里走弯路 |
+| 项目 `docs/` + `README.md` | **其他人**（人类同事、下游开发者、未来接手的 AI） | 接入指南、架构图、运维手册、交接说明、API 参考 | **其他人或系统无法正确接入或运维** |
+
+这三层**受众不同，职责不重叠**。CLAUDE.md 里写"新增了 device flow 五个路由" ≠ docs/integration-guide.md 里"下游怎么接这套 flow" —— 前者是提醒自己，后者是教别人。**两份都要写。**
+
+> **Agent 记忆系统的具体位置因平台而异**。MCP memory 可用时，优先使用 `memory_search`/`memory_store`/`memory_update`/`memory_delete` 操作记忆（遵循 memory skill Cross-Skill API，使用 scope 别名 `project`/`shared`/`global`）。MCP 不可用时，fallback 到文件记忆（Claude Code: `~/.claude/projects/<...>/memory/`，Codex: `AGENTS.md`，OpenCode: `.opencode/`）。完整路径速查见 [references/agent-paths.md](references/agent-paths.md)。如果两种都不可用，把功夫全花在 docs 和项目根 markdown 上。
 
 ## 执行流程
 
-### Step 0: 模式选择 + Git 锚定
+### 第一步：盘点现状（强制机械式枚举，不能跳过）
 
-| 触发词含 | 模式 | 范围 |
-|----------|------|------|
-| "全量" / "full" | 全量 | 完整 Steps 1-6 |
-| 其他 | **增量（默认）** | 仅变更涉及的文件 |
+**先做 ls，再做判断。**
 
-**Git 锚定**（v3.0 新增）：
+1. **盘点记忆层**（按优先级尝试，第一个成功即停止）：
+   - **MCP memory 优先**：`memory_health()` 检查可用性 → 可用则 `memory_search(tags=["project"], limit=100)` + `memory_search(tags=["shared"], limit=50)` + `memory_search(tags=["global"], limit=30)` 全量拉取
+   - **文件记忆 fallback**（MCP 不可用时）：`ls ~/.claude/projects/<...>/memory/` 并读 `MEMORY.md` 及所有被引用的 `.md`；Codex/OpenCode 等见 references/agent-paths.md
+   - **都不可用**：标记"记忆层跳过"，只处理文档层
+2. 对本次对话涉及的**每一个项目**：
+   - `ls <project-root>/` → 确认根目录结构
+   - `ls <project-root>/docs/ 2>/dev/null` → **枚举所有 docs**（缺失也要确认）
+   - `find <project-root> -maxdepth 2 -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*"` → 兜底抓散落的 .md
+   - 读 `README.md`、`CLAUDE.md` / `AGENTS.md`、每一个 `docs/*.md`
+3. 读全局 agent 配置（若有，如 `~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md`）
+4. 回顾本次对话全部内容
 
-```bash
-source scripts/neat.sh && neat-snapshot
-```
+**输出一张文件清单**（内部用，不用给用户看），对每个文件标：「评估过 / 要改 / 不用改」。**漏一个不行**——这是这个 skill 最容易翻车的地方。
 
-记录当前 HEAD hash 到 `/tmp/.neat-freak/last-hash`。后续步骤基于此 hash 精确追踪变更范围。
+### 第二步：识别变更——用"变更影响矩阵"思考
 
-**首次运行检测**：若 `/tmp/.neat-freak/last-hash` 不存在，输出 "首次运行，无 git 基线，将使用对话上下文"。
+**不要只看对话增量有什么新事实，要看新事实会波及哪些文档层级。**
 
-### Step 1: 变更提取 + 定位
+常见模式速览：
+- 新增 API / 路由 → CLAUDE.md 路由清单 + integration-guide + architecture 的 Routes
+- 新增 / 改名 环境变量 → CLAUDE.md 环境变量表 + runbook + 下游 integration-guide
+- 新增数据库表 → CLAUDE.md + architecture 的 Data Model
+- 新增大特性（跨多文件） → 以上全部 + architecture 新章节 + handoff 已完成清单
+- 跨项目改动 → 上下游两边的 docs **都要对齐**（最常见的漏改场景）
+- 记忆层面：相对时间→绝对日期、过期事实→改、重复→合并、已完成待办→删
 
-**禁止启动 Explore/搜索类 agent 做记忆审查。** 记忆文件是短文本，grep 精准且快。
+**MCP memory 特殊检查**（可用时）：
+- `memory_conflicts()` → 检测矛盾记忆，列入"未处理"让用户决定
+- `memory_quality(action="analyze", min_quality=0.0, max_quality=0.5)` → 低质量记忆标记清理
+- 每条 MCP 记忆检查 tags 是否包含 scope + type 双标签（缺失则补）
 
-#### 1a. Git diff 变更清单（v3.0 核心）
+完整映射表（覆盖更多变更类型与对应文档）见 **[references/sync-matrix.md](references/sync-matrix.md)**——遇到不确定的改动先查这张表。
 
-```bash
-source scripts/neat.sh && neat-diff-summary
-```
+**关键检查**：这次对话是不是**跨项目**的？如果改了项目 A 且项目 B 依赖它（通过 SDK、API、子域、环境变量），**项目 B 的 docs 也要改**。这是历次同步最常翻的车。
 
-输出上次 snapshot 以来的变更文件列表。此列表作为事实变更的**客观基础**。
+### 第三步：实际修改（用工具，不只是描述）
 
-结合对话上下文补充 git diff 无法捕获的变更（如 MCP 操作、memory 写入等）。
+你必须**真的用 Edit 修改现有文件、用 Write 创建新文件、用删除命令清理废弃文件**。"我会怎么改"的描述不算完成。
 
-**变更模板**（v3.0 新增）：
+**顺序建议**：先改 docs/（改错影响外部）→ 再改 CLAUDE.md/AGENTS.md → 最后理记忆。先动外部优先级最高的，即使中途被打断，读者看到的也是对齐的最新状态。
 
-```
-| 变更项 | 类型 | 来源 | 目标文件 |
-|--------|------|------|---------|
-| {具体变更} | 新增/修改/删除 | git diff / 对话 | {CLAUDE.md, memory/xxx.md, docs/} |
-```
+**MCP memory 操作规范**（可用时）：
 
-无 git 基线时 → 纯对话提取。
-
-#### 1b. grep 定位受影响文件
-
-根据变更清单 + git diff 输出，用 grep 定位需要检查的记忆/文档文件：
-
-```bash
-# 过时引用
-grep -rn "旧关键词" memory/ CLAUDE.md
-
-# 相对时间
-grep -rn "今天\|昨天\|最近\|today\|yesterday\|recently" memory/ CLAUDE.md
-
-# 旧技术名/旧路径
-grep -rn "旧技术名" memory/
-```
-
-**增量优化**（v3.0）：先用 `neat-diff-grep <关键词>` 限定搜索范围到变更文件。
-
-grep 结果为空的文件 → **跳过，不读**。
-
-#### 1c. 过期/冲突扫描（强制）
-
-```bash
-source scripts/neat.sh && neat-scan-stale
-```
-
-**增量和全量都执行**。全量模式额外：
-- `ls memory/` → 逐个 Read 检查
-- `find . -maxdepth 2 -name "*.md"` → 项目级文件枚举
-- `ls docs/ 2>/dev/null` → docs 枚举
-
-#### 1d. docs/ 按需扫描
-
-**不要无条件扫描 docs/。** 按变更类型决定：
-
-| 变更类型 | 扫描 docs/ | 原因 |
-|----------|-----------|------|
-| 新增 API/工具/路由 | **是** | 需更新 integration-guide |
-| 新增/改名环境变量 | **是** | 需更新 runbook |
-| 新增数据库表 | **是** | 需更新 architecture Data Model |
-| 内部重构/审计/bug修复 | **否** | 不影响对外文档 |
-| 记忆/文档层自身变更 | **否** | 已在 1b 处理 |
-| 跨文件大特性 | **是** | 需全面更新 |
-
-### Step 2: 识别变更（表格驱动）
-
-从变更清单映射到目标文件：
-
-| 变更类型 | CLAUDE.md | docs/ |
-|----------|-----------|-------|
-| 新增 API/路由 | 路由清单 | integration-guide + architecture |
-| 新增/改名环境变量 | 环境变量表 | runbook + integration-guide |
-| 新增数据库表 | Schema 引用 | architecture Data Model |
-| 跨文件大特性 | 以上全部 + handoff | 以上全部 |
-| 跨项目改动 | 两边都改 | 两边 integration docs 都改 |
-| 记忆过期/矛盾 | N/A | N/A（Step 3 处理） |
-
-完整映射见 [references/sync-matrix.md](references/sync-matrix.md)。
-
-**MCP 检查**（可用时）：
-- `memory_conflicts()` → 矛盾列「未处理」让用户决定
-- `memory_quality(action="analyze", min_quality=0.0, max_quality=0.5)` → 低质量标记
-- 每条记忆需含 scope + type 双标签（缺失则补）
-
-### Step 3: 执行修改
-
-**必须用 Edit/Write 真改文件**，描述不算完成。
-
-**顺序**：docs/ → CLAUDE.md/AGENTS.md → 记忆。
-
-**MCP 操作**（可用时）：
-
-| 操作 | 工具 | 规则 |
-|------|------|------|
-| 新增 | `memory_store` | scope 别名 + type 双标签，≤120 字 |
-| 更新 | `memory_update` | 先 `memory_search` 定位 hash |
-| 删除 | `memory_delete` | 先 `dry_run=true` 确认 |
+| 操作 | MCP 工具 | 要点 |
+|------|---------|------|
+| 新增记忆 | `memory_store` | scope 别名 + type 双标签，内容先精炼（≤120 字） |
+| 更新记忆 | `memory_update` | 先 `memory_search` 定位 hash → 更新 tags/metadata |
+| 删除过期记忆 | `memory_delete` | 先 `dry_run=true` 确认再执行 |
 | 去重 | `memory_cleanup` | 全局去重 |
-| 标签补全 | `memory_update` | 补齐缺失 scope 或 type |
+| 标签补全 | `memory_update` | 缺 scope 或 type 的记忆补齐双标签 |
 
-**编辑三原则**：
-1. **合并优于追加** — 新信息更新旧条目，不追加
-2. **删除优于保留** — 完成的计划、推翻的决策、过期上下文，删
-3. **绝对时间** — 永远 `2026-05-27`，不写"今天"/"最近"
+**编辑原则**：
 
-**docs/ 新增能力时四补**：integration-guide → architecture → runbook → handoff/CHANGELOG。
+- **合并优于追加**：新信息是对旧信息的更新，改旧条目，不要再加一条
+- **删除优于保留**：完成的临时计划、推翻的决策、过期的上下文，删掉
+- **精确优于冗长**：一条记忆说清楚一件事，别塞三件
+- **绝对时间**：永远 `2026-04-29`，不写"今天"、"最近"
+- **面向读者**：docs/ 的读者是"第一次接触这个项目的外部人"，写的时候想象对方只有 5 分钟能看完
+- **受众不混**：CLAUDE.md 里不抄 docs/ 的全文，docs/ 里不写"我记得上次……"——这是记忆的事
 
-> 全局配置（`~/.claude/CLAUDE.md`）只有用户明确表达跨项目核心原则才动。
+**全局配置极度克制**：`~/.claude/CLAUDE.md` / `~/.codex/AGENTS.md` 只有用户在对话中明确表达了**跨项目的核心原则**才动。日常项目细节绝不进全局。
 
-### Step 4: 自检（7 项必过）
+**docs/ 编辑要点**——新增一个能力的文档变更通常要四处都补：
+1. **integration-guide** 或对应"外部视角"文档：加**怎么用**（curl / SDK 示例 / 错误码表）
+2. **architecture**：加**怎么工作**（数据流、状态机、设计取舍）
+3. **runbook**：加**怎么运维**（冒烟命令、故障排查、环境变量）
+4. **handoff** 或 CHANGELOG：加**已完成**
 
-- [ ] git diff 变更清单中每项：已反映到对应文件或确认不需要
-- [ ] 对话上下文补充变更：已反映
-- [ ] 新增 API/环境变量/数据库表：docs 和 CLAUDE.md 都出现
-- [ ] 无相对时间残留（`neat-scan-stale` 清零）
-- [ ] 无过时引用残留（grep 清零）
-- [ ] 全局配置未被项目细节污染
-- [ ] 变更摘要输出完整（Step 5 模板）
+API 速查表、环境变量表、术语表是高频查询的结构化信息，**必须保持"所见即最新"**。
 
-不过 → 回去补。
+### 第四步：自检清单（必须逐项过一遍）
 
-### Step 5: Git 提交 + 推送（v3.0 新增）
+这一步防止"漏改 docs"。改完后逐条检查：
 
-**前提**：Step 4 自检全部通过。
+- [ ] 第一步列出的每个文件，都判断了"不用改"或"已改"
+- [ ] MCP 记忆（若有）的 tags 都包含 scope + type 双标签
+- [ ] MCP 记忆之间没有互相矛盾（`memory_conflicts()` 清零）
+- [ ] 文件记忆索引（若有）里的每个链接指向存在的文件
+- [ ] 每个记忆文件的 description 和内容对得上
+- [ ] CLAUDE.md / AGENTS.md 里提到的路径 / 命令 / 工具 / 环境变量在代码中真实存在
+- [ ] README 的安装 / 运行步骤跟代码一致
+- [ ] 新增 API 路由：**在 integration-guide 和 architecture 都出现了**
+- [ ] 新增环境变量：**在 runbook 和项目根 markdown 都出现了**
+- [ ] 新增数据库表：**在 architecture 的 Data Model 和项目根 markdown 都出现了**
+- [ ] 跨项目影响：下游项目的 docs 也跟着改了
+- [ ] 没有相对时间遗留（`grep -E "今天|昨天|刚刚|最近|上周|today|yesterday|recently"` 清零）
 
-```bash
-source scripts/neat.sh
-neat-commit "同步记忆+文档: {本次主要变更概括}"
-neat-push
-```
+哪条打不了勾，**回去补**。不要因为"差不多了"就跳过这一步——这是这个 skill 的灵魂。
 
-**提交信息模板**：
+### 第五步：变更摘要
 
-```
-neat-freak: 同步记忆+文档: {概括}
-
-{变更详情列表，每行一个}
-
-Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
-```
-
-**推送失败处理**：推送失败时输出错误信息，**不重试**，告知用户手动 `git push`。
-
-**无变更时**：`neat-commit` 返回 "NOTHING_TO_COMMIT" → 跳过提交和推送，直接输出 Step 6。
-
-**用户确认**：提交前展示 `git status -s` + `git diff --stat`，用户确认后才执行。用户拒绝 → 跳过提交。
-
-### Step 6: 变更摘要
-
-改完后输出：
+在所有文件修改完之后（不是之前），给用户简洁摘要：
 
 ```
 ## 同步完成
 
-### Git 变更
-- 基线: {hash} → 最新: {hash}
-- 变更文件: {N} 个
-
 ### 记忆变更
-- 更新：xxx（原因）| 新增：xxx | 删除：xxx（原因）
+- 更新：xxx（原因）
+- 新增：xxx
+- 删除：xxx（原因）
 
-### 文档变更（按项目）
-- <项目>/CLAUDE.md — xxx
-- <项目>/docs/xxx.md — xxx
+### 文档变更（按项目分组，每个项目列全改动的文件）
+- <项目 A>/CLAUDE.md — xxx
+- <项目 A>/docs/integration-guide.md — xxx
+- <项目 A>/docs/architecture.md — xxx
+- <项目 B>/docs/<integration>.md — xxx
 
 ### 未处理
-- xxx（需用户确认）
+- xxx（为什么没处理，比如需要用户确认）
 ```
 
-只列实际变更。没改不写。
+只列有实际变更的条目。没改的不写。
 
-## Token 效率守则
+## 特殊情况
 
-| 做法 | Token 消耗 | 推荐度 |
-|------|-----------|--------|
-| `neat-diff-summary` + grep 定位 | ~1-2K | **默认** |
-| 启动 agent 扫描记忆文件 | ~20-50K | **禁止** |
-| 全量 Read 所有记忆文件 | ~15-30K | 仅全量模式 |
-| 无条件扫描 docs/ | ~5-10K | 按变更类型决定 |
+**项目还没有 README 或 CLAUDE.md/AGENTS.md**：判断项目是不是到了"有可运行代码"的阶段。是 → 创建。还在 vibe 阶段 → 跳过，但在摘要里提一句。
 
-**增量模式目标**：≤10K tokens。**全量模式目标**：≤25K tokens。
+**对话没有产生新事实**：审查现有记忆和文档有没有过期 / 冲突 / 相对时间——审查本身就有价值。
 
-## 关键约束
+**记忆之间出现无法自动判断的矛盾**：列在「未处理」让用户决定。**这是唯一需要用户介入的情况**，其他都自己拍板。
 
-1. **git hash 锚定** — Step 0 必须记录，Step 5 必须基于此追踪
-2. **脚本驱动** — git 操作必须通过 `scripts/neat.sh`，不手写 git 命令
-3. **提交前确认** — 展示变更，用户确认后才 commit+push
-4. **推送失败不重试** — 报错让用户处理
-5. **无变更不提交** — `neat-commit` 返回 NOTHING_TO_COMMIT 时跳过
-6. **禁止 agent 扫描记忆** — grep 优先，记忆文件是短文本
+**跨项目改动**：本次对话改了多个项目，每个项目都要跑一次完整的第一步（ls + 读 docs）。不要假设一个项目的 docs 改了，另一个就不用。尤其是上游-下游对接文档（集成指南 / SDK 说明 / API 协议），两边都要对齐。
+
+**发现之前的同步漏了东西**：修掉。不要说"那不是这次对话的事"——你就是这个项目的持续编辑，过去的漏洞也归你管。
+
+## Memory Integration
+
+遵循 [memory skill Cross-Skill API](../memory/SKILL.md)（稳定接口）：
+- 使用 scope 别名：project / shared / global / session
+- 检索：`memory_search` + tags 过滤（至少指定 scope 别名）
+- 存储：`memory_store` + scope别名,type 双标签
+- 更新：`memory_update` 补齐缺失的双标签、修正过期内容
+- 删除：`memory_delete` 清理废弃记忆（先 `dry_run=true`）
+- 去重：`memory_cleanup` 全局去重
+- 冲突：`memory_conflicts` → 用户决定 → `memory_resolve`
+- 降级：MCP memory 不可用时 fallback 到文件记忆，两种都不可用则只处理文档层
+- 内容精炼：存储前必须精炼（≤120 字，去除对话残留，确保独立可理解）
+- ⚠️ 不要使用 memory 内部标签格式（如 `project:<name>`），只使用别名
 
 ---
 
 ## 参考资料
 
-- [references/sync-matrix.md](references/sync-matrix.md) — 变更类型 → 目标文件映射表
-- [references/agent-paths.md](references/agent-paths.md) — 各平台记忆与配置路径
-- [scripts/neat.sh](scripts/neat.sh) — git 追踪 + 提交 + 过期扫描脚本
+- **[references/sync-matrix.md](references/sync-matrix.md)** — 完整的"变更类型 → 要改哪些文件"映射表
+- **[references/agent-paths.md](references/agent-paths.md)** — Claude Code / Codex / OpenCode 各自的记忆与配置路径速查

@@ -1,0 +1,16 @@
+{
+  "updated": "2026-05-23T12:30",
+  "mcp_hash": "searxng+github+crawl4ai+webreader+websearchprime",
+  "available": [
+    "mcp__searxng__searxng_web_search",
+    "mcp__searxng__web_url_read",
+    "mcp__crawl4ai-mcp__scrape",
+    "mcp__crawl4ai-mcp__crawl",
+    "mcp__web_reader__webReader",
+    "mcp__web-search-prime__web_search_prime",
+    "WebSearch",
+    "WebFetch"
+  ],
+  "unavailable": [],
+  "fallback": "WebSearch + WebFetch"
+}

@@ -317,3 +317,60 @@ quick-fix-check() {
     echo "FULL_EVOLUTION"
   fi
 }
+
+# ============ 轻量质量验证（Mode H / 编辑后触发） ============
+skill-validate() {
+  local dir="${1:?skill dir required}"
+  local skill_name
+  skill_name=$(basename "$dir")
+  local issues=0
+
+  echo "=== Skill Validate: $skill_name ==="
+
+  # Check 1: SKILL.md exists
+  [ -f "$dir/SKILL.md" ] || { echo "ERROR: SKILL.md not found in $dir" >&2; return 1; }
+
+  # Check 2: Frontmatter required fields
+  local has_name has_desc
+  has_name=$(grep -c "^name:" "$dir/SKILL.md" 2>/dev/null || echo "0")
+  has_desc=$(grep -c "^description:" "$dir/SKILL.md" 2>/dev/null || echo "0")
+  [ "$has_name" -ge 1 ] || { echo "ERROR: frontmatter missing 'name'" >&2; issues=$((issues + 1)); }
+  [ "$has_desc" -ge 1 ] || { echo "ERROR: frontmatter missing 'description'" >&2; issues=$((issues + 1)); }
+
+  # Check 3: Bloat detection
+  local lines
+  lines=$(wc -l < "$dir/SKILL.md" | tr -d ' ')
+  if [ "$lines" -gt 200 ]; then
+    echo "WARN: SKILL.md is $lines lines (>200 = bloat threshold)" >&2
+    issues=$((issues + 1))
+  fi
+
+  # Check 4: Reference files count
+  if [ -d "$dir/references" ]; then
+    local refs
+    refs=$(find "$dir/references" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$refs" -gt 10 ]; then
+      echo "WARN: $refs reference files (>10 = bloat threshold)" >&2
+      issues=$((issues + 1))
+    fi
+  fi
+
+  # Check 5: Silent-bypass
+  silent-bypass-check "$dir" 2>/dev/null || issues=$((issues + 1))
+
+  # Check 6: Constraint count
+  local constraints
+  constraints=$(grep -cE "^\d+\.\s" "$dir/SKILL.md" 2>/dev/null || echo "0")
+  if [ "$constraints" -gt 15 ]; then
+    echo "WARN: $constraints constraints (>15 = constraint bloat)" >&2
+    issues=$((issues + 1))
+  fi
+
+  # Summary
+  if [ "$issues" -eq 0 ]; then
+    echo "OK: All quality checks passed ($lines lines)"
+  else
+    echo "FOUND: $issues issue(s) — consider running full evolution (/skill-evolver 进化 $skill_name)"
+  fi
+  return $issues
+}

@@ -34,7 +34,7 @@
 ### URL 内容提取
 
 ```json
-{ "url": "https://...", "startChar": 0, "maxLength": 15000 }
+{ "url": "https://...", "startChar": 0, "maxLength": 5000 }
 ```
 
 | 参数 | 说明 |
@@ -42,8 +42,6 @@
 | section | 提取指定标题下的内容 |
 | readHeadings | `true` 只返回标题列表（快速判断结构） |
 | paragraphRange | `"1-5"` 指定段落范围 |
-
-**多段提取**：文章超过 15000 字时，分 2-3 次提取（分段移动 startChar），不截断。优先提取中间和后半段（结论、数据、分析通常在后面）。
 
 ---
 

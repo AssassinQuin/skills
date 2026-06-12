@@ -1,3 +1,0 @@
-{"id": "PP-25", "ts": "2026-06-05", "source": "user-stated", "status": "resolved", "description": "neat-freak 不记录 git hash，无法追踪本次会话变更范围，增量模式靠对话记忆不可靠", "context": "用户希望 neat-freak 在 Step 1 记录 git HEAD hash，后续运行时可 diff 精确变更范围"}
-{"id": "PP-26", "ts": "2026-06-05", "source": "user-stated", "status": "resolved", "description": "neat-freak 不执行 git commit/push，用户需手动推送，流程断裂", "context": "用户希望 neat-freak 在 Step 3 执行完后自动 git add/commit/push，成为完整闭环"}
-{"id": "PP-27", "ts": "2026-06-05", "source": "user-stated", "status": "resolved", "description": "缺少脚本化工具和模板，执行靠自然语言指令不够准确完整", "context": "需要 git-diff-summary 脚本、变更模板、文件写入检查清单等结构化工具"}
