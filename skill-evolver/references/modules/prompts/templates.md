@@ -78,13 +78,17 @@ exploration/audit/deployment 模块的子 agent prompt 模板。主 agent 读取
 
 ## 审计输入
 - 文件 A（标记为 BEFORE）：{before_path} — 原始版本（行数：{before_lines}）
+- BEFORE 目录清单：{before_manifest}（BEFORE 快照时刻的完整文件列表）
 - 文件 B（标记为 AFTER）：{after_path} — 改写后版本（行数：{after_lines}）
+- AFTER 目录：{skill_path}/（改写后的完整 skill 目录，用于审计 README.md、agents/、scripts/ 等同级文件）
 
 ## 文件访问白名单（Contamination Controls Layer 2）
 
-**你只能读取以下文件**：
+**你可以读取以下文件**：
 - {before_path}（BEFORE 副本）
+- {before_manifest}（BEFORE 目录清单）
 - {after_path}（改写后 SKILL.md）
+- {skill_path}/ 下除 .evolve/ 外的所有文件（README.md、agents/、references/、scripts/ 等 — 用于全目录级审计）
 - {test_prompts_path}（仅 T_val 部分）
 - {audit_rubric_path}（审计评分标准）
 
@@ -104,10 +108,11 @@ exploration/audit/deployment 模块的子 agent prompt 模板。主 agent 读取
 先读 BEFORE，再读 AFTER，对比时始终引用 BEFORE/AFTER 标记名。
 
 ## 审计方法
-1. 读取 BEFORE 文件
-2. 读取 AFTER 文件
-3. 按以下 10 项清单逐项检查
-4. 每项必须有具体证据，不写空泛评语
+1. 读取 BEFORE 文件和 BEFORE 目录清单
+2. 读取 AFTER 文件，扫描 {skill_path}/ 下的同级文件（README.md、agents/、scripts/）
+3. 对比 BEFORE 清单 vs AFTER 目录，标注新增/删除/修改的文件
+4. 按以下 5 维清单逐项检查（包括目录级变更的影响）
+5. 每项必须有具体证据，不写空泛评语
 
 ## 审计清单（5 维 0-10 评分）
 
@@ -177,7 +182,9 @@ exploration/audit/deployment 模块的子 agent prompt 模板。主 agent 读取
 |--------|------|
 | `{skill_name}` | 目标 skill 名 |
 | `{before_path}` | 绝对路径 BEFORE 副本 |
+| `{before_manifest}` | 绝对路径 BEFORE 目录清单 |
 | `{after_path}` | 绝对路径改写后文件 |
+| `{skill_path}` | 改写后 skill 目录绝对路径（用于读取同级文件） |
 | `{before_lines}` | BEFORE 文件行数（主 agent 预填） |
 | `{after_lines}` | AFTER 文件行数（主 agent 预填） |
 | `{test_prompts_path}` | .evolve/test-prompts.json（仅 T_val 部分） |

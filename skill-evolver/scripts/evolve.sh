@@ -390,17 +390,27 @@ snapshot-save() {
   local ts
   ts=$(date +%Y%m%dT%H%M%S)
   local snap_file="$snap_dir/${skill_name}-${ts}.md"
+  local manifest_file="$snap_dir/${skill_name}-${ts}-manifest.txt"
 
   [ -f "$dir/SKILL.md" ] || { echo "ERROR: SKILL.md not found in $dir" >&2; return 1; }
 
   mkdir -p "$snap_dir"
   cp "$dir/SKILL.md" "$snap_file"
 
-  # Also create a "latest" symlink for easy access
-  local latest="$snap_dir/${skill_name}-latest.md"
-  ln -sf "$snap_file" "$latest"
+  # Save directory manifest (all files excluding .evolve/)
+  find "$dir" -not -path '*/.evolve/*' -not -path '*/.git/*' -type f | \
+    sed "s|$dir/||" | sort | while read -r f; do
+      lines=$(wc -l < "$dir/$f" 2>/dev/null || echo "?")
+      size=$(wc -c < "$dir/$f" 2>/dev/null || echo "?")
+      printf "%-6s %-8s %s\n" "$lines" "$size" "$f"
+    done > "$manifest_file"
+
+  # Also create "latest" symlinks
+  ln -sf "$snap_file" "$snap_dir/${skill_name}-latest.md"
+  ln -sf "$manifest_file" "$snap_dir/${skill_name}-latest-manifest.txt"
 
   echo "Snapshot saved: $snap_file"
+  echo "Manifest saved: $manifest_file"
 }
 
 # ============ 审计报告保存 ============
