@@ -337,12 +337,16 @@ skill-validate() {
   [ "$has_name" -ge 1 ] || { echo "ERROR: frontmatter missing 'name'" >&2; issues=$((issues + 1)); }
   [ "$has_desc" -ge 1 ] || { echo "ERROR: frontmatter missing 'description'" >&2; issues=$((issues + 1)); }
 
-  # Check 3: Bloat detection
-  local lines
-  lines=$(wc -l < "$dir/SKILL.md" | tr -d ' ')
-  if [ "$lines" -gt 200 ]; then
-    echo "WARN: SKILL.md is $lines lines (>200 = bloat threshold)" >&2
-    issues=$((issues + 1))
+  # Check 3: Patch saturation (check metrics.json if exists)
+  local metrics_file
+  metrics_file="$dir/.evolve/metrics.json"
+  if [ -f "$metrics_file" ]; then
+    local rounds
+    rounds=$(jq -r '.total_rounds // 0' "$metrics_file" 2>/dev/null || echo "0")
+    if [ "$rounds" -ge 5 ]; then
+      echo "WARN: $rounds evolution rounds (>=5 = patch saturation, consider content simplification)" >&2
+      issues=$((issues + 1))
+    fi
   fi
 
   # Check 4: Reference files count
@@ -367,6 +371,8 @@ skill-validate() {
   fi
 
   # Summary
+  local lines
+  lines=$(wc -l < "$dir/SKILL.md" | tr -d ' ')
   if [ "$issues" -eq 0 ]; then
     echo "OK: All quality checks passed ($lines lines)"
   else

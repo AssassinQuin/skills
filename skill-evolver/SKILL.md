@@ -144,7 +144,7 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。
 |---|--------|---------|
 | 1 | SKILL.md 存在 | 文件可读 |
 | 2 | Frontmatter 必需字段 | 有 name + description |
-| 3 | 膨胀检测 | SKILL.md ≤ 200 行 |
+| 3 | 补丁饱和 | metrics.json total_rounds < 5 |
 | 4 | 参考文件数 | references/ ≤ 10 个 .md |
 | 5 | Silent-bypass 信号 | 无 WARN 信号 |
 | 6 | 约束数量 | ≤ 15 条 |
@@ -156,6 +156,6 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。
 5. **写入集中** — 主 agent 写，子 agent 只读
 6. **完整改写** — 不打补丁；T_train/T_val 隔离
 7. **R ratchet** — 只保留有改进的版本；退化回滚
-8. **膨胀检测** — SKILL.md > 200 行 or total_rounds >= 4 → 强制重构
+8. **补丁饱和检测** — `total_rounds >= 5` 时触发精简建议（删补丁式说明，保留框架结构），不强制重构
 
-已合并到约束/脚本的旧约束：渐进披露(→模块按需加载)、Token上限(→baseline.md)、子agent不重试(→exploration.md)、重构优先补丁(→约束8)、silent-bypass(→脚本命令)、Git锚定(→git-setup参数)、用户确认(→确认点表格)、workspace隔离(→约束4)
+已合并到约束/脚本的旧约束：渐进披露(→模块按需加载)、Token上限(→baseline.md)、子agent不重试(→exploration.md)、重构优先补丁(→约束8)、silent-bypass(→脚本命令)、Git锚定(→git-setup参数)、用户确认(→确认点表格)、workspace隔离(→约束4)、行数膨胀检测(→补丁饱和检测)
