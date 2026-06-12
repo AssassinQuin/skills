@@ -29,7 +29,7 @@ phase-check deployment {skill_dir}
 
 ### Step 2: T_val Held-out 验证（独立 opus 子 agent）
 
-独立 opus agent 在全新上下文中读取 SKILL.md + T_val，模拟执行每个 T_val prompt，输出通过率。Prompt 模板见 [deployer-template.md](prompts/deployer-template.md)。
+独立 opus agent 在全新上下文中读取 SKILL.md + T_val，模拟执行每个 T_val prompt，输出通过率。Prompt 模板见 [templates.md](prompts/templates.md#Deployer)。
 
 **T_val 是 deployment 的硬性门控**。如果未 spawn opus 子 agent 执行 T_val，deployment 必须中止。
 

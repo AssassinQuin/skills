@@ -25,7 +25,7 @@ phase-check exploration {skill_dir} && phase-start exploration {skill_dir}
 - 有 S0 时：S0 + S1-S6 = 7 个并行子 agent
 - 无 S0 时：S1-S6 = 6 个并行子 agent
 
-子 agent prompt 模板见 [explorer-template.md](prompts/explorer-template.md)。
+子 agent prompt 模板见 [templates.md](prompts/templates.md#Explorer)。
 
 关键约束：
 - 子 agent 只能用 T_train，不可见 T_val

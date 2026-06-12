@@ -13,7 +13,7 @@ phase-start audit {skill_dir}
 
 - 全新上下文子 agent（model=opus）
 - 不继承任何进化过程信息
-- Prompt 模板见 [auditor-template.md](prompts/auditor-template.md)
+- Prompt 模板见 [templates.md](prompts/templates.md#Auditor)
 
 ## Contamination Controls（论文 Layer 1 + Layer 2）
 
