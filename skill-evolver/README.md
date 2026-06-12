@@ -30,7 +30,7 @@ SKILL.md                        # Core instructions
 references/
   evolution-strategies.md       # Strategy library for common skill issues
   origin-paper.md               # SkillEvolver paper summary
-  origin-paper-SkillEvolver.docx  # Original paper
+  failure-modes.md              # FM1-FM7 failure mode diagnostics
   modules/                      # Modular evolution components
 scripts/
   evolve.sh                     # Bash-enforced phase execution
