@@ -96,9 +96,11 @@ source evolve.sh && audit-save {skill_dir} {round}
 
 ```
 审计结果：Score = X.X/10
-- 通过 → deployment
+- 通过 → 展示进化效果对比 + 诚实边界 → 用户确认 → deployment
 - 未通过 → git reset HEAD~1 → 回 exploration
 ```
+
+**检查点意义**：audit 是最终质量门。通过后直接进入部署，问题不在此拦截就会带到生产。
 
 **Fallback**：opus 超时 → 简化审计(sonnet, D4+D5) → 极速审计(主 agent, 仅 D4)。
 

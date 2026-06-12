@@ -172,4 +172,8 @@ git-checkpoint "evolve {skill}: baseline+gap-r{r}"
 
 ## 关卡
 
-展示：trace_source + 基线评分 + 差距报告 + Quick Fix 判定。用户确认后继续。
+展示：trace_source + 基线评分 + 差距报告 + Quick Fix 判定 + **本轮局限**（trace 覆盖度、信息盲区）。
+
+**检查点意义**：基线决定了进化方向。方向错了后面全白费，在这里拦截比在 deployment 返工成本低得多。
+
+用户确认后继续。

@@ -87,10 +87,14 @@ touch {skill_dir}/.evolve/deployment-traces.jsonl
 
 ## 关卡：部署结果确认
 
+**检查点意义**：deployment 是上线门控。回归问题不在此拦截就会带到生产。用户在这个检查点看到的应该是一个诚实、完整的进化报告。
+
 ```
 部署结果：
 - T_train 通过率：X/Y（子 agent 执行 / UNVERIFIED）
+  证据：{引用子 agent 返回的关键输出行，UNVERIFIED 时写"未 spawn 子 agent"}
 - T_val 通过率：X/Y（opus 子 agent 执行 / UNVERIFIED）
+  证据：{同上}
 - 痛点回归：X/Y
 - 退化：progress / partial / regression
 - Token：{actual} / {budget}
@@ -105,11 +109,25 @@ touch {skill_dir}/.evolve/deployment-traces.jsonl
 □ 审计报告已保存到 .evolve/audit-reports/
 □ deployment-traces.jsonl 已创建
 
+## 诚实边界（必填，禁止留空）
+### 本轮未验证
+- {列出 UNVERIFIED 的测试项}
+
+### 本轮未覆盖
+- {本轮策略未涉及的痛点}
+
+### 结构性局限
+- {依赖 agent 自律而非结构保障的约束}
+
+### 信息盲区
+- {trace 不足的领域}
+
 本轮总结：
 - 策略：S{k}
 - 评分：{before} → {after}（Δ +{N}）
 - 审计：{audit_score}/10
 - 痛点：[PP-id → resolved | open]
+- 迭代：第 {r}/{R} 轮（上限 3 轮，超过自动终止并交付当前版本）
 ```
 
 确认后：
