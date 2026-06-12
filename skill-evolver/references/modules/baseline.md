@@ -93,7 +93,7 @@ trace_source：≥3→empirical，1-2→sparse，0→none。
 ### Step 3: 历史指标 + 痛点 + 部署反馈
 
 读 metrics.json，按效率告警阈值检查。
-Mode G 时：用户提供痛点 → `pp-create`，source="user-stated"。
+Mode A 用户提供痛点时：`pp-create`，source="user-stated"。Quick Fix 由 `quick-fix-check` 自动判定。
 
 **Deployment-Grounded Learning（论文核心闭环）**：
 - 检查 `.evolve/deployment-traces.jsonl` 是否存在

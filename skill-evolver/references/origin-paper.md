@@ -65,3 +65,20 @@ Agent skills are static artifacts — authored once and consumed unchanged. Skil
 2. **Git repo detection**: git-setup must detect and target the skill's own repo, not CWD
 3. **Phase gate enforcement**: User confirmation must be mandatory, not skippable
 4. **Workspace isolation for audit**: Auditor should not see training traces
+
+---
+
+## 与论文的定位差异
+
+| 方面 | 论文 | 本框架 |
+|------|------|--------|
+| 反馈信号 | 始终来自部署失败 | 优先来自轨迹，退化时用 rubric |
+| 评估 | avg@5 客观通过率 | T_train 通过率 + T_val held-out |
+| 策略 | 每轮动态生成 | S0(动态) + S1-S6(固定) |
+| Agent 架构 | 双 Agent（进化者≠使用者） | 子 agent 隔离 + 独立 opus 审计/验证 |
+
+### 未对齐项
+
+1. **对比学习对象不同**：论文对比高/低奖励轨迹，我们对比高/低分候选版本
+2. **策略生成方式不同**：论文按任务决策轴动态生成，我们用固定矩阵+动态 S0 近似
+3. **评估仍部分主观**：D1-D4 是静态分析，非任务通过率；仅 D5 客观化
