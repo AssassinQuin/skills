@@ -1,11 +1,11 @@
 {
-  "total_rounds": 5,
+  "total_rounds": 6,
   "avg_score_delta": 1.5,
   "avg_T_val_pass_rate": 1.0,
   "last_round": {
     "date": "2026-06-12",
-    "strategy": "Quick-Fix",
-    "score": 7.80
+    "strategy": "S2+S5-nuwa-integrity",
+    "score": 7.19
   },
   "strategies_used": [
     "S5+S1+S3-merge",
@@ -55,6 +55,14 @@
       "score_before": 7.60,
       "score_after": 7.80,
       "delta": 0.20
+    },
+    {
+      "round": 10,
+      "date": "2026-06-12",
+      "strategy": "S2+S5-nuwa-integrity",
+      "score_before": 5.80,
+      "score_after": 7.19,
+      "delta": 1.39
     }
   ]
 }
