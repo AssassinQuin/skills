@@ -17,6 +17,7 @@ allowed-tools:
   - Glob
   - Grep
   - Agent
+  - AskUserQuestion
 user-invocable: true
 ---
 
@@ -75,7 +76,9 @@ source /Users/ganjie/.claude/skills/skill-evolver/scripts/evolve.sh && phase-sta
 | 质量验证 | `verify-metrics <dir>` | audit |
 | 轻量检查 | `skill-validate <dir>` | Mode H / 编辑后 |
 
-### 确认点
+### 确认点（AskUserQuestion 强制）
+
+每个 Phase 完成后，**必须**调用 `AskUserQuestion` 展示结果并等待用户确认。未收到确认禁止进入下一 Phase。
 
 | Phase | 展示内容 | 确认后 |
 |-------|---------|--------|
@@ -135,7 +138,18 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。
 
 ## 约束（8 条）
 
-1. **命令驱动** — Phase 入口必须通过 Bash 执行 `phase-check` + `phase-start`
+**Mode H: skill-validate 检查清单**（`source evolve.sh && skill-validate <dir>`）
+
+| # | 检查项 | 通过标准 |
+|---|--------|---------|
+| 1 | SKILL.md 存在 | 文件可读 |
+| 2 | Frontmatter 必需字段 | 有 name + description |
+| 3 | 膨胀检测 | SKILL.md ≤ 200 行 |
+| 4 | 参考文件数 | references/ ≤ 10 个 .md |
+| 5 | Silent-bypass 信号 | 无 WARN 信号 |
+| 6 | 约束数量 | ≤ 15 条 |
+
+1. **命令驱动** — Phase 入口必须通过 Bash 执行 `phase-check` + `phase-start`；Phase 结尾必须 `AskUserQuestion`
 2. **脚本等价优先** — 有脚本命令的操作禁止手动替代（评分、痛点、Git、指标）
 3. **路径锚定** — 子 agent 绝对路径 + ls 验证
 4. **审计隔离** — BEFORE 副本 + 全新上下文 opus + 禁止引用 training traces

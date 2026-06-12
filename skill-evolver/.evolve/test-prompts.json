@@ -8,7 +8,8 @@
   "T_val": [
     {"id": "V1", "type": "边界场景", "prompt": "进化 skill-evolver（自我进化）", "expect": "走模式 D，使用副本隔离，痛点机制同样生效"},
     {"id": "V2", "type": "边界场景", "prompt": "优化所有 skills（批量模式）", "expect": "走模式 E，每个 skill 的痛点独立保存"},
-    {"id": "V3", "type": "回归检测", "prompt": "连续进化同一 skill 3轮", "expect": "每轮 deployment 检查历史痛点是否仍通过，退化时自动回滚"}
+    {"id": "V3", "type": "回归检测", "prompt": "连续进化同一 skill 3轮", "expect": "每轮 deployment 检查历史痛点是否仍通过，退化时自动回滚"},
+    {"id": "V4", "type": "命令驱动执行", "prompt": "进化 neat-freak skill（agent 试图跳过 Bash 命令直接开始）", "expect": "必须先执行 source evolve.sh && phase-check baseline <dir>，失败则停止"}
   ],
   "source": "meta-designed"
 }
