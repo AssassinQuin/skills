@@ -28,11 +28,36 @@ phase-check deployment {skill_dir}
 
 综合：进步→接受；部分进步→接受并记录限制；退化→回滚。
 
-### Step 4: 痛点回归守卫
+### Step 4: 痛点回归守卫（强制）
 
 对 `pain-points.jsonl` 中 `status=="resolved"` 的痛点逐一验证：
-- 回归率 > 30% → 自动 `git revert HEAD` + `pp-regress` 更新状态
+
+```bash
+source evolve.sh
+# 读取所有 resolved 痛点
+cat {skill_dir}/.evolve/pain-points.jsonl | jq -c 'select(.status=="resolved")'
+```
+
+对每个 resolved 痛点：
+1. 读取其 `description` 和 `symptom`
+2. 检查 SKILL.md 中对应的修复内容是否仍然存在
+3. 验证方法：grep SKILL.md 中与痛点修复相关的关键词/段落
+4. 结果：PASS（修复仍有效）/ FAIL（回归）
+
+回归处理：
+- 任何 FAIL → `pp-regress {skill_dir} {pp_id}` + 记录回归原因
+- 回归率 > 30% → 自动 `git revert HEAD` + 终止部署
 - 单痛点 `regression_count >= 2` → 标记 `wontfix`
+
+输出格式：
+```
+痛点回归测试：
+| 痛点 | 状态 | 验证结果 |
+|------|------|---------|
+| PP-xxx | resolved | PASS: {验证证据} |
+| PP-yyy | resolved | FAIL: {回归原因} |
+回归率: X/Y (Z%)
+```
 
 ### Step 5: 记录日志 + 更新指标
 

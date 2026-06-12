@@ -102,10 +102,17 @@ Mode G 时：用户提供痛点 → `pp-create`，source="user-stated"。
 - 标记 trace_source 为 "deployment-grounded"
 - 清空 deployment-traces.jsonl（已消费）
 
-### Step 4: Git 分支
+### Step 4: Git 分支 + BEFORE 快照
 
 ```bash
 git-setup {skill_name}
+```
+
+保存 BEFORE 快照到 `.evolve/snapshots/`（非 `/tmp/`，确保可追溯）：
+
+```bash
+mkdir -p {skill_dir}/.evolve/snapshots
+cp {skill_dir}/SKILL.md {skill_dir}/.evolve/snapshots/{skill_name}-$(date +%Y%m%dT%H%M%S).md
 ```
 
 ### Step 5: 基线评估

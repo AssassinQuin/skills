@@ -45,8 +45,11 @@ phase-start audit {skill_dir}
 ### Step 1: BEFORE 副本
 
 ```bash
-BEFORE_PATH="/tmp/{skill}-before.md"
-git show "HEAD~1:{git_rel}" > "$BEFORE_PATH"
+BEFORE_PATH="{skill_dir}/.evolve/snapshots/{skill-name}-latest.md"
+# 如果 snapshots 目录无最新副本，从 git 获取
+if [ ! -f "$BEFORE_PATH" ]; then
+  git show "HEAD~1:{git_rel}" > "$BEFORE_PATH"
+fi
 ```
 
 ### Step 2: 构造审计 prompt
@@ -58,13 +61,31 @@ git show "HEAD~1:{git_rel}" > "$BEFORE_PATH"
 
 门控：Score > 基线 Score，且无单项 < 5。
 
-### Step 4: 清理 + 保存报告
+### Step 4: 进化效果对比（主 agent 生成，非审计子 agent）
 
-```bash
-rm /tmp/{skill}-before.md
+审计子 agent 返回评分后，**主 agent** 基于已知信息生成效果对比：
+
+```
+## 进化效果对比
+### 问题解决
+| 痛点 | 进化前 | 进化后 | 改善 |
+|------|--------|--------|------|
+| PP-xxx | {痛点描述} | {如何解决} | {量化效果} |
+
+### 量化对比
+| 指标 | Before | After | Δ |
+|------|--------|-------|---|
+| Score | X.X | Y.Y | +Z.Z |
+| 约束数 | N | M | -K |
+| 行数 | L1 | L2 | ±L |
+| 痛点 open | O1 | O2 | -P |
 ```
 
-保存到 `.evolve/audit-reports/{skill}-R{round}.md`。
+此对比与审计报告一起展示给用户确认。
+
+### Step 5: 清理 + 保存报告
+
+保存到 `.evolve/audit-reports/{skill}-R{round}.md`（不删除 snapshots）。
 
 ## 关卡
 

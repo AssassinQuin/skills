@@ -85,8 +85,36 @@ source /Users/ganjie/.claude/skills/skill-evolver/scripts/evolve.sh && phase-sta
 | baseline | 基线评分 + 痛点表 + Quick Fix 判定 | → exploration |
 | exploration | 候选策略排名 + 对比分析 | → application |
 | application | 修改文件列表 + diff 摘要 | → audit |
-| audit | 审计报告 | → deployment |
-| deployment | 最终评分对比 + T_val 结果 | → merge to main |
+| audit | 审计报告 + **进化效果对比**（见下方） | → deployment |
+| deployment | 最终评分对比 + **痛点回归测试** + T_val 结果 | → merge to main |
+
+### 进化效果对比（audit 阶段展示）
+
+除审计评分外，必须展示：
+
+```
+## 进化效果对比
+### 问题解决
+| 痛点 | 进化前 | 进化后 | 改善 |
+|------|--------|--------|------|
+| PP-xxx | 描述问题 | 如何解决 | 量化效果 |
+
+### 量化对比
+| 指标 | Before | After | Δ |
+|------|--------|-------|---|
+| Score | X.X | Y.Y | +Z.Z |
+| 约束数 | N | M | -K |
+| 行数 | L1 | L2 | -L |
+| 痛点 open | O1 | O2 | -P |
+```
+
+### 痛点回归测试（deployment 阶段强制）
+
+deployment 阶段必须执行：
+1. 读取 `{skill}/.evolve/pain-points.jsonl` 所有 `resolved` 状态的痛点
+2. 对每个 resolved 痛点验证其修复是否仍然有效（检查 SKILL.md 中对应内容）
+3. 任何回归 → `pp-regress` + 回滚到 CP-03
+4. 全部通过 → 继续部署
 
 ## 子 Agent
 
@@ -113,7 +141,7 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。
 
 ## Git
 
-分支：`evolve/{skill}/YYYYMMDD`。BEFORE 写 `/tmp/`。
+分支：`evolve/{skill}/YYYYMMDD`。BEFORE 副本保存到 `{skill}/.evolve/snapshots/{skill-name}-{timestamp}.md`。
 
 | 时机 | Checkpoint |
 |------|-----------|
