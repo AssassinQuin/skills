@@ -2,6 +2,19 @@
 
 P2 阶段各子 Agent 的搜索词模板。按需替换 `{功能词}` / `{同义词}` / `{上下游词}`。
 
+## MCP 降级策略
+
+当 MCP 工具不可用（超时/报错/未配置）时，按以下链路降级：
+
+| 工具不可用 | 降级方案 |
+|-----------|---------|
+| `mcp__github__search_repositories` | → `WebSearch: site:github.com "{功能词}" skill` |
+| `mcp__searxng__searxng_web_search` | → `WebSearch` 或 `mcp__web-search-prime__web_search_prime` |
+| `mcp__github__get_file_contents` | → `WebFetch: raw.githubusercontent.com/...` |
+| `mcp__web-reader__webReader` | → `WebFetch` |
+
+降级后标注来源为 `{工具名}-fallback`，不影响后续流程。
+
 ## Scout-GH（只用 search_repositories）
 
 ```

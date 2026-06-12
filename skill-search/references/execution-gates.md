@@ -29,6 +29,7 @@
 ## P4 Exit Checklist
 
 ```
+□ P2 未使用 search_code 做发现（若使用了，丢弃结果重搜）
 □ 每个候选先 get_repo_structure 检查目录（不做根目录假设）
 □ 多 Skill 仓库已识别（SKILL.md 在 skills/ 子目录）
 □ SKILL.md + README.md 已读取
