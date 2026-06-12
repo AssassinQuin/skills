@@ -1,0 +1,18 @@
+{
+  "total_rounds": 1,
+  "history": [
+    {
+      "round": 1,
+      "date": "2026-06-12",
+      "strategy": "S5+S4+S1",
+      "score_before": 4.40,
+      "score_after": 8.80,
+      "delta": 4.40
+    }
+  ],
+  "last_round": {
+    "date": "2026-06-12",
+    "strategy": "S5+S4+S1",
+    "score": 8.80
+  }
+}

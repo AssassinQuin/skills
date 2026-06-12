@@ -1,0 +1,45 @@
+interface:
+  display_name: "Skill Creator"
+  short_description: "Command-driven skill factory with sub-agent orchestration and enforced validation."
+  trigger_words: ["create skill", "new skill", "写个 skill", "创建 skill", "skill 模板", "新建 skill", "update skill", "validate skill", "init skill"]
+  default_prompt: "Use $skill-creator to create or update a skill following the standard directory structure."
+
+agents:
+  - role: "architect"
+    model: "haiku"
+    description: "Directory structure planning, naming validation, frontmatter generation. Deterministic tasks."
+
+  - role: "writer"
+    model: "sonnet"
+    description: "SKILL.md content writing, README.md, references/ content. Requires creative reasoning."
+
+  - role: "validator"
+    model: "haiku"
+    description: "quick_validate.py execution, structure completeness check. Deterministic verification."
+
+workflow:
+  - step: "init"
+    agent: null
+    description: "Run init_skill.py script (mandatory)"
+    output: "directory with templates"
+
+  - step: "architect"
+    agent: "architect"
+    output: "frontmatter + directory layout + agents/ config"
+
+  - step: "draft"
+    agent: "writer"
+    output: "SKILL.md body + README.md + references/"
+
+  - step: "validate"
+    agent: "validator"
+    output: "validation results + completeness check"
+
+  - step: "package"
+    agent: null
+    description: "Run package_skill.py (optional, only when requested)"
+
+scripts:
+  init: "scripts/init_skill.py"
+  validate: "scripts/quick_validate.py"
+  package: "scripts/package_skill.py"
