@@ -14,6 +14,7 @@ allowed-tools:
   - Bash
   - mcp__github__get_file_contents
   - mcp__github__list_issues
+hidden: true
 metadata:
   version: "1.0"
 ---

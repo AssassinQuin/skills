@@ -1,6 +1,7 @@
 ---
 name: simplify
-description: Simplifies code for clarity without changing behavior. Use for readability, maintainability, and complexity reduction after behavior is understood.
+description: Simplifies code for clarity without changing behavior. Use for readability, maintainability, and complexity reduction after behavior is understood. Merged into code-review --fix mode.
+hidden: true
 ---
 
 # Code Simplification
