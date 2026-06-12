@@ -1,0 +1,44 @@
+interface:
+  display_name: "MCP Builder"
+  short_description: "Full-lifecycle MCP server creation: research → implement → review → evaluate."
+  trigger_words: ["build MCP server", "创建 MCP server", "MCP 工具开发", "MCP integration", "mcp-builder"]
+  default_prompt: "Use $mcp-builder to create a production-quality MCP server for the target service."
+
+agents:
+  - role: "researcher"
+    model: "sonnet"
+    description: "Deep research on target service API. Maps endpoints, auth patterns, rate limits, and data models."
+
+  - role: "implementer"
+    model: "sonnet"
+    description: "Implements MCP server with proper error handling, type safety, and documentation. Follows MCP spec."
+
+  - role: "reviewer"
+    model: "sonnet"
+    description: "Reviews implementation against MCP spec. Checks error messages are actionable and types are safe at boundaries."
+
+  - role: "evaluator"
+    model: "sonnet"
+    description: "Creates evaluation suite. Designs test cases for happy path, edge cases, and error scenarios."
+
+workflow:
+  - step: "research"
+    agent: "researcher"
+    output: "API mapping + tool interface design"
+
+  - step: "implement"
+    agent: "implementer"
+    output: "MCP server implementation"
+
+  - step: "review"
+    agent: "reviewer"
+    output: "review findings + fixes"
+
+  - step: "evaluate"
+    agent: "evaluator"
+    output: "evaluation suite + results"
+
+scripts:
+  deps: "scripts/requirements.txt"
+  eval: "scripts/evaluation.py"
+  connections: "scripts/connections.py"

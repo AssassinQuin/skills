@@ -1,0 +1,48 @@
+interface:
+  display_name: "Web Research"
+  short_description: "Multi-source parallel research with structured synthesis."
+  trigger_words: ["调研", "研究", "web research", "对比分析", "方案选型", "文献", "literature review", "deep dive"]
+  default_prompt: "Use $web-research to conduct structured multi-source research on the topic."
+
+agents:
+  - role: "local-search"
+    model: "haiku"
+    description: "Greps existing knowledge base and MCP cache. Fast, zero-cost first pass before web search."
+
+  - role: "search-agent"
+    model: "sonnet"
+    description: "Parallel search agents, one per brainstorm angle. Uses MCP search tools with source diversity."
+
+  - role: "inspiration-miner"
+    model: "sonnet"
+    description: "Follow-up mining on ≥2 high-value findings. Budget: 5-8 iterations per finding."
+
+  - role: "synthesizer"
+    model: "sonnet"
+    description: "Combines all findings into structured synthesis report. Writes to data/{date}-{slug}/."
+
+workflow:
+  - step: "local-first"
+    agent: "local-search"
+    output: "existing knowledge check"
+
+  - step: "brainstorm-angles"
+    agent: "synthesizer"
+    output: "6 search themes + user confirmation"
+
+  - step: "parallel-search"
+    agent: "search-agent"
+    parallel: true
+    output: "raw search results per angle"
+
+  - step: "inspiration-mining"
+    agent: "inspiration-miner"
+    condition: "≥2 high-value findings"
+    output: "deep-dived findings"
+
+  - step: "synthesis"
+    agent: "synthesizer"
+    output: "structured report"
+
+scripts:
+  probe: "scripts/mcp-probe.sh"

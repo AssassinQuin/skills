@@ -1,0 +1,40 @@
+interface:
+  display_name: "Coder"
+  short_description: "Multi-language coding orchestrator with context-aware execution."
+  trigger_words: ["写代码", "实现", "重构", "修复", "coder", "编码", "开发", "debug", "新增", "审计代码", "review diff"]
+  default_prompt: "Use $coder to implement the requested change with language detection, context loading, and verification."
+
+agents:
+  - role: "language-detector"
+    model: "haiku"
+    description: "Detects project language and loads appropriate conventions from references/. Fast, deterministic task."
+
+  - role: "context-loader"
+    model: "haiku"
+    description: "Reads language-specific reference files (go-*.md, python-*.md) and project config. No reasoning needed."
+
+  - role: "executor"
+    model: "sonnet"
+    description: "Main code execution agent. Implements changes following loaded conventions with verification loops."
+
+  - role: "auditor"
+    model: "sonnet"
+    description: "Deep code audit following code-audit-protocol.md. Checks correctness, security, and convention compliance."
+
+workflow:
+  - step: "detect"
+    agent: "language-detector"
+    output: "language + toolchain info"
+
+  - step: "load-context"
+    agent: "context-loader"
+    output: "conventions + constraints loaded"
+
+  - step: "execute"
+    agent: "executor"
+    output: "code changes"
+
+  - step: "audit"
+    agent: "auditor"
+    condition: "standard or full path"
+    output: "audit findings"

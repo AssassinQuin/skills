@@ -1,0 +1,43 @@
+interface:
+  display_name: "Doc Co-Authoring"
+  short_description: "Structured document co-authoring. User drives content, AI drives structure."
+  trigger_words: ["写文档", "co-author", "proposal", "技术方案", "设计文档", "RFC", "decision record"]
+  default_prompt: "Use $doc-coauthoring to guide the user through a structured document writing workflow."
+
+agents:
+  - role: "questioner"
+    model: "sonnet"
+    description: "Stage 1: Asks clarifying questions to gather context. Helps user dump info without structure pressure."
+
+  - role: "structurer"
+    model: "sonnet"
+    description: "Stage 2: Proposes document structures, brainstorming organization options, running gap checks."
+
+  - role: "drafter"
+    model: "sonnet"
+    description: "Stage 2/3: Drafts sections based on user's content input and agreed structure."
+
+  - role: "reviewer"
+    model: "sonnet"
+    description: "Stage 3: Reviews draft for gaps, inconsistencies, and clarity. Suggests improvements."
+
+workflow:
+  - step: "context-gathering"
+    agent: "questioner"
+    output: "user's knowledge dump + clarifications"
+
+  - step: "structure"
+    agent: "structurer"
+    output: "proposed structure + brainstorm + curation"
+
+  - step: "gap-check"
+    agent: "structurer"
+    output: "identified gaps + missing sections"
+
+  - step: "draft"
+    agent: "drafter"
+    output: "document draft"
+
+  - step: "review"
+    agent: "reviewer"
+    output: "improvement suggestions"

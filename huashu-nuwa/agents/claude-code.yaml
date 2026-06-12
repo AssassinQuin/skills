@@ -1,0 +1,50 @@
+interface:
+  display_name: "女娲 (Nuwa)"
+  short_description: "Distills expert thinking patterns into reusable skills from multi-source research."
+  trigger_words: ["蒸馏", "distill", "创建视角skill", "从视频提取方法论", "从文章提取思维框架"]
+  default_prompt: "Use $huashu-nuwa to distill a person's cognitive framework into a reusable skill."
+
+agents:
+  - role: "research-swarm"
+    model: "sonnet"
+    description: "Parallel Agent Swarm for multi-source research. One agent per channel: books, podcasts, social media, critic perspectives, decisions, timelines."
+
+  - role: "framework-synthesizer"
+    model: "sonnet"
+    description: "Triple-verify and synthesize research into mental models. Filters for cross-domain appearance, predictive power, and exclusivity."
+
+  - role: "skill-generator"
+    model: "sonnet"
+    description: "Generates SKILL.md from synthesized framework using skill-template.md. Includes expression DNA, decision heuristics, and honesty boundaries."
+
+  - role: "quality-validator"
+    model: "sonnet"
+    description: "Tests generated skill with 3 known-answer questions + 1 novel question. Validates consistency and appropriate uncertainty."
+
+workflow:
+  - step: "triage"
+    agent: null
+    description: "Entry triage: direct path vs. fuzzy diagnosis."
+
+  - step: "research"
+    agent: "research-swarm"
+    parallel: true
+    output: "raw research per channel"
+
+  - step: "synthesize"
+    agent: "framework-synthesizer"
+    output: "verified mental models + decision heuristics"
+
+  - step: "generate"
+    agent: "skill-generator"
+    output: "SKILL.md + supporting files"
+
+  - step: "validate"
+    agent: "quality-validator"
+    output: "quality report + pass/fail"
+
+scripts:
+  download: "scripts/download_subtitles.sh"
+  merge: "scripts/merge_research.py"
+  quality: "scripts/quality_check.py"
+  transcript: "scripts/srt_to_transcript.py"

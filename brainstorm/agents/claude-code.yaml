@@ -1,0 +1,32 @@
+interface:
+  display_name: "Brainstorm"
+  short_description: "Structured brainstorming: DIGGING → INCUBATING → CONVERGING."
+  trigger_words: ["头脑风暴", "brainstorm", "碰撞", "发散", "创意", "想法", "帮我想想"]
+  default_prompt: "Use $brainstorm to dig into the real problem and generate creative solutions."
+
+agents:
+  - role: "stimulus-generator"
+    model: "sonnet"
+    description: "Generates cross-domain stimulus for the INCUBATING phase. Random analogies, inversions, and remote associations."
+
+  - role: "novel-enhancer"
+    model: "sonnet"
+    description: "Activates novel-writing domain techniques for creative fiction requests. Uses novel-brainstorm.md."
+
+workflow:
+  - step: "digging"
+    agent: null
+    description: "Deep-dive into real problem. Input validation + clarify with user."
+
+  - step: "incubating"
+    agent: "stimulus-generator"
+    output: "cross-domain stimulus + collision results"
+
+  - step: "converging"
+    agent: null
+    description: "Filter, rank, select. User correction mechanism active."
+
+  - step: "novel-boost"
+    agent: "novel-enhancer"
+    condition: "fiction/creative writing request"
+    output: "domain-specific ideation"

@@ -8,11 +8,28 @@ A unified AI skill library. 34 skills distributed via directory-level symlinks t
 
 ## Skill Structure
 
-Every skill lives in `<skill-name>/SKILL.md` with YAML frontmatter (required: `name`, `description`) plus Markdown body. Optional dirs: `references/`, `scripts/`.
+Every skill lives in `<skill-name>/SKILL.md` with YAML frontmatter (required: `name`, `description`) plus Markdown body.
 
 Frontmatter fields: `name`, `description`, `allowed-tools`, `license`, `hidden`, `user-invocable`, `hooks`, `metadata.version`.
 
 Languages: mostly English, some Chinese (huashu-nuwa, pua-debugging), traditional Chinese (storytelling).
+
+### Standard Directory Layout
+
+```
+<skill-name>/
+├── SKILL.md                    # Core instructions (AI consumed, required)
+├── README.md                   # User docs: what it does, triggers, workflow, structure
+├── references/                 # Reference knowledge loaded by the skill
+├── scripts/                    # Automation scripts (shell, python, etc.)
+├── agents/
+│   └── claude-code.yaml        # Sub-agent orchestration: roles, models, workflow
+├── examples/                   # Example inputs/outputs (optional)
+└── evals/                      # Quality checklists and evaluation rubrics (optional)
+```
+
+- **README.md** — User-facing documentation. What the skill does, trigger words, quick start, workflow overview, directory structure, and related skills.
+- **agents/claude-code.yaml** — Declarative sub-agent config: `interface` (display_name, trigger_words, default_prompt) + `agents` (role, model, description) + `workflow` (ordered steps with agent assignments). Model assignment follows coding-rules R5.1 (haiku for deterministic, sonnet for standard, opus for strategic).
 
 ## Distribution (Directory-Level Symlinks)
 

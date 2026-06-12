@@ -1,0 +1,43 @@
+interface:
+  display_name: "Skill Evolver"
+  short_description: "Skill self-evolution framework. Command-driven, script-enforced, with deployment grounding audit."
+  trigger_words: ["进化", "审计", "评估", "skill-evolver", "优化 skill", "重写 skill", "验证 skill", "查看进化历史"]
+  default_prompt: "Use $skill-evolver to analyze and evolve the target skill through structured phases."
+
+agents:
+  - role: "evaluator"
+    model: "sonnet"
+    description: "Scores skill against rubric dimensions. Identifies weak areas and pain points."
+
+  - role: "proposer"
+    model: "opus"
+    description: "Generates evolution proposals with strategic reasoning. Requires deep understanding of skill design."
+
+  - role: "applier"
+    model: "sonnet"
+    description: "Applies proposed changes to SKILL.md, runs evolve.sh phases, and validates regression."
+
+  - role: "reviewer"
+    model: "opus"
+    description: "Final quality gate. Reviews evolved skill holistically, checks for regressions."
+
+workflow:
+  - step: "evaluate"
+    agent: "evaluator"
+    output: "baseline score + pain points"
+
+  - step: "propose"
+    agent: "proposer"
+    output: "evolution proposals with rationale"
+
+  - step: "apply"
+    agent: "applier"
+    output: "modified SKILL.md + phase results"
+
+  - step: "review"
+    agent: "reviewer"
+    condition: "deployment phase"
+    output: "final quality assessment"
+
+scripts:
+  enforce: "scripts/evolve.sh"

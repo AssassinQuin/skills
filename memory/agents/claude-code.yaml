@@ -1,0 +1,53 @@
+interface:
+  display_name: "Memory"
+  short_description: "Cross-skill memory API with MCP tools. Three-tier isolation: project/shared/global."
+  trigger_words: ["save to memory", "保存记忆", "提取记忆", "recall", "remember", "记忆", "会话结束"]
+  default_prompt: "Use $memory to store, retrieve, or manage knowledge across sessions."
+
+agents:
+  - role: "gate-keeper"
+    model: "haiku"
+    description: "Validates whether information is memory-worthy. Rejects ephemeral, derivable-from-code, or duplicate entries."
+
+  - role: "tagger"
+    model: "haiku"
+    description: "Classifies memory entry: assigns scope (project/shared/global), type (fact/decision/pattern/error/preference), and lifecycle."
+
+  - role: "search-agent"
+    model: "haiku"
+    description: "Searches memory with scope filtering and relevance ranking via MCP tools."
+
+  - role: "cleanup-agent"
+    model: "haiku"
+    description: "Identifies stale, conflicting, or redundant memories. Proposes cleanup actions."
+
+workflow:
+  - step: "gate"
+    agent: "gate-keeper"
+    output: "memory-worthy: yes/no + reason"
+
+  - step: "classify"
+    agent: "tagger"
+    condition: "memory-worthy"
+    output: "scope + type + lifecycle"
+
+  - step: "store"
+    agent: null
+    description: "Write via MCP tool (memory_store)"
+
+  - step: "search"
+    agent: "search-agent"
+    output: "ranked results"
+
+  - step: "cleanup"
+    agent: "cleanup-agent"
+    condition: "user requests or session-end"
+    output: "cleanup proposal"
+
+mcp_tools:
+  store: "memory_memory_store"
+  search: "memory_memory_search"
+  list: "memory_memory_list"
+  delete: "memory_memory_delete"
+  update: "memory_memory_update"
+  health: "memory_memory_health"
