@@ -105,15 +105,16 @@ Mode G 时：用户提供痛点 → `pp-create`，source="user-stated"。
 ### Step 4: Git 分支 + BEFORE 快照
 
 ```bash
-git-setup {skill_name}
+git-setup {skill_name} {skill_dir}
 ```
 
-保存 BEFORE 快照到 `.evolve/snapshots/`（非 `/tmp/`，确保可追溯）：
+保存 BEFORE 快照（必须使用脚本，禁止手动 cp）：
 
 ```bash
-mkdir -p {skill_dir}/.evolve/snapshots
-cp {skill_dir}/SKILL.md {skill_dir}/.evolve/snapshots/{skill_name}-$(date +%Y%m%dT%H%M%S).md
+source /path/to/evolve.sh && snapshot-save {skill_dir}
 ```
+
+**禁止**：将副本保存到 `/tmp/` 或任何非 `.evolve/snapshots/` 的位置。
 
 ### Step 5: 基线评估
 

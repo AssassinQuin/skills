@@ -380,3 +380,40 @@ skill-validate() {
   fi
   return $issues
 }
+
+# ============ 快照保存（BEFORE 副本） ============
+snapshot-save() {
+  local dir="${1:?skill dir required}"
+  local skill_name
+  skill_name=$(basename "$dir")
+  local snap_dir="$dir/.evolve/snapshots"
+  local ts
+  ts=$(date +%Y%m%dT%H%M%S)
+  local snap_file="$snap_dir/${skill_name}-${ts}.md"
+
+  [ -f "$dir/SKILL.md" ] || { echo "ERROR: SKILL.md not found in $dir" >&2; return 1; }
+
+  mkdir -p "$snap_dir"
+  cp "$dir/SKILL.md" "$snap_file"
+
+  # Also create a "latest" symlink for easy access
+  local latest="$snap_dir/${skill_name}-latest.md"
+  ln -sf "$snap_file" "$latest"
+
+  echo "Snapshot saved: $snap_file"
+}
+
+# ============ 审计报告保存 ============
+audit-save() {
+  local dir="${1:?skill dir required}"
+  local round="${2:?round number required}"
+  local skill_name
+  skill_name=$(basename "$dir")
+  local report_dir="$dir/.evolve/audit-reports"
+  local report_file="$report_dir/${skill_name}-R${round}.md"
+
+  mkdir -p "$report_dir"
+
+  echo "Audit report path: $report_file"
+  echo "Write the audit report to this file. Main agent must save the content."
+}

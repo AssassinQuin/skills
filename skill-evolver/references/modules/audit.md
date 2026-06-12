@@ -44,13 +44,14 @@ phase-start audit {skill_dir}
 
 ### Step 1: BEFORE 副本
 
+从 `.evolve/snapshots/` 读取（由 baseline 阶段 `snapshot-save` 创建）：
+
 ```bash
 BEFORE_PATH="{skill_dir}/.evolve/snapshots/{skill-name}-latest.md"
-# 如果 snapshots 目录无最新副本，从 git 获取
-if [ ! -f "$BEFORE_PATH" ]; then
-  git show "HEAD~1:{git_rel}" > "$BEFORE_PATH"
-fi
+ls "$BEFORE_PATH" || { echo "ERROR: BEFORE snapshot not found. Was snapshot-save run in baseline?" >&2; exit 1; }
 ```
+
+如果 snapshot 不存在（异常情况），从 git 获取并报警告。
 
 ### Step 2: 构造审计 prompt
 
@@ -83,9 +84,13 @@ fi
 
 此对比与审计报告一起展示给用户确认。
 
-### Step 5: 清理 + 保存报告
+### Step 5: 保存审计报告（必须执行）
 
-保存到 `.evolve/audit-reports/{skill}-R{round}.md`（不删除 snapshots）。
+```bash
+source evolve.sh && audit-save {skill_dir} {round}
+```
+
+主 agent 将审计子 agent 的完整报告写入 `audit-save` 输出的路径。不删除 snapshots。
 
 ## 关卡
 

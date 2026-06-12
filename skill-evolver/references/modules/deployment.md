@@ -12,11 +12,15 @@ phase-check deployment {skill_dir}
 
 ### Step 1: T_train 回归测试（sonnet 子 agent）
 
-用 T_train 测试改写后的 skill + traces.jsonl 失败场景。
+**必须 spawn sonnet 子 agent 执行**，禁止主 agent 自行验证。子 agent 读取 SKILL.md + T_train，模拟执行每个 prompt，返回通过/失败结果。
+
+如果 T_train 未由子 agent 实际执行，日志中 T_train_rate 必须标记为 "UNVERIFIED"，不可填写通过率。
 
 ### Step 2: T_val Held-out 验证（独立 opus 子 agent）
 
 独立 opus agent 在全新上下文中读取 SKILL.md + T_val，模拟执行每个 T_val prompt，输出通过率。Prompt 模板见 [deployer-template.md](prompts/deployer-template.md)。
+
+**T_val 是 deployment 的硬性门控**。如果未 spawn opus 子 agent 执行 T_val，deployment 必须中止。
 
 ### Step 3: 退化判定
 
@@ -73,21 +77,33 @@ metrics-update {skill_dir} {round} {strategy} {before} {after} {d1} {d2} {d3} {d
 pp-resolve {skill_dir} {pp_id} {strategy_id}
 ```
 
-### Step 7: Git Commit（CP-04）
+### Step 7: Git Commit（CP-04）+ 初始化 deployment-traces
 
 ```bash
 git-checkpoint "evolve {skill}: deploy-r{r}-score-{before}-{after}"
+# 确保 deployment-traces.jsonl 存在
+touch {skill_dir}/.evolve/deployment-traces.jsonl
 ```
 
 ## 关卡：部署结果确认
 
 ```
 部署结果：
-- T_train 通过率：X/Y
-- T_val 通过率：X/Y
+- T_train 通过率：X/Y（子 agent 执行 / UNVERIFIED）
+- T_val 通过率：X/Y（opus 子 agent 执行 / UNVERIFIED）
 - 痛点回归：X/Y
 - 退化：progress / partial / regression
 - Token：{actual} / {budget}
+- BEFORE 快照：.evolve/snapshots/ 存在 / 不存在
+- 审计报告：.evolve/audit-reports/ 存在 / 不存在
+
+诚信自检：
+□ T_train 由子 agent 实际执行（非主 agent 自评）
+□ T_val 由 opus 子 agent 独立执行
+□ 审计由 opus 子 agent 独立执行（Quick Fix 也不例外）
+□ BEFORE 快照保存在 .evolve/snapshots/（非 /tmp/）
+□ 审计报告已保存到 .evolve/audit-reports/
+□ deployment-traces.jsonl 已创建
 
 本轮总结：
 - 策略：S{k}
