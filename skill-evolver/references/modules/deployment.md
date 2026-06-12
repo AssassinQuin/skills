@@ -10,6 +10,17 @@ phase-check deployment {skill_dir}
 
 ## 执行步骤
 
+### Step 0: 更新版本号
+
+根据本轮改动幅度更新 SKILL.md frontmatter `version` 和标题：
+- 小改动（痛点修复、内容精简、文件合并）：patch +0.1
+- 大改动（范式转换、新增模式/流程）：minor +1.0
+
+```bash
+# 编辑 SKILL.md: version: "X.Y" → version: "X.Z"（或 X+1.0）
+# 编辑 SKILL.md: # Skill Evolver vX.Y → vZ.W
+```
+
 ### Step 1: T_train 回归测试（sonnet 子 agent）
 
 **必须 spawn sonnet 子 agent 执行**，禁止主 agent 自行验证。子 agent 读取 SKILL.md + T_train，模拟执行每个 prompt，返回通过/失败结果。
