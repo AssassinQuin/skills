@@ -1,1 +1,2 @@
 {"round":1,"date":"2026-06-12","strategy":"S2+S5","score_before":4.65,"score_after":7.60,"delta":2.95,"d1":8,"d2":7,"d3":9,"d4":8,"d5":7,"t_train_rate":"4/4","t_val_rate":"3/3","audit_score":7.60,"lines_before":335,"lines_after":125}
+{"round":2,"date":"2026-06-12","strategy":"S1+S2","score_before":7.25,"score_after":7.95,"delta":0.70,"dimensions":{"D1":9,"D2":8,"D3":8,"D4":9,"D5":7},"t_train_rate":"4/4","t_val_rate":"3/3","verdict":"progress","audit_score":7.75,"lines_before":124,"lines_after":140,"warns_fixed":2,"pain_points_resolved":9}
