@@ -94,21 +94,21 @@ Bash: echo "tools loaded"
 
 如果加载失败：在 P6 报告中标注 `[TOOL-LOAD-FAIL]` 并降级到 WebSearch-only 模式。
 
-### Skill-local Agents 配置
+### Skill-local Agents 配置（prompt 模板）
 
-Scout 子 Agent 定义在 skill 自带的 `agents/` 目录（自包含，不依赖全局 `~/.claude/agents/`）：
+Scout 子 Agent 的 prompt 模板在 skill 自带的 `agents/` 目录：
 
 ```
 skill-search/agents/
-├── claude-code.yaml          # 5 个 Scout role 声明
+├── claude-code.yaml          # 5 个 Scout role 设计声明（文档）
 ├── scout-gh.md               # GitHub 搜索 prompt 模板
-├── scout-builtin.md          # 本地+Marketplace 扫描
-├── scout-market.md           # 垂直平台搜索
-├── scout-community.md        # 社区口碑
-└── scout-expand.md           # 候选扩展
+├── scout-builtin.md          # 本地+Marketplace 扫描 prompt 模板
+├── scout-market.md           # 垂直平台搜索 prompt 模板
+├── scout-community.md        # 社区口碑 prompt 模板
+└── scout-expand.md           # 候选扩展 prompt 模板
 ```
 
-修改 Scout 行为只改 `agents/scout-*.md`，不动 SKILL.md。
+Claude Code 不扫描 skill-local `agents/` 注册 subagent_type。这些 .md 是 **prompt 模板**，配合 `Agent(subagent_type="general-purpose", prompt=按模板填充)` 使用。修改 Scout 行为只改 `agents/scout-*.md`，不动 SKILL.md。
 
 ---
 
@@ -141,32 +141,34 @@ skill-search/agents/
 
 ### 主路径：Agent() 并行（推荐）
 
-启动 5 个子 Agent 并行执行（必须在单个 tool_calls 块中并行调用）：
+启动 5 个子 Agent 并行执行（必须在单个 tool_calls 块中并行调用）。
 
-| 子 Agent | subagent_type | model | 搜索源 | 核心规则 |
-|----------|--------------|-------|--------|---------|
-| Scout-GH | `scout-gh` | sonnet | GitHub | 只用 `search_repositories`，禁止 `search_code` |
-| Scout-BuiltIn | `scout-builtin` | sonnet | 本地 + Marketplace | 三层全执行，不允许跳过 |
-| Scout-Market | `scout-market` | sonnet | 垂直平台 | 直接访问 skillsmp.com 等，不依赖 SearXNG |
-| Scout-Community | `scout-community` | sonnet | 社区 | 中英文分别搜索，标记 `EN`/`CN` |
-| Scout-Expand | `scout-expand` | sonnet | 已发现→扩展 | Top 3 候选的 fork、credits、topics、关联项目 |
+**关键约束**：Claude Code 只识别内置 subagent_type（`general-purpose` / `Explore`）或全局 `~/.claude/agents/` 已注册的。Scout 用 `general-purpose` + prompt 模板调用。
 
-**Agent() 调用模板**（完整代码示例，详见 [tool-usage.md#agent-template](references/tool-usage.md#agent-template)；prompt 模板见 `agents/scout-*.md`）：
+| 子 Agent | subagent_type | model | prompt 模板 | 搜索源 |
+|----------|--------------|-------|------------|--------|
+| Scout-GH | `general-purpose` | sonnet | `agents/scout-gh.md` | GitHub `search_repositories` |
+| Scout-BuiltIn | `general-purpose` | sonnet | `agents/scout-builtin.md` | 本地 + Marketplace |
+| Scout-Market | `general-purpose` | sonnet | `agents/scout-market.md` | 垂直平台 |
+| Scout-Community | `general-purpose` | sonnet | `agents/scout-community.md` | 社区口碑 |
+| Scout-Expand | `general-purpose` | sonnet | `agents/scout-expand.md` | 候选扩展 |
+
+**Agent() 调用模板**：
 
 ```
 Agent(
-  subagent_type="scout-gh",        # 来自 skill-local agents/claude-code.yaml
-  model="sonnet",                  # R5.1：禁止省略
+  subagent_type="general-purpose",
+  model="sonnet",
   description="Scout-GH: GitHub 仓库搜索",
-  prompt="..."                     # 从 agents/scout-gh.md 加载，按需注入 {功能词}/{同义词}
+  prompt=按 agents/scout-gh.md 模板，{功能词}/{同义词}/{上下游} 替换为本次任务参数
 )
 ```
 
-5 个子 Agent 必须在**同一个 tool_calls 块**中并行调用。等待全部返回后聚合结果。
+5 个子 Agent 在同一个 tool_calls 块中并行调用。等待全部返回后聚合结果。
 
 ### Fallback 路径：主 Agent 串行（L2 降级）
 
-**触发条件**：连续 2 次 `Agent()` 调用报错（subagent_type 不存在 / model 错误 / 网络超时）。
+**触发条件**：连续 2 次 `Agent()` 调用报错（网络超时 / model 错误）。
 
 **降级流程**：
 1. 在 P6 报告附录标注 `[L2-FALLBACK] 子 Agent 无法 spawn，主 Agent 串行执行`
@@ -377,7 +379,7 @@ P5 推荐用 `mcp__searxng__searxng_web_search` 批量检索 + `mcp__web-search-
 
 1. **P0 工具加载不可跳过** — 进入 P1 前必须完成 ToolSearch 加载
 2. **Phase 间必须 AskUserQuestion 确认** — exit-checklist 配合强制确认点，未确认禁止进入下一 Phase
-3. **Agent() 调用必须传 subagent_type + model** — 启动子 Agent 用 `Agent` 工具（不是 `TaskCreate`）；缺任一参数子 Agent 不启动；model 选择：搜索用 sonnet，分析评估用 opus；subagent_type 必须在 skill-local `agents/claude-code.yaml` 或全局 `~/.claude/agents/` 中存在
+3. **Agent() 调用必须传 subagent_type + model** — 启动子 Agent 用 `Agent` 工具（不是 `TaskCreate`）；缺任一参数子 Agent 不启动；model 选择：搜索用 sonnet，分析评估用 opus；**subagent_type 必须是 Claude Code 内置（`general-purpose`/`Explore`）或全局 `~/.claude/agents/` 已注册的**；skill-local `agents/*.md` 仅作 prompt 模板，通过 inline 注入 prompt 参数
 4. **`search_code` 禁用于 P2 发现** — 只用于 P4 验证候选是否有 SKILL.md
 5. **垂直平台优先于 SearXNG** — SearXNG 对 Skill 生态理解差，英文搜索走 skillsmp.com / openagentskill.com
 6. **P4 必须先检查目录结构** — 不假设 SKILL.md 在根目录
