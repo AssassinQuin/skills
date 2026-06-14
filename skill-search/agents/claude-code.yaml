@@ -1,0 +1,88 @@
+interface:
+  display_name: "Skill Search"
+  short_description: "Multi-source skill search & evaluation engine (GitHub + Marketplace + Vertical Platforms + Community)"
+  trigger_words:
+    - 找 skill
+    - 搜索 skill
+    - skill 推荐
+    - skill 选型
+    - find skill
+    - recommend skill
+    - skill comparison
+    - skill 选哪个
+    - skill 横评
+    - 帮我找一个 skill
+  default_prompt: "Use skill-search to find, evaluate, and recommend skills across multiple sources."
+
+agents:
+  - role: scout-gh
+    model: sonnet
+    description: |
+      GitHub 仓库搜索 agent。加载 agents/scout-gh.md prompt 模板。
+      任务：用 mcp__github__search_repositories 搜索功能词/同义词/上下游词。
+      禁止用 search_code 做发现（只用于 P4 验证 SKILL.md 存在性）。
+
+  - role: scout-builtin
+    model: sonnet
+    description: |
+      本地+Marketplace 扫描 agent。加载 agents/scout-builtin.md。
+      三层扫描：本地 ~/.claude/skills/ → Plugin Marketplace registry → Web 搜新商城。
+      必须用 ctx_batch_execute 批量执行三层命令。
+
+  - role: scout-market
+    model: sonnet
+    description: |
+      垂直平台搜索 agent。加载 agents/scout-market.md。
+      直接访问 skillsmp.com / openagentskill.com / skills.sh / clawhub.ai。
+      不依赖 SearXNG 做主要发现。
+
+  - role: scout-community
+    model: sonnet
+    description: |
+      社区口碑搜索 agent。加载 agents/scout-community.md。
+      英文源（Reddit/HN/Medium/Dev.to）+ 中文源（知乎/V2EX/掘金/CSDN）分别搜索。
+      每条反馈标注来源语言 + 日期。
+
+  - role: scout-expand
+    model: sonnet
+    description: |
+      候选扩展搜索 agent。加载 agents/scout-expand.md。
+      对 Top 3 候选执行：读 README credits、检查 topics、找 fork、找 alternative。
+
+workflow:
+  - step: p0-tool-loading
+    agent: null
+    description: 主 agent 执行 ToolSearch select 加载 deferred 工具
+    output: 工具 schema 注册完成
+
+  - step: p1-requirement-parse
+    agent: null
+    description: 主 agent 提取四组搜索词（功能/同义/上下游/生态）
+    output: 中英双语搜索词 + AskUserQuestion 确认
+
+  - step: p2-multi-source-search
+    agent: scout-*  # 5 个 Scout 并行（在单个 tool_calls 块中）
+    output: 候选池（合并去重，≥10 个）
+
+  - step: p3-coarse-filter
+    agent: null
+    description: 主 agent 按 stars/issues/forks 粗筛（用 ctx_batch_execute 批量）
+    output: Top 5 候选
+
+  - step: p4-deep-read
+    agent: null
+    description: 主 agent 用 mcp__zread__read_file 读 SKILL.md + README.md，按 evaluation-rubric 打分
+    output: 8 维评分（40 分制）
+
+  - step: p5-community-feedback
+    agent: null
+    description: 主 agent 读取 GitHub Issues + 双源社区搜索
+    output: 中英文反馈分别记录
+
+  - step: p6-report
+    agent: null
+    description: 主 agent 生成综合报告（含执行透明度声明）
+    output: 推荐 Top 5 + 淘汰记录 + 搜索覆盖统计
+
+scripts:
+  enforce: "../skill-evolver/scripts/evolve.sh"

@@ -4,40 +4,51 @@ interface:
   trigger_words: ["进化", "审计", "评估", "skill-evolver", "优化 skill", "重写 skill", "验证 skill", "查看进化历史"]
   default_prompt: "Use $skill-evolver to analyze and evolve the target skill through structured phases."
 
+# 子 Agent 角色声明
+# 注意：本 skill 复用 ~/.claude/agents/ 全局 personal agent，不重复定义 skill-local
+# 全局配置：~/.claude/agents/{evolver-auditor,evolver-explorer}.md
+# Claude 内置：Explore / general-purpose（无需配置）
+
 agents:
-  - role: "evaluator"
-    model: "sonnet"
-    description: "Scores skill against rubric dimensions. Identifies weak areas and pain points."
+  - role: evolver-explorer
+    model: sonnet
+    description: |
+      策略探索子 agent（全局 ~/.claude/agents/evolver-explorer.md）。
+      任务：baseline 阶段 D5 基线测试、exploration 阶段 S0-S6 策略探索、T_train 回归测试。
+      用法：Agent(subagent_type="evolver-explorer", model="sonnet", description=..., prompt=...)
 
-  - role: "proposer"
-    model: "opus"
-    description: "Generates evolution proposals with strategic reasoning. Requires deep understanding of skill design."
-
-  - role: "applier"
-    model: "sonnet"
-    description: "Applies proposed changes to SKILL.md, runs evolve.sh phases, and validates regression."
-
-  - role: "reviewer"
-    model: "opus"
-    description: "Final quality gate. Reviews evolved skill holistically, checks for regressions."
+  - role: evolver-auditor
+    model: opus
+    description: |
+      独立审计子 agent（全局 ~/.claude/agents/evolver-auditor.md）。
+      任务：audit 阶段 5 维评分、deployment 阶段 T_val held-out 验证。
+      用法：Agent(subagent_type="evolver-auditor", model="opus", description=..., prompt=...)
+      强制全新上下文（不继承进化过程信息）。
 
 workflow:
-  - step: "evaluate"
-    agent: "evaluator"
-    output: "baseline score + pain points"
+  - step: baseline
+    agent: evolver-explorer  # sonnet，D5 基线测试
+    output: 基线评分 + 痛点 + Quick Fix 判定
 
-  - step: "propose"
-    agent: "proposer"
-    output: "evolution proposals with rationale"
+  - step: exploration
+    agent: evolver-explorer  # sonnet，S0-S6 策略探索（K=6/7 并行）
+    output: 候选策略排名 + 对比分析
 
-  - step: "apply"
-    agent: "applier"
-    output: "modified SKILL.md + phase results"
+  - step: application
+    agent: null  # 主 agent 直接改写
+    output: 修改后的 SKILL.md + Git Commit CP-03
 
-  - step: "review"
-    agent: "reviewer"
-    condition: "deployment phase"
-    output: "final quality assessment"
+  - step: audit
+    agent: evolver-auditor  # opus，独立审计
+    output: 5 维评分 + Verdict（PASS/NEEDS-FIX/REJECT）
+
+  - step: deployment-T-train
+    agent: evolver-explorer  # sonnet，T_train 回归
+    output: T_train 通过率
+
+  - step: deployment-T-val
+    agent: evolver-auditor  # opus，T_val held-out
+    output: T_val 通过率 + 痛点回归
 
 scripts:
   enforce: "scripts/evolve.sh"
