@@ -303,11 +303,9 @@ P5 推荐用 `mcp__searxng__searxng_web_search` 批量检索 + `mcp__web-search-
 
 ---
 
-## P6: 综合报告
+## P6: 综合报告 + 本地保存
 
-输出到用户指定位置或当前目录。每个候选包含：
-
-来源 / Stars / 一句话定位 / 优缺点（附证据链接）/ 典型 Issue / 社区反馈—英文源 / 社区反馈—中文源 / 安装建议 / 适合谁
+每个候选包含：来源 / Stars / 一句话定位 / 优缺点（附证据链接）/ 典型 Issue / 社区反馈—英文源 / 社区反馈—中文源 / 安装建议 / 适合谁
 
 报告末尾**必须包含**：
 - 淘汰记录（每个一行原因）
@@ -318,6 +316,36 @@ P5 推荐用 `mcp__searxng__searxng_web_search` 批量检索 + `mcp__web-search-
   - MCP 工具调用统计（`search_repositories: 8 次, get_repo_structure: 5 次, zread: 4 次`）
   - Fallback 触发记录（哪些工具降级到了什么）
 
+### 本地保存规范（强制，与 web-research 一致）
+
+所有 P2-P6 的搜索结果必须保存到 skill-search 自己的 data 目录，建立可检索档案：
+
+```
+{skill_dir}/data/{YYYYMMDD}-{slug}/
+├── 搜索报告.md          # P6 综合报告（主索引，≤200 行）
+├── 候选-Top5.md         # Top 5 详细评分（按 evaluation-rubric 8 维 40 分制）
+├── 淘汰记录.md          # P3 粗筛淘汰的候选 + 一行原因
+├── sources.md           # 搜索查询记录（中英文分开） + 信息源覆盖率
+└── raw/                 # 子 agent 原始输出（按 Scout 拆分）
+    ├── scout-gh.json
+    ├── scout-builtin.json
+    ├── scout-market.json
+    ├── scout-community.json
+    └── scout-expand.json
+```
+
+**slug 规则**：从用户需求提取关键词（中英结合，kebab-case），如：
+- "找代码审查的 skill" → `20260614-code-review`
+- "中文小说网文 skill" → `20260614-chinese-webnovel`
+- "兼容 OpenCode 的 skill" → `20260614-opencode-compat`
+
+**保存时机**：
+- P2 每个 Scout 返回后立即写入 `raw/scout-{role}.json`（增量保存，防丢失）
+- P3 粗筛完成后写入 `淘汰记录.md`
+- P6 报告生成后写入 `搜索报告.md` + `候选-Top5.md` + `sources.md`
+
+**去重检索**：下次触发相同/相似需求时，主 agent 先用 `glob("{skill_dir}/data/**/*.md")` + `grep(关键词)` 查历史档案，避免重复搜索。
+
 ### P6 Exit Checklist + AskUser 确认点
 
 ```
@@ -327,6 +355,7 @@ P5 推荐用 `mcp__searxng__searxng_web_search` 批量检索 + `mcp__web-search-
 □ 搜索覆盖统计
 □ 搜索查询记录（中文/英文分开）
 □ 执行透明度声明（spawn 数 + MCP 调用统计 + Fallback 记录）
+□ 本地保存完成：{skill_dir}/data/{YYYYMMDD}-{slug}/ 含 ≥4 个文件（搜索报告/候选-Top5/淘汰记录/sources）+ raw/ 目录
 □ AskUserQuestion 确认最终报告
 ```
 
@@ -356,3 +385,4 @@ P5 推荐用 `mcp__searxng__searxng_web_search` 批量检索 + `mcp__web-search-
 8. **P4 文件读取禁用 get_file_contents 读内容** — 该工具在 Claude Code 中只返回 SHA；用 `mcp__zread__read_file` 或 `WebFetch raw URL` 替代
 9. **ctx_batch_execute 必须双参数** — `commands` 数组 + `queries` 数组都必需，缺 queries 报错
 10. **执行透明度声明强制** — P6 报告必须展示 spawn 数 + MCP 调用统计 + Fallback 记录
+11. **本地保存强制** — P6 必须保存到 `{skill_dir}/data/{YYYYMMDD}-{slug}/`（与 web-research 一致），含搜索报告 + Top5 + 淘汰记录 + sources + raw/ 目录；下次相似需求先 grep 历史档案
