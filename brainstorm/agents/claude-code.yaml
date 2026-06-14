@@ -4,10 +4,7 @@ interface:
   trigger_words: ["头脑风暴", "brainstorm", "碰撞", "发散", "创意", "想法", "帮我想想"]
   default_prompt: "Use $brainstorm to dig into the real problem and generate creative solutions."
 
-agents:
-  - role: "stimulus-generator"
-    model: "sonnet"
-    description: "Generates cross-domain stimulus for the INCUBATING phase. Random analogies, inversions, and remote associations."
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: "novel-enhancer"
     model: "sonnet"
@@ -19,7 +16,7 @@ workflow:
     description: "Deep-dive into real problem. Input validation + clarify with user."
 
   - step: "incubating"
-    agent: "stimulus-generator"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "cross-domain stimulus + collision results"
 
   - step: "converging"
@@ -27,6 +24,6 @@ workflow:
     description: "Filter, rank, select. User correction mechanism active."
 
   - step: "novel-boost"
-    agent: "novel-enhancer"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     condition: "fiction/creative writing request"
     output: "domain-specific ideation"

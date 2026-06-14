@@ -4,10 +4,7 @@ interface:
   trigger_words: ["卡住了", "stuck", "失败", "搞不定", "反复出错", "pua-debugging"]
   default_prompt: "Use $pua-debugging to break through the stuck pattern with structured pressure and systematic debugging."
 
-agents:
-  - role: "diagnostician"
-    model: "opus"
-    description: "Diagnoses the stuck pattern: repetition, tunnel vision, wrong abstraction level, or wrong approach entirely. Requires deep reasoning about root cause."
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: "challenger"
     model: "opus"
@@ -15,7 +12,7 @@ agents:
 
 workflow:
   - step: "smell"
-    agent: "diagnostician"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "stuck pattern diagnosis"
 
   - step: "pull-up"
@@ -27,7 +24,7 @@ workflow:
     description: "Self-check assumptions and approach."
 
   - step: "challenge"
-    agent: "challenger"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     condition: "failure_count >= 3"
     output: "escalating counter-arguments"
 

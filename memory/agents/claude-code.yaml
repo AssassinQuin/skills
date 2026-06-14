@@ -4,10 +4,7 @@ interface:
   trigger_words: ["save to memory", "保存记忆", "提取记忆", "recall", "remember", "记忆", "会话结束"]
   default_prompt: "Use $memory to store, retrieve, or manage knowledge across sessions."
 
-agents:
-  - role: "gate-keeper"
-    model: "haiku"
-    description: "Validates whether information is memory-worthy. Rejects ephemeral, derivable-from-code, or duplicate entries."
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: "tagger"
     model: "haiku"
@@ -23,11 +20,11 @@ agents:
 
 workflow:
   - step: "gate"
-    agent: "gate-keeper"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "memory-worthy: yes/no + reason"
 
   - step: "classify"
-    agent: "tagger"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     condition: "memory-worthy"
     output: "scope + type + lifecycle"
 
@@ -36,11 +33,11 @@ workflow:
     description: "Write via MCP tool (memory_store)"
 
   - step: "search"
-    agent: "search-agent"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "ranked results"
 
   - step: "cleanup"
-    agent: "cleanup-agent"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     condition: "user requests or session-end"
     output: "cleanup proposal"
 

@@ -9,13 +9,7 @@ interface:
 # 全局配置：~/.claude/agents/{evolver-auditor,evolver-explorer}.md
 # Claude 内置：Explore / general-purpose（无需配置）
 
-agents:
-  - role: evolver-explorer
-    model: sonnet
-    description: |
-      策略探索子 agent（全局 ~/.claude/agents/evolver-explorer.md）。
-      任务：baseline 阶段 D5 基线测试、exploration 阶段 S0-S6 策略探索、T_train 回归测试。
-      用法：Agent(subagent_type="evolver-explorer", model="sonnet", description=..., prompt=...)
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: evolver-auditor
     model: opus

@@ -4,10 +4,7 @@ interface:
   trigger_words: ["蒸馏", "distill", "创建视角skill", "从视频提取方法论", "从文章提取思维框架"]
   default_prompt: "Use $huashu-nuwa to distill a person's cognitive framework into a reusable skill."
 
-agents:
-  - role: "research-swarm"
-    model: "sonnet"
-    description: "Parallel Agent Swarm for multi-source research. One agent per channel: books, podcasts, social media, critic perspectives, decisions, timelines."
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: "framework-synthesizer"
     model: "sonnet"
@@ -27,20 +24,20 @@ workflow:
     description: "Entry triage: direct path vs. fuzzy diagnosis."
 
   - step: "research"
-    agent: "research-swarm"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     parallel: true
     output: "raw research per channel"
 
   - step: "synthesize"
-    agent: "framework-synthesizer"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "verified mental models + decision heuristics"
 
   - step: "generate"
-    agent: "skill-generator"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "SKILL.md + supporting files"
 
   - step: "validate"
-    agent: "quality-validator"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "quality report + pass/fail"
 
 scripts:

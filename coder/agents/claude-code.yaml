@@ -4,10 +4,7 @@ interface:
   trigger_words: ["写代码", "实现", "重构", "修复", "coder", "编码", "开发", "debug", "新增", "审计代码", "review diff"]
   default_prompt: "Use $coder to implement the requested change with language detection, context loading, and verification."
 
-agents:
-  - role: "language-detector"
-    model: "haiku"
-    description: "Detects project language and loads appropriate conventions from references/. Fast, deterministic task."
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: "context-loader"
     model: "haiku"
@@ -23,18 +20,18 @@ agents:
 
 workflow:
   - step: "detect"
-    agent: "language-detector"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "language + toolchain info"
 
   - step: "load-context"
-    agent: "context-loader"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "conventions + constraints loaded"
 
   - step: "execute"
-    agent: "executor"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "code changes"
 
   - step: "audit"
-    agent: "auditor"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     condition: "standard or full path"
     output: "audit findings"

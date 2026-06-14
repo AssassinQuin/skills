@@ -4,10 +4,7 @@ interface:
   trigger_words: ["build MCP server", "创建 MCP server", "MCP 工具开发", "MCP integration", "mcp-builder"]
   default_prompt: "Use $mcp-builder to create a production-quality MCP server for the target service."
 
-agents:
-  - role: "researcher"
-    model: "sonnet"
-    description: "Deep research on target service API. Maps endpoints, auth patterns, rate limits, and data models."
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: "implementer"
     model: "sonnet"
@@ -23,19 +20,19 @@ agents:
 
 workflow:
   - step: "research"
-    agent: "researcher"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "API mapping + tool interface design"
 
   - step: "implement"
-    agent: "implementer"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "MCP server implementation"
 
   - step: "review"
-    agent: "reviewer"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "review findings + fixes"
 
   - step: "evaluate"
-    agent: "evaluator"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "evaluation suite + results"
 
 scripts:

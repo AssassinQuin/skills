@@ -4,10 +4,7 @@ interface:
   trigger_words: ["create skill", "new skill", "写个 skill", "创建 skill", "skill 模板", "新建 skill", "update skill", "validate skill", "init skill"]
   default_prompt: "Use $skill-creator to create or update a skill following the standard directory structure."
 
-agents:
-  - role: "architect"
-    model: "haiku"
-    description: "Directory structure planning, naming validation, frontmatter generation. Deterministic tasks."
+# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
 
   - role: "writer"
     model: "sonnet"
@@ -24,15 +21,15 @@ workflow:
     output: "directory with templates"
 
   - step: "architect"
-    agent: "architect"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "frontmatter + directory layout + agents/ config"
 
   - step: "draft"
-    agent: "writer"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "SKILL.md body + README.md + references/"
 
   - step: "validate"
-    agent: "validator"
+    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
     output: "validation results + completeness check"
 
   - step: "package"
