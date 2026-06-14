@@ -1,6 +1,6 @@
 ---
 name: skill-evolver
-version: "6.3"
+version: "6.5"
 description: >
   Skill 自进化框架。基于 SkillEvolver 论文(arXiv:2605.10500)实现。
   命令驱动 + 脚本强制 + 渐进披露 + 双路径 + 部署接地审计。
@@ -159,7 +159,7 @@ deployment 阶段必须执行：
 | T_val 验证 | `evolver-auditor` | opus | [templates.md#Deployer](references/modules/prompts/templates.md) |
 | D5 基线测试 | `evolver-explorer` | sonnet | 内联（baseline 模块内） |
 
-R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。
+R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。Agent 是 deferred 工具，调用前需 `ToolSearch select:Agent` 加载 schema。
 
 ## 评分 / 痛点
 

@@ -1,0 +1,4 @@
+     104     3359 references/evaluation-rubric.md
+      68     2362 references/execution-gates.md
+      96     3233 references/search-templates.md
+     139     6239 SKILL.md
