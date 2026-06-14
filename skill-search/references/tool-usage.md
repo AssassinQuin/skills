@@ -257,7 +257,7 @@ AskUserQuestion(
 ### 子 Agent 统计
 - 计划 spawn: 5 (Scout-GH/BuiltIn/Market/Community/Expand)
 - 实际 spawn 成功: 5/5  OR  L2 fallback, 0 spawn
-- 失败原因（如有）: ToolSearch select:Task 返回空 schema
+- 失败原因（如有）: Agent 调用报错（subagent_type 不存在 / model 错误 / 网络超时）
 
 ### MCP 调用统计
 - mcp__github__search_repositories: 8 次

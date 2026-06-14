@@ -7,7 +7,7 @@
 ## P0 Exit Checklist（工具加载）
 
 ```
-□ ToolSearch select:Task,Bash,WebFetch,AskUserQuestion 已执行
+□ ToolSearch select:Agent,Bash,WebFetch,AskUserQuestion 已执行
 □ ToolSearch select:mcp__github__* 已执行
 □ ToolSearch select:mcp__web-search-prime__*,mcp__web-reader__webReader,WebSearch 已执行
 □ ToolSearch select:mcp__zread__* 已执行
