@@ -334,7 +334,7 @@ P5 推荐用 `mcp__searxng__searxng_web_search` 批量检索 + `mcp__web-search-
 4. **`search_code` 禁用于 P2 发现** — 只用于 P4 验证候选是否有 SKILL.md
 5. **垂直平台优先于 SearXNG** — SearXNG 对 Skill 生态理解差，英文搜索走 skillsmp.com / openagentskill.com
 6. **P4 必须先检查目录结构** — 不假设 SKILL.md 在根目录
-7. **P2 必须并行调用 ≥ 3 个子 Agent** — 失败时按 L2 fallback 规则降级，并在 P6 报告中标注
+7. **P2 必须并行调用全部 5 个 Scout 子 Agent** — 至少 3 个 spawn 成功才能进入 P3；全部失败时按 L2 fallback 规则降级到主 Agent 串行（在 P6 标注）
 8. **P4 文件读取禁用 get_file_contents 读内容** — 该工具在 Claude Code 中只返回 SHA；用 `mcp__zread__read_file` 或 `WebFetch raw URL` 替代
 9. **ctx_batch_execute 必须双参数** — `commands` 数组 + `queries` 数组都必需，缺 queries 报错
 10. **执行透明度声明强制** — P6 报告必须展示 spawn 数 + MCP 调用统计 + Fallback 记录

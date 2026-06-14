@@ -1,5 +1,5 @@
 {
-  "total_rounds": 3,
+  "total_rounds": 4,
   "history": [
     {
       "round": 1,
@@ -24,11 +24,19 @@
       "score_before": 4.85,
       "score_after": 7.10,
       "delta": 2.25
+    },
+    {
+      "round": 1,
+      "date": "2026-06-14",
+      "strategy": "S1+S2+S3 + Agent修复",
+      "score_before": 4.85,
+      "score_after": 8.30,
+      "delta": 3.45
     }
   ],
   "last_round": {
     "date": "2026-06-14",
-    "strategy": "S1+S2+S3",
-    "score": 7.10
+    "strategy": "S1+S2+S3 + Agent修复",
+    "score": 8.30
   }
 }
