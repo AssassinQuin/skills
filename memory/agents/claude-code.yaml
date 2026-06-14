@@ -1,50 +1,13 @@
 interface:
-  display_name: "Memory"
-  short_description: "Cross-skill memory API with MCP tools. Three-tier isolation: project/shared/global."
-  trigger_words: ["save to memory", "保存记忆", "提取记忆", "recall", "remember", "记忆", "会话结束"]
-  default_prompt: "Use $memory to store, retrieve, or manage knowledge across sessions."
+  display_name: "memory"
+  short_description: ""
+  trigger_words: []
+  default_prompt: "Use $memory ..."
 
-# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
-
-  - role: "tagger"
-    model: "haiku"
-    description: "Classifies memory entry: assigns scope (project/shared/global), type (fact/decision/pattern/error/preference), and lifecycle."
-
-  - role: "search-agent"
-    model: "haiku"
-    description: "Searches memory with scope filtering and relevance ranking via MCP tools."
-
-  - role: "cleanup-agent"
-    model: "haiku"
-    description: "Identifies stale, conflicting, or redundant memories. Proposes cleanup actions."
-
-workflow:
-  - step: "gate"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "memory-worthy: yes/no + reason"
-
-  - step: "classify"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    condition: "memory-worthy"
-    output: "scope + type + lifecycle"
-
-  - step: "store"
-    agent: null
-    description: "Write via MCP tool (memory_store)"
-
-  - step: "search"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "ranked results"
-
-  - step: "cleanup"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    condition: "user requests or session-end"
-    output: "cleanup proposal"
-
-mcp_tools:
-  store: "memory_memory_store"
-  search: "memory_memory_search"
-  list: "memory_memory_list"
-  delete: "memory_memory_delete"
-  update: "memory_memory_update"
-  health: "memory_memory_health"
+# 注：子 Agent 实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/
+# 已注册的（如 brainstorm-collider/oracle/evolver-*）。本 yaml 中原 agents: 块的 role 声明
+# 是设计意图文档，Claude Code 运行时不读取，已删除以避免误导。
+#
+# 原始 agents 块已迁移到 git 历史，如需查阅设计意图：
+#   git log --all --oneline -- memory/agents/claude-code.yaml
+# 实际调用子 Agent 的方式见各 skill 的 SKILL.md。

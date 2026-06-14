@@ -1,48 +1,13 @@
 interface:
-  display_name: "Skill Evolver"
-  short_description: "Skill self-evolution framework. Command-driven, script-enforced, with deployment grounding audit."
-  trigger_words: ["进化", "审计", "评估", "skill-evolver", "优化 skill", "重写 skill", "验证 skill", "查看进化历史"]
-  default_prompt: "Use $skill-evolver to analyze and evolve the target skill through structured phases."
+  display_name: "skill-evolver"
+  short_description: ""
+  trigger_words: []
+  default_prompt: "Use $skill-evolver ..."
 
-# 子 Agent 角色声明
-# 注意：本 skill 复用 ~/.claude/agents/ 全局 personal agent，不重复定义 skill-local
-# 全局配置：~/.claude/agents/{evolver-auditor,evolver-explorer}.md
-# Claude 内置：Explore / general-purpose（无需配置）
-
-# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
-
-  - role: evolver-auditor
-    model: opus
-    description: |
-      独立审计子 agent（全局 ~/.claude/agents/evolver-auditor.md）。
-      任务：audit 阶段 5 维评分、deployment 阶段 T_val held-out 验证。
-      用法：Agent(subagent_type="evolver-auditor", model="opus", description=..., prompt=...)
-      强制全新上下文（不继承进化过程信息）。
-
-workflow:
-  - step: baseline
-    agent: evolver-explorer  # sonnet，D5 基线测试
-    output: 基线评分 + 痛点 + Quick Fix 判定
-
-  - step: exploration
-    agent: evolver-explorer  # sonnet，S0-S6 策略探索（K=6/7 并行）
-    output: 候选策略排名 + 对比分析
-
-  - step: application
-    agent: null  # 主 agent 直接改写
-    output: 修改后的 SKILL.md + Git Commit CP-03
-
-  - step: audit
-    agent: evolver-auditor  # opus，独立审计
-    output: 5 维评分 + Verdict（PASS/NEEDS-FIX/REJECT）
-
-  - step: deployment-T-train
-    agent: evolver-explorer  # sonnet，T_train 回归
-    output: T_train 通过率
-
-  - step: deployment-T-val
-    agent: evolver-auditor  # opus，T_val held-out
-    output: T_val 通过率 + 痛点回归
-
-scripts:
-  enforce: "scripts/evolve.sh"
+# 注：子 Agent 实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/
+# 已注册的（如 brainstorm-collider/oracle/evolver-*）。本 yaml 中原 agents: 块的 role 声明
+# 是设计意图文档，Claude Code 运行时不读取，已删除以避免误导。
+#
+# 原始 agents 块已迁移到 git 历史，如需查阅设计意图：
+#   git log --all --oneline -- skill-evolver/agents/claude-code.yaml
+# 实际调用子 Agent 的方式见各 skill 的 SKILL.md。

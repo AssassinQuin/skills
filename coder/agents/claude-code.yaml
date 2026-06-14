@@ -1,37 +1,13 @@
 interface:
-  display_name: "Coder"
-  short_description: "Multi-language coding orchestrator with context-aware execution."
-  trigger_words: ["写代码", "实现", "重构", "修复", "coder", "编码", "开发", "debug", "新增", "审计代码", "review diff"]
-  default_prompt: "Use $coder to implement the requested change with language detection, context loading, and verification."
+  display_name: "coder"
+  short_description: ""
+  trigger_words: []
+  default_prompt: "Use $coder ..."
 
-# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
-
-  - role: "context-loader"
-    model: "haiku"
-    description: "Reads language-specific reference files (go-*.md, python-*.md) and project config. No reasoning needed."
-
-  - role: "executor"
-    model: "sonnet"
-    description: "Main code execution agent. Implements changes following loaded conventions with verification loops."
-
-  - role: "auditor"
-    model: "sonnet"
-    description: "Deep code audit following code-audit-protocol.md. Checks correctness, security, and convention compliance."
-
-workflow:
-  - step: "detect"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "language + toolchain info"
-
-  - step: "load-context"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "conventions + constraints loaded"
-
-  - step: "execute"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "code changes"
-
-  - step: "audit"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    condition: "standard or full path"
-    output: "audit findings"
+# 注：子 Agent 实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/
+# 已注册的（如 brainstorm-collider/oracle/evolver-*）。本 yaml 中原 agents: 块的 role 声明
+# 是设计意图文档，Claude Code 运行时不读取，已删除以避免误导。
+#
+# 原始 agents 块已迁移到 git 历史，如需查阅设计意图：
+#   git log --all --oneline -- coder/agents/claude-code.yaml
+# 实际调用子 Agent 的方式见各 skill 的 SKILL.md。

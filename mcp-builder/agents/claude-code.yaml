@@ -1,41 +1,13 @@
 interface:
-  display_name: "MCP Builder"
-  short_description: "Full-lifecycle MCP server creation: research → implement → review → evaluate."
-  trigger_words: ["build MCP server", "创建 MCP server", "MCP 工具开发", "MCP integration", "mcp-builder"]
-  default_prompt: "Use $mcp-builder to create a production-quality MCP server for the target service."
+  display_name: "mcp-builder"
+  short_description: ""
+  trigger_words: []
+  default_prompt: "Use $mcp-builder ..."
 
-# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
-
-  - role: "implementer"
-    model: "sonnet"
-    description: "Implements MCP server with proper error handling, type safety, and documentation. Follows MCP spec."
-
-  - role: "reviewer"
-    model: "sonnet"
-    description: "Reviews implementation against MCP spec. Checks error messages are actionable and types are safe at boundaries."
-
-  - role: "evaluator"
-    model: "sonnet"
-    description: "Creates evaluation suite. Designs test cases for happy path, edge cases, and error scenarios."
-
-workflow:
-  - step: "research"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "API mapping + tool interface design"
-
-  - step: "implement"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "MCP server implementation"
-
-  - step: "review"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "review findings + fixes"
-
-  - step: "evaluate"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "evaluation suite + results"
-
-scripts:
-  deps: "scripts/requirements.txt"
-  eval: "scripts/evaluation.py"
-  connections: "scripts/connections.py"
+# 注：子 Agent 实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/
+# 已注册的（如 brainstorm-collider/oracle/evolver-*）。本 yaml 中原 agents: 块的 role 声明
+# 是设计意图文档，Claude Code 运行时不读取，已删除以避免误导。
+#
+# 原始 agents 块已迁移到 git 历史，如需查阅设计意图：
+#   git log --all --oneline -- mcp-builder/agents/claude-code.yaml
+# 实际调用子 Agent 的方式见各 skill 的 SKILL.md。

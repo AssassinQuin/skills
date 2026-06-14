@@ -1,38 +1,13 @@
 interface:
-  display_name: "PUA Debugging"
-  short_description: "Exhaustive problem-solving with escalating pressure. Activates after 2+ failures."
-  trigger_words: ["卡住了", "stuck", "失败", "搞不定", "反复出错", "pua-debugging"]
-  default_prompt: "Use $pua-debugging to break through the stuck pattern with structured pressure and systematic debugging."
+  display_name: "pua-debugging"
+  short_description: ""
+  trigger_words: []
+  default_prompt: "Use $pua-debugging ..."
 
-# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
-
-  - role: "challenger"
-    model: "opus"
-    description: "Acts as the pressure agent. Escalates rhetoric based on failure count. Constructs the strongest counter-arguments to current approach."
-
-workflow:
-  - step: "smell"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "stuck pattern diagnosis"
-
-  - step: "pull-up"
-    agent: null
-    description: "Elevate perspective. Zoom out to system level."
-
-  - step: "mirror"
-    agent: null
-    description: "Self-check assumptions and approach."
-
-  - step: "challenge"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    condition: "failure_count >= 3"
-    output: "escalating counter-arguments"
-
-  - step: "execute"
-    agent: null
-    description: "Execute new approach with full verification."
-
-escalation:
-  failures_2: "鼓励式 — 指出可能忽略的角度"
-  failures_3: "挑战式 — 质疑核心假设和方向"
-  failures_4_plus: "直接对抗 — 要求证明当前方向不是在浪费时间"
+# 注：子 Agent 实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/
+# 已注册的（如 brainstorm-collider/oracle/evolver-*）。本 yaml 中原 agents: 块的 role 声明
+# 是设计意图文档，Claude Code 运行时不读取，已删除以避免误导。
+#
+# 原始 agents 块已迁移到 git 历史，如需查阅设计意图：
+#   git log --all --oneline -- pua-debugging/agents/claude-code.yaml
+# 实际调用子 Agent 的方式见各 skill 的 SKILL.md。

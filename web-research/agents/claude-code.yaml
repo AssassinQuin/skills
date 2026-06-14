@@ -1,45 +1,13 @@
 interface:
-  display_name: "Web Research"
-  short_description: "Multi-source parallel research with structured synthesis."
-  trigger_words: ["调研", "研究", "web research", "对比分析", "方案选型", "文献", "literature review", "deep dive"]
-  default_prompt: "Use $web-research to conduct structured multi-source research on the topic."
+  display_name: "web-research"
+  short_description: ""
+  trigger_words: []
+  default_prompt: "Use $web-research ..."
 
-# 子 Agent：实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/ 已注册的（如 brainstorm-collider/oracle/evolver-*）
-
-  - role: "search-agent"
-    model: "sonnet"
-    description: "Parallel search agents, one per brainstorm angle. Uses MCP search tools with source diversity."
-
-  - role: "inspiration-miner"
-    model: "sonnet"
-    description: "Follow-up mining on ≥2 high-value findings. Budget: 5-8 iterations per finding."
-
-  - role: "synthesizer"
-    model: "sonnet"
-    description: "Combines all findings into structured synthesis report. Writes to data/{date}-{slug}/."
-
-workflow:
-  - step: "local-first"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "existing knowledge check"
-
-  - step: "brainstorm-angles"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "6 search themes + user confirmation"
-
-  - step: "parallel-search"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    parallel: true
-    output: "raw search results per angle"
-
-  - step: "inspiration-mining"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    condition: "≥2 high-value findings"
-    output: "deep-dived findings"
-
-  - step: "synthesis"
-    agent: null  # 设计意图，实际由主 agent 用 general-purpose 执行
-    output: "structured report"
-
-scripts:
-  probe: "scripts/mcp-probe.sh"
+# 注：子 Agent 实际用 Claude Code 内置（general-purpose/Explore）或全局 ~/.claude/agents/
+# 已注册的（如 brainstorm-collider/oracle/evolver-*）。本 yaml 中原 agents: 块的 role 声明
+# 是设计意图文档，Claude Code 运行时不读取，已删除以避免误导。
+#
+# 原始 agents 块已迁移到 git 历史，如需查阅设计意图：
+#   git log --all --oneline -- web-research/agents/claude-code.yaml
+# 实际调用子 Agent 的方式见各 skill 的 SKILL.md。
