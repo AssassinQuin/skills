@@ -2,8 +2,6 @@
 
 P2 阶段各子 Agent 的搜索词模板。按需替换 `{功能词}` / `{同义词}` / `{上下游词}`。
 
-工具调用规范（Agent / MCP / ctx_batch_execute）详见 [tool-usage.md](tool-usage.md)。
-
 ## MCP 降级策略
 
 当 MCP 工具不可用（超时/报错/未配置）时，按以下链路降级：
