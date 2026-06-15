@@ -25,11 +25,23 @@ phase-check deployment {skill_dir}
 
 **必须 spawn sonnet 子 agent 执行**，禁止主 agent 自行验证。子 agent 读取 SKILL.md + T_train，模拟执行每个 prompt，返回通过/失败结果。
 
+子 agent 返回结构化 JSON 后，调用：
+
+```bash
+test-record {skill_dir} T_train '{json_results_array}'
+```
+
 如果 T_train 未由子 agent 实际执行，日志中 T_train_rate 必须标记为 "UNVERIFIED"，不可填写通过率。
 
 ### Step 2: T_val Held-out 验证（独立 opus 子 agent）
 
-独立 opus agent 在全新上下文中读取 SKILL.md + T_val，模拟执行每个 T_val prompt，输出通过率。Prompt 模板见 [templates.md](prompts/templates.md#Deployer)。
+独立 opus agent 在全新上下文中读取 SKILL.md + T_val，模拟执行每个 T_val prompt，输出结构化 JSON 结果。Prompt 模板见 [templates.md](prompts/templates.md#Deployer)。
+
+子 agent 返回结构化 JSON 后，调用：
+
+```bash
+test-record {skill_dir} T_val '{json_results_array}'
+```
 
 **T_val 是 deployment 的硬性门控**。如果未 spawn opus 子 agent 执行 T_val，deployment 必须中止。
 

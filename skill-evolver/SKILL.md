@@ -128,7 +128,7 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。Agent 是 deferred 
 8. **补丁饱和检测** — `total_rounds >= 5` 时提示精简
 9. **测试真实执行** — T_train/T_val 必须由子 agent 实际执行，结果通过 `test-record` 结构化存储
 10. **BEFORE 可追溯** — 副本必须保存到 `.evolve/snapshots/`
-11. **跨轮次对比** — 连续 2 轮同维度 ≤4 触发 slow update（放宽搜索粒度）
+11. **跨轮次对比** — 连续 2 轮 delta < 0.5 触发 slow update（放宽搜索粒度）
 12. **测试结构化输出** — 子 agent 测试结果必须返回 JSON（pass/partial/fail + evidence），自由文本不被接受
 
 ### Mode C: skill-validate
