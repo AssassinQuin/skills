@@ -74,6 +74,10 @@ cat {skill_dir}/.evolve/rejected-edits.jsonl 2>/dev/null | jq -r '.[] | "避免:
 git-checkpoint "evolve {skill}: exploration-r{r}-S{k}"
 ```
 
+**检查点意义**：策略选错 = 整轮白费，在这里拦截成本最低。
+
+**本轮局限**（必须声明，禁止写"无"）：策略覆盖盲区、未探索的维度。
+
 ## Fallback
 
 | 成功数 | 处理 |

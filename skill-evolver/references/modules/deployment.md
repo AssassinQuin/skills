@@ -156,6 +156,7 @@ touch {skill_dir}/.evolve/deployment-traces.jsonl
 确认后：
 - **r < R** → 回 exploration
 - **r = R** → `git checkout main && git merge`
+- **r > R 或单 Phase 回滚 ≥ 2 次** → 终止本轮，交付 metrics.json 中 `score` 最高的历史 commit：`git checkout $(jq -r '.history | max_by(.score_after).round' .evolve/metrics.json)`
 
 ### Step 8: Deployment Feedback 收集（Deployment-Grounded Learning）
 
