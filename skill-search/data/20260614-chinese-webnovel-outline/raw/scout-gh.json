@@ -1,0 +1,79 @@
+[
+  {
+    "full_name": "lornshrimp/Lorn.NovelWriteSkills",
+    "stars": 87,
+    "forks": 21,
+    "open_issues": 1,
+    "html_url": "https://github.com/lornshrimp/Lorn.NovelWriteSkills",
+    "description": "面向长篇网文/小说创作工作流的AI写作资产库，题材设计→大纲搭建→章节创作→审阅润色→多平台改写→质量门禁→分发落盘",
+    "topics": ["agent-skills", "ai", "novel", "skills", "writing-assistant"],
+    "updated_at": "2026-06-14T03:01:08Z",
+    "search_term": "网文 大纲 skill 创作"
+  },
+  {
+    "full_name": "PhosAQy/novel-skills",
+    "stars": 11,
+    "forks": 0,
+    "open_issues": 0,
+    "html_url": "https://github.com/PhosAQy/novel-skills",
+    "description": "Complete AI-powered novel creation system for Claude Code. From volume planning to chapter generation, quality review, and analytics.",
+    "topics": [],
+    "updated_at": "2026-06-13T19:35:44Z",
+    "search_term": "网文写作 AI助手 自动生成 大纲"
+  },
+  {
+    "full_name": "Thatgfsj/wangwenwrite-skill",
+    "stars": 10,
+    "forks": 0,
+    "open_issues": 0,
+    "html_url": "https://github.com/Thatgfsj/wangwenwrite-skill",
+    "description": "男频系统流网文全流程创作助手，覆盖选题研判、系统设定、大纲撰写、章节创作、润色优化、发布适配全环节",
+    "topics": [],
+    "updated_at": "2026-05-16T22:52:02Z",
+    "search_term": "网文 大纲 skill 创作"
+  },
+  {
+    "full_name": "Zhao73/xiaoshuo-studio",
+    "stars": 5,
+    "forks": 0,
+    "open_issues": 1,
+    "html_url": "https://github.com/Zhao73/xiaoshuo-studio",
+    "description": "Local fiction studio for long-form novel planning, canon memory, style learning, and skill-based writing workflows for Codex and Claude Code.",
+    "topics": ["ai-agent", "claude-code", "codex", "fiction-writing", "nextjs", "novel-writing"],
+    "updated_at": "2026-05-15T09:43:01Z",
+    "search_term": "网文写作 AI助手 自动生成 大纲"
+  },
+  {
+    "full_name": "tanaka-naoki/japanese-creative-writing",
+    "stars": 2,
+    "forks": 0,
+    "open_issues": 0,
+    "html_url": "https://github.com/tanaka-naoki/japanese-creative-writing",
+    "description": "Claude Code plugin for writing Japanese ghost stories (kaidan), novels, and other creative fiction with specialized agents and skills.",
+    "topics": [],
+    "updated_at": "2026-06-13T19:36:24Z",
+    "search_term": "网文写作 AI助手 自动生成 大纲"
+  },
+  {
+    "full_name": "xiaotiewinner/xt-webnovel-writing",
+    "stars": 1,
+    "forks": 0,
+    "open_issues": 0,
+    "html_url": "https://github.com/xiaotiewinner/xt-webnovel-writing",
+    "description": "中文网络小说写作Skill (OpenClaw/ClawHub)，6个workflow模块覆盖参考文本拆解→立书→剧情设计→爽点与文笔→反AI味体检→长篇持久化记忆",
+    "topics": ["ai", "hermes-agent", "openclaw", "skills", "webnovels"],
+    "updated_at": "2026-05-05T07:23:09Z",
+    "search_term": "小说 skill AI 长篇 写作 workflow"
+  },
+  {
+    "full_name": "Zn-lemon/cherry-agent-skills-public",
+    "stars": 1,
+    "forks": 0,
+    "open_issues": 0,
+    "html_url": "https://github.com/Zn-lemon/cherry-agent-skills-public",
+    "description": "中文男频网文/小说大纲/人物设定/剧情节奏/桥段设计skill，支持多角色扮演和DM叙事",
+    "topics": [],
+    "updated_at": "2026-05-14T06:53:47Z",
+    "search_term": "网文 大纲 skill 创作"
+  }
+]

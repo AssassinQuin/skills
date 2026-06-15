@@ -148,9 +148,13 @@ traces 同一失败点 >= 3 次 → `pp-create`(trace-inferred)。
 
 ### Step 9: Quick Fix 判定
 
+主 agent 先评估改动范围（预估受影响文件数），再调用脚本：
+
 ```bash
-quick-fix-check {skill_dir}
+quick-fix-check {skill_dir} {estimated_file_count}
 ```
+
+三条件全部满足才走 Quick Fix：① 恰好 1 个 open + user-stated 痛点 ② 策略可唯一确定 ③ 改动 ≤ 3 文件。
 
 ### Step 10: Checkpoint（CP-01）
 

@@ -288,9 +288,13 @@ phase-start() {
   echo "Phase started: $phase"
 }
 
-# Quick Fix 判定
+# Quick Fix 判定（三条件全部满足）
+# Condition 1: 有 open + user-stated 痛点
+# Condition 2: 恰好 1 个（修复策略可唯一确定）
+# Condition 3: 预估改动文件数 ≤ 3（由主 agent 传入）
 quick-fix-check() {
   local dir="${1:?skill dir required}"
+  local estimated_files="${2:-999}"
   local pp="$dir/.evolve/pain-points.jsonl"
 
   if [ ! -f "$pp" ] || [ ! -s "$pp" ]; then
@@ -298,24 +302,27 @@ quick-fix-check() {
     return 0
   fi
 
-  local open_count
-  open_count=$(grep -c '"status":"open"' "$pp" 2>/dev/null || true)
+  # Condition 1 + 2: 恰好 1 个 open + user-stated 痛点
+  local user_stated_open
+  user_stated_open=$(jq '[.[] | select(.status=="open" and .source=="user-stated")] | length' "$pp" 2>/dev/null || echo "0")
 
-  if [ "$open_count" -eq 0 ]; then
+  if [ "$user_stated_open" -eq 0 ]; then
     echo "FULL_EVOLUTION"
     return 0
   fi
 
-  # 有 open 痛点 → 检查是否可走 Quick Fix
-  # 判定标准：有明确痛点描述 + 用户直接提供了痛点
-  local has_user_stated
-  has_user_stated=$(grep -c '"source":"user-stated"' "$pp" 2>/dev/null || true)
-
-  if [ "$has_user_stated" -gt 0 ]; then
-    echo "QUICK_FIX_OK"
-  else
+  if [ "$user_stated_open" -gt 1 ]; then
     echo "FULL_EVOLUTION"
+    return 0
   fi
+
+  # Condition 3: 改动范围 ≤ 3 个文件
+  if [ "$estimated_files" -gt 3 ]; then
+    echo "FULL_EVOLUTION"
+    return 0
+  fi
+
+  echo "QUICK_FIX_OK"
 }
 
 # ============ 轻量质量验证（Mode H / 编辑后触发） ============

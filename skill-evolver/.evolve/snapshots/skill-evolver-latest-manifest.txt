@@ -1,1 +1,1 @@
-/Users/ganjie/.claude/skills/skill-evolver/.evolve/snapshots/skill-evolver-20260612T190813-manifest.txt
+/Users/ganjie/skills/skill-evolver/.evolve/snapshots/skill-evolver-20260615T145712-manifest.txt

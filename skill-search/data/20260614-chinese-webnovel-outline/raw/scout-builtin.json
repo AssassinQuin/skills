@@ -1,0 +1,20 @@
+[
+  {"name": "novel-plan", "source": "local-project", "description": "全书框架 + 单卷大纲生成"},
+  {"name": "novel-plotcraft", "source": "local-project", "description": "人机协作剧情讨论skill，5模式+世界观实时校验"},
+  {"name": "novel-write", "source": "local-project", "description": "单章正文生成"},
+  {"name": "novel-setup", "source": "local-project", "description": "项目创建与世界观构建引擎"},
+  {"name": "novel-distill", "source": "local-project", "description": "参考作品蒸馏引擎v6.0"},
+  {"name": "novel-character", "source": "local-project", "description": "人物设计/修改"},
+  {"name": "novel-review", "source": "local-project", "description": "5种审查模式"},
+  {"name": "novel-fix", "source": "local-project", "description": "3种修复模式"},
+  {"name": "story-architecture", "source": "local-project", "description": "多尺度叙事结构"},
+  {"name": "prose-critique", "source": "local-project", "description": "对抗性审查方法论"},
+  {"name": "abilitycraft", "source": "local-project", "description": "觉醒者能力设计+命名"},
+  {"name": "lorecraft", "source": "local-project", "description": "术语合规检查"},
+  {"name": "jiangye-perspective", "source": "local-project", "description": "将夜视角蒸馏skill"},
+  {"name": "wuzhei-perspective", "source": "local-project", "description": "无职转生视角蒸馏skill v2.0"},
+  {"name": "novel-skill-creator", "source": "local-project", "description": "新建skill模板"},
+  {"name": "storytelling", "source": "local-global", "description": "通用故事创作"},
+  {"name": "prose-craft", "source": "local-global", "description": "通用写作质量"},
+  {"name": "webnovel-writer", "source": "web", "url": "https://github.com/lingfengQAQ/webnovel-writer", "description": "基于Claude Code的长篇网文创作插件。初始化设定、规划卷纲、写章、审查、沉淀记忆、查询状态、可视化面板"}
+]
