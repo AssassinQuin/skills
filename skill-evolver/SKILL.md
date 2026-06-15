@@ -1,9 +1,9 @@
 ---
 name: skill-evolver
-version: "7.0"
+version: "7.1"
 description: >
   Skill 自进化框架。基于 SkillEvolver(arXiv:2605.10500) + SkillOpt(arXiv:2605.23904)实现。
-  命令驱动 + 脚本强制 + 渐进披露 + 双轨编辑 + 部署接地审计 + 负反馈闭环。
+  命令驱动 + 脚本强制 + 渐进披露 + 双轨编辑 + 部署接地审计 + 负反馈闭环 + 三重质量门。
   Trigger: "进化 X skill", "审计 X", "评估 X 质量", "进化 skill-evolver",
   "优化所有 skills", "查看进化历史", "重写 skill", "优化 X，痛点 Y", "优化 X skill",
   "验证 X skill".
@@ -19,7 +19,7 @@ allowed-tools:
 user-invocable: true
 ---
 
-# Skill Evolver v7.0
+# Skill Evolver v7.1
 
 ## 决策入口
 
@@ -74,6 +74,8 @@ source /Users/ganjie/skills/skill-evolver/scripts/evolve.sh && phase-start <phas
 | 编辑模式判定 | `diff-budget-check <dir> <segment_count>` | application |
 | 失败经验记录 | `rejected-edit-record <dir> <strategy> <reason>` | audit |
 | 测试结果记录 | `test-record <dir> <label> <json_string>` | baseline, deployment |
+| 分支验证 | `branch-check <dir>` | deployment（前置） |
+| 痛点回归 | `regression-check <dir>` | deployment（前置 + Step 4） |
 | Silent-bypass | `silent-bypass-check` | audit |
 | 快照/审计保存 | `snapshot-save` / `audit-save` | baseline, audit |
 | 轻量检查 | `skill-validate <dir>` | Mode C |
@@ -130,6 +132,7 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。Agent 是 deferred 
 10. **BEFORE 可追溯** — 副本必须保存到 `.evolve/snapshots/`
 11. **跨轮次对比** — 连续 2 轮 delta < 0.5 触发 slow update（放宽搜索粒度）
 12. **测试结构化输出** — 子 agent 测试结果必须返回 JSON（pass/partial/fail + evidence），自由文本不被接受
+13. **部署三重门** — deployment 前置必须 `branch-check`（防读错分支）+ `regression-check`（防痛点回归）+ T_val 子 agent 实测（防静态审计虚高）
 
 ### Mode C: skill-validate
 

@@ -531,6 +531,102 @@ slow-update-check() {
   fi
 }
 
+# ============ Deployment 质量门（v7.1 PP-SE19 修复） ============
+
+# 分支验证：确保 T_val 测试在 evolve 分支而非 main 上执行
+# 防止 AFTER 测试读错文件（R13 暴露的问题）
+branch-check() {
+  local dir="${1:?skill dir required}"
+  local skill_name
+  skill_name=$(basename "$dir")
+  local git_root
+  git_root=$(_git-root "$dir")
+
+  if [ -z "$git_root" ]; then
+    echo "WARN: no git repo — skipping branch check" >&2
+    return 0
+  fi
+
+  local current_branch expected_pattern
+  current_branch=$(git -C "$git_root" branch --show-current)
+  expected_pattern="evolve/${skill_name}/"
+
+  if [[ "$current_branch" == "$expected_pattern"* ]]; then
+    echo "OK: on evolve branch '$current_branch'"
+  else
+    echo "ERROR: current branch '$current_branch' is NOT an evolve branch (expected '$expected_pattern*'). T_val tests will read the wrong file." >&2
+    echo "Fix: git -C $git_root checkout -b evolve/${skill_name}/$(date +%Y%m%d)" >&2
+    return 1
+  fi
+}
+
+# 痛点回归检查：验证关键结构元素是否仍存在（resolved_by 存策略 ID 不可 grep）
+# 检查项：(1) 核心脚本函数 (2) 核心约束 (3) 核心 Phase 模块 (4) resolved 痛点计数
+regression-check() {
+  local dir="${1:?skill dir required}"
+  local pp="$dir/.evolve/pain-points.jsonl"
+  local skill_name
+  skill_name=$(basename "$dir")
+  local issues=0
+
+  echo "=== Regression Check: $skill_name ==="
+
+  # 1. 核心脚本函数必须存在
+  local required_fns="score pp-create pp-resolve pp-regress git-setup git-checkpoint phase-check phase-start snapshot-save"
+  echo "1. Core script functions:"
+  for fn in $required_fns; do
+    if grep -q "^${fn}()" "$dir/scripts/evolve.sh" 2>/dev/null; then
+      echo "  PASS: $fn()"
+    else
+      echo "  REGRESSION: $fn() missing from evolve.sh" >&2
+      issues=$((issues + 1))
+    fi
+  done
+
+  # 2. 核心约束必须存在（防约束被意外删除）
+  echo "2. Core constraints:"
+  local required_patterns=("绝对不做" "AskUserQuestion" "phase-check" "score D1")
+  for pat in "${required_patterns[@]}"; do
+    if grep -q "$pat" "$dir/SKILL.md" 2>/dev/null; then
+      echo "  PASS: '$pat' present in SKILL.md"
+    else
+      echo "  REGRESSION: '$pat' missing from SKILL.md" >&2
+      issues=$((issues + 1))
+    fi
+  done
+
+  # 3. 核心 Phase 模块必须存在
+  echo "3. Phase modules:"
+  for phase in baseline exploration application audit deployment; do
+    if [ -f "$dir/references/modules/${phase}.md" ]; then
+      echo "  PASS: ${phase}.md"
+    else
+      echo "  REGRESSION: references/modules/${phase}.md missing" >&2
+      issues=$((issues + 1))
+    fi
+  done
+
+  # 4. 痛点计数（resolved 不应变为 open/regressed）
+  if [ -f "$pp" ]; then
+    local total resolved regressed
+    total=$(jq -s 'length' "$pp" 2>/dev/null || echo "0")
+    resolved=$(jq -s '[.[] | select(.status=="resolved")] | length' "$pp" 2>/dev/null || echo "0")
+    regressed=$(jq -s '[.[] | select(.status=="regressed")] | length' "$pp" 2>/dev/null || echo "0")
+    echo "4. Pain points: total=$total resolved=$resolved regressed=$regressed"
+    if [ "$regressed" -gt 0 ]; then
+      echo "  REGRESSION: $regressed pain point(s) have regressed" >&2
+      issues=$((issues + 1))
+    fi
+  fi
+
+  echo "---"
+  if [ "$issues" -gt 0 ]; then
+    echo "FOUND: $issues regression(s)"
+    return 1
+  fi
+  echo "OK: No structural regressions detected"
+}
+
 # ============ 审计报告保存 ============
 audit-save() {
   local dir="${1:?skill dir required}"

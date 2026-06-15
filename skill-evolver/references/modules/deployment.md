@@ -6,7 +6,16 @@
 
 ```bash
 phase-check deployment {skill_dir}
+
+# 强制：必须在 evolve 分支上执行（防止 T_val 读错文件）
+branch-check {skill_dir}
+
+# 强制：痛点回归检查（所有 resolved 痛点必须仍有效）
+regression-check {skill_dir}
 ```
+
+**branch-check 失败** → 中止 deployment，切回 evolve 分支。
+**regression-check 失败** → 中止 deployment，记录回归到 pain-points。
 
 ## 执行步骤
 
@@ -55,24 +64,17 @@ test-record {skill_dir} T_val '{json_results_array}'
 
 综合：进步→接受；部分进步→接受并记录限制；退化→回滚。
 
-### Step 4: 痛点回归守卫（强制）
+### Step 4: 痛点回归守卫（强制，脚本驱动）
 
-对 `pain-points.jsonl` 中 `status=="resolved"` 的痛点逐一验证：
+**必须在前置校验中已执行 `regression-check`**。此处补充人工审查：
 
 ```bash
-source evolve.sh
-# 读取所有 resolved 痛点
-cat {skill_dir}/.evolve/pain-points.jsonl | jq -c 'select(.status=="resolved")'
+regression-check {skill_dir}
 ```
 
-对每个 resolved 痛点：
-1. 读取其 `description` 和 `symptom`
-2. 检查 SKILL.md 中对应的修复内容是否仍然存在
-3. 验证方法：grep SKILL.md 中与痛点修复相关的关键词/段落
-4. 结果：PASS（修复仍有效）/ FAIL（回归）
-
-回归处理：
-- 任何 FAIL → `pp-regress {skill_dir} {pp_id}` + 记录回归原因
+对 `regression-check` 报告的每个 REGRESSION：
+1. `pp-regress {skill_dir} {pp_id}` + 记录回归原因
+2. 回归率 > 30% → 自动 `git revert HEAD` + 终止部署
 - 回归率 > 30% → 自动 `git revert HEAD` + 终止部署
 - 单痛点 `regression_count >= 2` → 标记 `wontfix`
 
