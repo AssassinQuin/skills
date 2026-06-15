@@ -1,11 +1,11 @@
 {
-  "total_rounds": 8,
+  "total_rounds": 9,
   "avg_score_delta": 1.5,
   "avg_T_val_pass_rate": 1.0,
   "last_round": {
-    "date": "2026-06-12",
-    "strategy": "S4-dedup-extract",
-    "score": 8.35
+    "date": "2026-06-15",
+    "strategy": "S5+S3+S1-dual-edit",
+    "score": 7.6
   },
   "strategies_used": [
     "S5+S1+S3-merge",
@@ -79,6 +79,14 @@
       "score_before": 7.22,
       "score_after": 8.35,
       "delta": 1.13
+    },
+    {
+      "round": 13,
+      "date": "2026-06-15",
+      "strategy": "S5+S3+S1-dual-edit",
+      "score_before": 5.9,
+      "score_after": 7.6,
+      "delta": 1.7
     }
   ]
 }
