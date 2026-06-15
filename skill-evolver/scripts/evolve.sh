@@ -303,8 +303,9 @@ quick-fix-check() {
   fi
 
   # Condition 1 + 2: 恰好 1 个 open + user-stated 痛点
+  # --slurp (-s) 将 JSONL 多行聚合为数组，否则 .[] 无法迭代
   local user_stated_open
-  user_stated_open=$(jq '[.[] | select(.status=="open" and .source=="user-stated")] | length' "$pp" 2>/dev/null || echo "0")
+  user_stated_open=$(jq -s '[.[] | select(.status=="open" and .source=="user-stated")] | length' "$pp" 2>/dev/null || echo "0")
 
   if [ "$user_stated_open" -eq 0 ]; then
     echo "FULL_EVOLUTION"
