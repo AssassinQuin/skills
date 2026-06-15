@@ -123,6 +123,20 @@ mkdir -p {skill}/.evolve/audit-reports
 traces 同一失败点 >= 3 次 → `pp-create`(trace-inferred)。
 连续 2 轮某维度 <= 4 → `pp-create`(audit-found)。
 
+### Step 8c: Slow Update 检测
+
+```bash
+slow-update-check {skill_dir}
+```
+
+`SLOW_UPDATE_TRIGGERED` → exploration 阶段优先选用放宽粒度策略（S3 上下文增强、S4 精简重写），并在 evolution-log.jsonl 中记录。
+
+门控阈值表追加：
+
+| 阈值 | 值 |
+|------|-----|
+| 慢更新触发 | 最近 2 轮 delta 均 < 0.5 |
+
 ### Step 8b: 补丁饱和检测
 
 读取 `metrics.json`，检测补丁累积信号：

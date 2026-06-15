@@ -420,6 +420,116 @@ snapshot-save() {
   echo "Manifest saved: $manifest_file"
 }
 
+# ============ 双轨编辑（v7.0 SkillOpt inspired） ============
+
+# 编辑模式判定：≤3 段 bounded edit，>3 段 full rewrite
+diff-budget-check() {
+  local dir="${1:?skill dir required}"
+  local segments="${2:?affected segment count required}"
+
+  if [ "$segments" -le 3 ]; then
+    echo "BOUNDED_EDIT"
+  else
+    echo "FULL_REWRITE"
+  fi
+}
+
+# ============ Rejected-Edit Buffer（v7.0 SkillOpt inspired） ============
+
+# 审计失败时记录到 rejected-edits.jsonl（滚动 50 条）
+rejected-edit-record() {
+  local dir="${1:?skill dir required}"
+  local strategy="${2:?strategy name}"
+  local reason="${3:?failure reason}"
+  local evolve_dir="$dir/.evolve"
+  local re="$evolve_dir/rejected-edits.jsonl"
+
+  mkdir -p "$evolve_dir"
+
+  local ts strategy_json reason_json
+  ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  strategy_json=$(printf '%s' "$strategy" | jq -Rs .)
+  reason_json=$(printf '%s' "$reason" | jq -Rs .)
+
+  printf '{"ts":"%s","strategy":%s,"reason":%s}\n' \
+    "$ts" "$strategy_json" "$reason_json" >> "$re"
+
+  # 滚动保留最近 50 条
+  local count
+  count=$(wc -l < "$re" | tr -d ' ')
+  if [ "$count" -gt 50 ]; then
+    tail -50 "$re" > "${re}.tmp" && mv "${re}.tmp" "$re"
+  fi
+
+  echo "Rejected edit recorded: $strategy — $reason"
+}
+
+# ============ 测试结果记录（v7.0 结构化输出） ============
+
+# 将子 agent 测试结果结构化存储到 test-results.json
+test-record() {
+  local dir="${1:?skill dir required}"
+  local label="${2:?test label (T_train/T_val)}"
+  local json_string="${3:?JSON test results array}"
+
+  local evolve_dir="$dir/.evolve"
+  local tr="$evolve_dir/test-results.json"
+
+  mkdir -p "$evolve_dir"
+
+  # 验证 json_string 是有效 JSON 数组
+  if ! echo "$json_string" | jq -e 'type == "array"' > /dev/null 2>&1; then
+    echo "ERROR: test-record received invalid JSON array" >&2
+    return 1
+  fi
+
+  # 追加记录，带 label 和时间戳
+  local ts entry
+  ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  entry=$(echo "$json_string" | jq --arg ts "$ts" --arg label "$label" \
+    '[.[] | . + {"ts": $ts, "label": $label}]')
+
+  if [ -f "$tr" ]; then
+    echo "$entry" | jq -s '.[0] + .[1]' "$tr" - > "${tr}.tmp" && mv "${tr}.tmp" "$tr"
+  else
+    echo "$entry" > "$tr"
+  fi
+
+  local total passed
+  total=$(echo "$entry" | 'length')
+  passed=$(echo "$entry" | '[.[] | select(.verdict == "PASS")] | length')
+  echo "Test results recorded: $label — $passed/$total passed"
+}
+
+# ============ Slow Update 检测（v7.0 SkillOpt inspired） ============
+
+# 连续 2 轮同维度 ≤4 触发 slow update
+slow-update-check() {
+  local dir="${1:?skill dir required}"
+  local metrics="$dir/.evolve/metrics.json"
+
+  [ -f "$metrics" ] || { echo "NO_HISTORY"; return 0; }
+
+  # 检查是否存在连续 2 轮退化（delta < 0 或 score <= 基线）
+  local recent_count
+  recent_count=$(jq '.history | length' "$metrics" 2>/dev/null || echo "0")
+
+  if [ "$recent_count" -lt 2 ]; then
+    echo "OK"
+    return 0
+  fi
+
+  # 简单检测：最近 2 轮 delta 都 < 0.5
+  local last_two_deltas
+  last_two_deltas=$(jq '[.history[-2:].[] | .delta] | map(select(. < 0.5)) | length' "$metrics" 2>/dev/null || echo "0")
+
+  if [ "$last_two_deltas" -ge 2 ]; then
+    echo "SLOW_UPDATE_TRIGGERED"
+  else
+    echo "OK"
+  fi
+}
+
 # ============ 审计报告保存 ============
 audit-save() {
   local dir="${1:?skill dir required}"

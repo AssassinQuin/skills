@@ -102,6 +102,14 @@ source evolve.sh && audit-save {skill_dir} {round}
 
 **检查点意义**：audit 是最终质量门。通过后直接进入部署，问题不在此拦截就会带到生产。
 
+### Step 5b: 记录失败经验（审计未通过时必须执行）
+
+审计未通过时，在回滚前调用：
+
+```bash
+rejected-edit-record {skill_dir} {strategy_id} "audit FAIL: Score {score} ≤ 基线 {baseline}, 原因: {主要FAIL项}"
+```
+
 **Fallback**：opus 超时 → 简化审计(sonnet, D4+D5) → 极速审计(主 agent, 仅 D4)。
 
 ---

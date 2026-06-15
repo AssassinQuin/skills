@@ -13,11 +13,21 @@ IF 不满足: 输出 [PRE-CHECK-FAIL] + 缺失项，禁止继续
 
 ## 原则
 
-准确完整地改写目标段落，不是打补丁。
+双轨编辑：根据改动范围自动选择模式（`diff-budget-check` 判定）。
 
 ## 执行步骤
 
-### Step 1: 检索最优候选
+### Step 1: 判定编辑模式
+
+```bash
+diff-budget-check {skill_dir} {affected_segment_count}
+```
+
+**BOUNDED_EDIT**（≤3 段）：行级 add/delete/replace，受 textual learning rate 约束（改动量 ≤ 原文对应段的 30%）。适合痛点修复、内容精简、局部改进。
+
+**FULL_REWRITE**（>3 段或结构性变化）：完整重写受影响段落。适合范式转换、新增流程、章节重组。
+
+### Step 1b: 检索最优候选（BOUNDED_EDIT 时跳过）
 
 用 `ctx_search` 检索最优候选完整内容。
 

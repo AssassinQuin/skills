@@ -1,9 +1,9 @@
 ---
 name: skill-evolver
-version: "6.6"
+version: "7.0"
 description: >
-  Skill 自进化框架。基于 SkillEvolver 论文(arXiv:2605.10500)实现。
-  命令驱动 + 脚本强制 + 渐进披露 + 双路径 + 部署接地审计。
+  Skill 自进化框架。基于 SkillEvolver(arXiv:2605.10500) + SkillOpt(arXiv:2605.23904)实现。
+  命令驱动 + 脚本强制 + 渐进披露 + 双轨编辑 + 部署接地审计 + 负反馈闭环。
   Trigger: "进化 X skill", "审计 X", "评估 X 质量", "进化 skill-evolver",
   "优化所有 skills", "查看进化历史", "重写 skill", "优化 X，痛点 Y", "优化 X skill",
   "验证 X skill".
@@ -19,7 +19,7 @@ allowed-tools:
 user-invocable: true
 ---
 
-# Skill Evolver v6.6
+# Skill Evolver v7.0
 
 ## 决策入口
 
@@ -71,6 +71,9 @@ source /Users/ganjie/skills/skill-evolver/scripts/evolve.sh && phase-start <phas
 | 指标更新 | `metrics-update` | deployment |
 | Git | `git-setup` / `git-checkpoint` | baseline, 各 Phase 末尾 |
 | Quick Fix 判定 | `quick-fix-check <dir> [file_count]` | baseline |
+| 编辑模式判定 | `diff-budget-check <dir> <segment_count>` | application |
+| 失败经验记录 | `rejected-edit-record <dir> <strategy> <reason>` | audit |
+| 测试结果记录 | `test-record <dir> <label> <json_string>` | baseline, deployment |
 | Silent-bypass | `silent-bypass-check` | audit |
 | 快照/审计保存 | `snapshot-save` / `audit-save` | baseline, audit |
 | 轻量检查 | `skill-validate <dir>` | Mode C |
@@ -99,7 +102,7 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。Agent 是 deferred 
 - **评分体系**：5 维 0-10 评分 + 痛点生命周期，详见 [baseline.md](references/modules/baseline.md)
 - **失败模式**：FM1-FM7 诊断，详见 [failure-modes.md](references/failure-modes.md)
 - **Git**：分支 `evolve/{skill}/YYYYMMDD`，BEFORE 快照 → `snapshot-save`，各 Phase → `git-checkpoint`
-- **日志**：`{skill}/.evolve/` 下 `evolution-log.jsonl`、`metrics.json`、`pain-points.jsonl`、`deployment-traces.jsonl`
+- **日志**：`{skill}/.evolve/` 下 `evolution-log.jsonl`、`metrics.json`、`pain-points.jsonl`、`deployment-traces.jsonl`、`rejected-edits.jsonl`、`test-results.json`
 - **Deployment-Grounded Learning**：每次 baseline 启动时检查 `deployment-traces.jsonl`，详见 baseline.md Step 3
 
 ## 约束
@@ -111,6 +114,7 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。Agent 是 deferred 
 3. **不跳过痛点回归** — deployment 必须验证 resolved 痛点
 4. **不在未执行时填结果** — 子 agent 未 spawn 则标记 UNVERIFIED
 5. **不忽略历史痛点** — 已解决痛点回归时必须记录
+6. **不丢弃失败经验** — 审计失败必须 `rejected-edit-record` 记录到 rejected-edits
 
 ### 流程约束
 
@@ -119,11 +123,13 @@ R5.1：`Agent()` 必须同时传 `subagent_type` + `model`。Agent 是 deferred 
 3. **路径锚定** — 子 agent 绝对路径 + ls 验证
 4. **审计隔离** — BEFORE 副本 + 全新上下文 opus + Quick Fix 也独立审计
 5. **写入集中** — 主 agent 写，子 agent 只读
-6. **完整改写** — 不打补丁；T_train/T_val 隔离
+6. **双轨编辑** — `diff-budget-check` 自动选择：≤3 段 bounded edit（受 textual learning rate 约束），>3 段或结构性变化 full rewrite
 7. **R ratchet** — 只保留有改进的版本；退化回滚
 8. **补丁饱和检测** — `total_rounds >= 5` 时提示精简
-9. **测试真实执行** — T_train/T_val 必须由子 agent 实际执行，日志必须有输出摘要作为证据
+9. **测试真实执行** — T_train/T_val 必须由子 agent 实际执行，结果通过 `test-record` 结构化存储
 10. **BEFORE 可追溯** — 副本必须保存到 `.evolve/snapshots/`
+11. **跨轮次对比** — 连续 2 轮同维度 ≤4 触发 slow update（放宽搜索粒度）
+12. **测试结构化输出** — 子 agent 测试结果必须返回 JSON（pass/partial/fail + evidence），自由文本不被接受
 
 ### Mode C: skill-validate
 

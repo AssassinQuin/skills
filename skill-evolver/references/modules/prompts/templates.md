@@ -251,6 +251,33 @@ exploration/audit/deployment 模块的子 agent prompt 模板。主 agent 读取
 [1-2 句话总结改写后 skill 的泛化能力]
 ```
 
+## 输出格式（结构化 JSON）
+
+```json
+{
+  "results": [
+    {
+      "id": "V1",
+      "type": "novel",
+      "prompt": "...",
+      "verdict": "PASS/PARTIAL/FAIL",
+      "details": {
+        "routing": true,
+        "steps": true,
+        "format": true,
+        "constraints": false,
+        "boundary": true
+      }
+    }
+  ],
+  "summary": {
+    "pass_rate": "X/Y",
+    "rate_pct": "Z%",
+    "verdict": "PASS/NEEDS-REVIEW/FAIL"
+  }
+}
+```
+
 ## 禁止
 - 不使用 Write/Edit
 - 模拟执行，不需要实际启动 skill

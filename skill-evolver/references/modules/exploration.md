@@ -32,6 +32,18 @@ phase-check exploration {skill_dir} && phase-start exploration {skill_dir}
 - 超时 120s，不重试
 - 成功 >= 2 → 正常对比学习；成功 == 1 → 直接采用；成功 == 0 → Fallback L2
 
+### Step 1b: 负样本注入（rejected-edits）
+
+读取 `.evolve/rejected-edits.jsonl`，注入到 explorer prompt 作为"避免"部分：
+
+```bash
+cat {skill_dir}/.evolve/rejected-edits.jsonl 2>/dev/null | jq -r '.[] | "避免: \(.strategy) — \(.reason)"' | head -10
+```
+
+无文件或文件为空 → 跳过（首次进化或首次审计通过）。
+
+**注意**：不传递 rejected-edits 的完整 JSON，只传递策略名 + 失败原因摘要（Contamination Controls Layer 2）。
+
 ### Step 2: 评分 + 显式对比学习（τ+/τ- Contrastive Update）
 
 按需 `ctx_search` 检索候选。评分只用 T_train。
