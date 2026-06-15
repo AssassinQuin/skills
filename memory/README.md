@@ -49,8 +49,6 @@ SKILL.md                    # Core instructions
 references/
   mcp-tools.md              # MCP tool reference (memory_memory_*)
   installation.md           # MCP server setup guide
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## MCP Tools

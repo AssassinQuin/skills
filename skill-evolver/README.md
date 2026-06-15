@@ -34,8 +34,6 @@ references/
   modules/                      # Modular evolution components
 scripts/
   evolve.sh                     # Bash-enforced phase execution
-agents/
-  claude-code.yaml              # Sub-agent orchestration config
 ```
 
 ## Evolution Strategies

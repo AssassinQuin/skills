@@ -43,8 +43,6 @@ scripts/
   init_skill.py             # Scaffold a new skill directory
   package_skill.py          # Package skill for distribution
   quick_validate.py         # Validate SKILL.md quality
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## See Also

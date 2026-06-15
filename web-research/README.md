@@ -31,10 +31,8 @@ references/
   agent-prompt.md           # Sub-agent prompt templates
   tool-specs.md             # MCP tool capability specs
 scripts/
-  mcp-probe.sh              # MCP server availability check
+  mcp-probe.sh              # MCP server diagnostics (optional)
 data/                       # Research output (gitignored)
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## Output Format

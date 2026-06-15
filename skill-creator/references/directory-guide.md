@@ -19,29 +19,11 @@ User-facing documentation. Every skill MUST have one. Contains:
 - Directory structure
 - Related skills
 
-### agents/claude-code.yaml (recommended)
+### Subagents — 全局基础设施
 
-Sub-agent orchestration config. Format:
+Subagent 不属于任何 skill，所有定义集中在仓库根 `skills/agents/`，通过 `scripts/setup-agents.sh` symlink 到 `~/.claude/agents/`。Skill 目录**不应**有 `agents/` 子目录。
 
-```yaml
-interface:
-  display_name: "Skill Name"
-  short_description: "One-line description"
-  trigger_words: ["trigger1", "trigger2"]
-  default_prompt: "Use $skill-name to ..."
-
-agents:
-  - role: "role-name"
-    model: "haiku|sonnet|opus"
-    description: "What this agent does"
-
-workflow:
-  - step: "step-name"
-    agent: "role-name"  # or null for main agent
-    output: "what this step produces"
-```
-
-Model assignment: haiku for deterministic/fast tasks, sonnet for standard reasoning, opus for strategic decisions.
+Model assignment: haiku for deterministic/fast tasks, sonnet for standard reasoning, opus for strategic decisions (R5.1：显式指定，禁止省略)。
 
 ### references/ (as needed)
 

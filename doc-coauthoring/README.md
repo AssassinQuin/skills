@@ -36,8 +36,6 @@ Guide users through a structured workflow for co-authoring documentation, propos
 
 ```
 SKILL.md                    # Core instructions
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## Supported Document Types

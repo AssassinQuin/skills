@@ -43,8 +43,6 @@ After each failed attempt, pressure increases. The rhetoric shifts from encourag
 
 ```
 SKILL.md                    # Core instructions
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## See Also

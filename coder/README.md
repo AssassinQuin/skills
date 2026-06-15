@@ -38,8 +38,6 @@ references/
   python-verification-loop.md
   core-protocols.md         # Shared execution protocols
   code-audit-protocol.md    # Deep audit checklist
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## See Also

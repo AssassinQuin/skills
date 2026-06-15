@@ -36,8 +36,6 @@ scripts/
   evaluation.py             # Evaluation framework template
   connections.py            # Connection management utilities
   example_evaluation.xml    # Example evaluation output
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## MCP Documentation Library

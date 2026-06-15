@@ -9,7 +9,17 @@ description: >
 
 # Skill Stats — 使用统计与质量分析
 
-分析 `.stats/usage.jsonl` 日志，生成 skill 使用统计报告。
+分析 `.stats/usage.jsonl` 日志，生成 skill/subagent 使用统计报告。
+
+## 数据格式
+
+`usage.jsonl` 每行一个 JSON 事件，`type` 字段区分：
+
+- `"skill"` — Skill 工具调用（PostToolUse hook）
+- `"subagent"` — Subagent 调用（SubagentStop hook）
+
+新格式字段：`ts, type, skill/subagent, model?, duration_ms?, session_id?, tokens?{input, output}`
+旧格式（兼容）：`ts, skill`（缺少 type 字段视为 skill）
 
 ## 执行流程
 
@@ -21,17 +31,25 @@ description: >
 
 用代码（非手动）计算以下指标：
 
-**使用排行**：
+**Skill 使用排行**（type=skill 或旧格式）：
 - 统计每个 skill 的总调用次数
 - 按次数降序排列
 - 标注 zero-use skill（日志中从未出现的 skill）
 
+**Subagent 使用排行**（type=subagent）：
+- 每个 subagent 的调用次数、总 token 消耗（如有）、平均耗时（如有）
+- 按调用次数降序
+
 **时间趋势**：
 - 最近 7 天 / 30 天 / 总计 调用次数
-- 活跃 skill（7天内有调用）vs 闲置 skill
+- 活跃（7天内有调用）vs 闲置
+
+**Token 成本分析**（仅新格式有 tokens 字段时）：
+- 每个 skill/subagent 的总 input + output token
+- TOP 5 token 消耗者
+- 估算成本（按 sonnet $3/opus $15 per MTok input 估算）
 
 **Darwin 交叉**（若 `darwin-skill/results.tsv` 存在）：
-- 读取最新评分
 - 高使用+低分 → 优化优先级最高
 - 零使用 → 删除候选
 
@@ -46,14 +64,20 @@ description: >
 ```
 ## Skill Stats Report（统计周期：YYYY-MM-DD ~ YYYY-MM-DD）
 
-### 使用排行 TOP 10
+### Skill 使用排行 TOP 10
 | # | Skill | 调用次数 | 7天 | 30天 | 建议 |
 |---|-------|---------|-----|------|------|
+
+### Subagent 使用排行
+| # | Subagent | 调用次数 | 总 tokens | 平均耗时ms | 建议 |
+|---|----------|---------|----------|-----------|------|
+
+### Token 消耗 TOP 5
+| # | Skill/Subagent | Input Tok | Output Tok | 估算成本 |
 ...
 
 ### 闲置 Skills（30天未使用）
 | Skill | 上次使用 | 建议 |
-|-------|---------|------|
 ...
 
 ### 零使用 Skills（从未被调用）

@@ -33,8 +33,6 @@ SKILL.md                    # Core instructions
 references/
   methods.md                # Brainstorming methodology library
   novel-brainstorm.md       # Novel-writing specific techniques
-agents/
-  claude-code.yaml          # Sub-agent orchestration config
 ```
 
 ## See Also

@@ -22,24 +22,38 @@ Languages: mostly English, some Chinese (huashu-nuwa, pua-debugging), traditiona
 ├── README.md                   # User docs: what it does, triggers, workflow, structure
 ├── references/                 # Reference knowledge loaded by the skill
 ├── scripts/                    # Automation scripts (shell, python, etc.)
-├── agents/
-│   └── claude-code.yaml        # Sub-agent orchestration: roles, models, workflow
 ├── examples/                   # Example inputs/outputs (optional)
 └── evals/                      # Quality checklists and evaluation rubrics (optional)
 ```
 
 - **README.md** — User-facing documentation. What the skill does, trigger words, quick start, workflow overview, directory structure, and related skills.
-- **agents/claude-code.yaml** — Declarative sub-agent config: `interface` (display_name, trigger_words, default_prompt) + `agents` (role, model, description) + `workflow` (ordered steps with agent assignments). Model assignment follows coding-rules R5.1 (haiku for deterministic, sonnet for standard, opus for strategic).
+
+### Global Subagents (`skills/agents/`)
+
+Subagents are Claude Code-level infrastructure, **decoupled from skills**. All subagent definitions live in `skills/agents/` and are symlinked to `~/.claude/agents/` via `scripts/setup-agents.sh`. Skills reference these global subagents by name in their SKILL.md but do **not** own or define them.
+
+This follows the official Claude Code design: subagents live at `~/.claude/agents/` (user-level) or `.claude/agents/` (project-level), independent from `~/.claude/skills/`. See [Subagents docs](https://docs.claude.com/en/docs/claude-code/sub-agents).
+
+| Subagent | Model | Used by |
+|----------|-------|---------|
+| brainstorm-collider | sonnet | brainstorm |
+| evolver-auditor | opus | skill-evolver |
+| evolver-explorer | sonnet | skill-evolver |
+| explorer | haiku | programmer |
+| oracle | opus | programmer, darwin-skill |
+| researcher | sonnet | web-research, huashu-nuwa |
+| reviewer | sonnet | darwin-skill, code-review, fin-code-review |
 
 ## Distribution (Directory-Level Symlinks)
 
 Each tool's skills directory symlinks directly to this repo. Adding/removing a skill here auto-syncs all tools.
 
 ```bash
-# Re-initialize all symlinks
+# Re-initialize all symlinks (skill 分发 + agent 注册)
 for dir in ~/.trae/skills ~/.config/opencode/skills ~/.opencode/skills ~/.claude/skills ~/.agents/skills ~/.cursor/skills; do
   rm -rf "$dir" && ln -s /Users/ganjie/skills "$dir"
 done
+bash ~/.claude/skills/scripts/setup-agents.sh   # 注册 skill agents → ~/.claude/agents/
 ```
 
 ## Nested Git Repos
@@ -70,6 +84,10 @@ Other upstream skills (skill-seekers, huashu-nuwa, storytelling, prose-craft) ar
 ## Docker / MCP Servers
 
 `dockerfile/` contains Docker configs for MCP servers: `searxng-mcp`, `github-mcp-server`, `one-search-mcp`.
+
+## Sub-Agent MCP Precheck
+
+Subagent 使用运行时降级处理 MCP 工具不可用（v2 协议），不再强制父 agent 预检。每个 agent body 末尾有降级表，工具失败时自动沿链切换。详见 `~/.claude/agents/MCP-PRECHECK.md`。
 
 ## Git Notes
 
