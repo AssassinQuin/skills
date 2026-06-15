@@ -1,11 +1,11 @@
 {
-  "total_rounds": 9,
+  "total_rounds": 10,
   "avg_score_delta": 1.5,
   "avg_T_val_pass_rate": 1.0,
   "last_round": {
     "date": "2026-06-15",
-    "strategy": "S5+S3+S1-dual-edit",
-    "score": 7.6
+    "strategy": "R14-deployment-gates",
+    "score": 8.9
   },
   "strategies_used": [
     "S5+S1+S3-merge",
@@ -87,6 +87,14 @@
       "score_before": 5.9,
       "score_after": 7.6,
       "delta": 1.7
+    },
+    {
+      "round": 14,
+      "date": "2026-06-15",
+      "strategy": "R14-deployment-gates",
+      "score_before": 7.6,
+      "score_after": 8.9,
+      "delta": 1.3
     }
   ]
 }

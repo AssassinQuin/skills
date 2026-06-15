@@ -75,8 +75,7 @@ regression-check {skill_dir}
 对 `regression-check` 报告的每个 REGRESSION：
 1. `pp-regress {skill_dir} {pp_id}` + 记录回归原因
 2. 回归率 > 30% → 自动 `git revert HEAD` + 终止部署
-- 回归率 > 30% → 自动 `git revert HEAD` + 终止部署
-- 单痛点 `regression_count >= 2` → 标记 `wontfix`
+3. 单痛点 `regression_count >= 2` → 标记 `wontfix`
 
 输出格式：
 ```
