@@ -1,0 +1,359 @@
+---
+name: coder
+version: "3.1"
+description: >
+  多语言编码元技能。检测语言→探测工具链→加载上下文→编排skill链→执行→审查→深度审计→总结→持久化经验。
+  显式 trigger：写代码、实现、重构、修复、修改、coder、编码、开发、debug、新增、审计代码、review diff。
+  隐式 trigger（v3.1 加）："修这个 bug" / "加个 X 功能" / "重构这块" / "这块代码不对" / "为什么 X 报错" / "改下 X"。
+agent-compatible: true
+skill_type: execution
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Glob
+  - Grep
+  - Agent
+---
+
+# Coder — 多语言编码元技能
+
+## 退出条件
+
+| 条件 | 行为 |
+|------|------|
+| 无匹配语言且目标文件无法确定语言 | 退出，使用通用编码 |
+| 纯文档任务（README/规范/变更日志） | 退出，使用文档 skill |
+| 非 coding 任务（分析数据/翻译/计划） | 退出，使用通用能力 |
+
+## 决策树
+
+```
+入口
+ ├─ 调用方式检测
+ │   ├─ Agent 调用 → 加载 references + 项目上下文 → 语言检测
+ │   └─ Skill 调用 → 加载 references → 语言检测
+ ├─ 语言检测（优先级：目标文件 > 项目文件 > prompt 关键词）
+ │   ├─ 目标文件扩展名（.go/.py/.ts/.rs） → 直接确定 [最高优先级]
+ │   ├─ 项目文件: go.mod→Go, pyproject.toml/setup.py/requirements.txt→Python
+ │   ├─ prompt 关键词（"Python API"/"Go 服务"） → 标记但需与上面冲突时降级 [最低]
+ │   └─ 三层均未匹配 → 退出
+ ├─ 框架工具链探测
+ │   ├─ 扫描构建文件 → 提取代码生成命令
+ │   └─ 标记自动生成目录 → 注入后续步骤
+ ├─ 复杂度评估（含可操作判据，禁止主观降级）
+ │   ├─ 简单（删除/注释/常量/配置） → 快速路径
+ │   ├─ 标准（新增函数/修改逻辑/同包重构，不含敏感词） → 标准路径
+ │   └─ 复杂（满足任一即强制完整路径，不可降级）：
+ │       ├─ 金额/支付/结算 → 风险类型见下表
+ │       ├─ 并发/goroutine/async/锁 → 风险类型见下表
+ │       ├─ API签名/认证/鉴权/auth/token/密码 → 风险类型见下表
+ │       ├─ 跨模块/跨服务 → 风险类型见下表
+ │       └─ 框架交互（ORM/MCP/序列化） → 风险类型见下表
+
+**复杂度关键词 → 风险类型映射**（v3.1 加，避免"并发"被当单一风险处理）：
+
+| 关键词类 | 实际风险子类型 | 触发不同验证策略 |
+|---------|--------------|---------------|
+| 并发 | 共享状态争用 / 资源争用 / 数据竞争 | mutex vs channel vs `go test -race` |
+| 金额 | 精度丢失 / 舍入 / 竞态 / 审计断点 | decimal vs int64 / 事务边界 / audit log |
+| auth | 凭证泄漏 / 越权 / 时序攻击 / 重放 | constant-time compare / nonce / TTL |
+| 跨模块 | 包边界 / 进程边界 / 一致性强弱 | 同事务 vs 异步 sink / RPC 失败回滚 |
+| 框架 | 类型解析 / 序列化 / 注解 / 生命周期 | 注解改 vs 逻辑改 / init 顺序 |
+ ├─ 执行路径
+ ├─ 验证门 → 审查门控 → 汇报 → 经验总结
+```
+
+## 上下文加载（强制，不可跳过）
+
+**加载证据要求**（v3.0 新增）：每次加载 reference 后，必须输出 `📂 已加载: [文件列表]` 作为执行证据。汇报段含 "references 引用点" 字段（每个改动标注从哪个 reference 抽取了什么），证明加载是真发生而非声明。
+
+#### references 加载时机矩阵（v3.1 加，避免 13 文件全加载 token 爆炸）
+
+| 执行阶段 | 加载文件 | 抽取段落 |
+|---------|---------|---------|
+| 理解 | `go-conventions.md` | 错误处理 + 分层 |
+| 方案 | `go-conventions.md` + `python-conventions.md` | 并发模式 / 测试模式 |
+| 执行 | `go-editing-traps.md` / `python-editing-rules.md` | Tab 陷阱 / 格式化 |
+| 验证 | `go-verification-loop.md` / `python-verification-loop.md` | 验证链（必含 -race for Go） |
+| 审查 Layer 1 | `core-protocols.md` | 自审范围 |
+| 审查 Layer 2 | `code-audit-protocol.md` | 子类型审计 checklist |
+| 始终 | `core-protocols.md` + `token-budget.md` | 编排协议 + token 上限 |
+
+**token 预算触顶时裁剪优先级**：验证 > 执行 > 方案 > 理解（保护测试 + 验证链最关键）。
+
+### Go 项目（`go.mod` 存在时）
+
+| 时机 | 文件 | 内容 |
+|------|------|------|
+| 步骤 1 前 | `references/go-gopls-strategy.md` | gopls 工具选择、导航策略 |
+| 步骤 3 前 | `references/go-editing-traps.md` | Tab 陷阱、sed 操作、文件归属 |
+| 步骤 4 前 | `references/go-verification-loop.md` | 验证链、预存失败识别 |
+| 新增/重组代码时 | `references/go-conventions.md` | 常量组织、架构分层、代码模式 |
+| 始终 | `references/core-protocols.md` | 编排协议、经验持久化、洞察发现、汇报格式 |
+
+### Python 项目（`pyproject.toml`/`setup.py`/`requirements.txt` 存在时）
+
+| 时机 | 文件 | 内容 |
+|------|------|------|
+| 步骤 1 前 | `references/python-tooling.md` | 工具选择、导航策略 |
+| 步骤 3 前 | `references/python-editing-rules.md` | 编辑规则、格式化 |
+| 步骤 4 前 | `references/python-verification-loop.md` | 验证链、预存失败识别 |
+| 新增/重组代码时 | `references/python-conventions.md` | 编码惯例、架构模式 |
+| 始终 | `references/core-protocols.md` | 编排协议、经验持久化、洞察发现、汇报格式 |
+
+### 新增语言扩展
+
+在 references/ 下创建 `{lang}-{purpose}.md` 文件，并在此表新增对应行。
+
+**最小集合 checklist**（v3.0 新增，缺一不可）：
+
+| 文件 | 必需内容 |
+|------|---------|
+| `references/{lang}-tooling.md` | 工具选择（lint/format/typecheck）、导航策略（symbol search/references） |
+| `references/{lang}-editing-rules.md` | 编辑规则（缩进、命名、format 命令）、常见陷阱（如 Tab/编码/换行） |
+| `references/{lang}-verification-loop.md` | 验证链（lint → type → test）、预存失败识别 |
+| `references/{lang}-conventions.md` | 编码惯例（架构分层、错误处理、测试模式如 table-driven/parametrize） |
+
+缺任一文件 → 该语言不可用，决策树直接退出"未匹配"。
+
+## 编排模式判定
+
+| 用户意图 | 模式 | skill 链 |
+|----------|------|----------|
+| 重构/重组/重命名 | 自主导导 | 本 skill → (可选 simplify) |
+| 新功能 | 单 skill | tdd |
+| **写测试/单元测试** | **复合链** | **tdd + unit-testing-best-practices（注入 pytest+parametrize / table-driven 上下文）** |
+| 修 bug | 单 skill | diagnose |
+| 审查代码 | 单 skill | code-review |
+| 审计代码 | 委托子 agent | 加载 `references/code-audit-protocol.md` → 子 agent 隔离审计 → 结构化报告 → 不确定项逐个确认 |
+| 诊断+修复+补测试 | 串联 | diagnose → 修复 → tdd |
+| 审查+修复 | 串联 | code-review → diagnose → 修复 |
+| 审计+修复 | 串联 | 子 agent 审计 → 逐项确认 → diagnose → 修复 |
+| 混合/不明确 | 交互确认 | 列出 ≤3 候选路径 |
+
+串联编排协议、委托验收标准见 `references/core-protocols.md`。
+
+## 执行路径
+
+| 路径 | 步骤 | 用户确认 |
+|------|------|---------|
+| **快速** | 理解→执行→验证→汇报→经验总结 | 否 |
+| **标准** | 理解→方案→执行→验证→汇报→经验总结 | 方案步骤需确认 |
+| **完整** | 理解→方案→保护测试→执行→验证→汇报→经验总结 | 方案步骤需确认 |
+
+### 理解（所有路径共有）
+
+1. 语义导航：引用关系、公开 API、同名符号
+2. 洞察发现：主动扫描（详见 core-protocols.md）
+3. 框架层错误专项：MCP/类型解析/序列化 → 对比同项目正常代码
+4. **框架工具链探测**：
+   - 扫描 `Makefile`/`Taskfile`/`justfile`/`package.json`，提取 `gen`/`generate`/`dao`/`ctrl`/`service` 目标
+   - 检测代码生成标记：`// Code generated by`、`gf gen`、`go generate`、`protoc`
+   - 标记自动生成目录（如 `dao/`、`service/`、`model/entity/`、`model/do/`）
+   - 输出探测结果：`🔧 框架工具链: {工具} → {命令列表} → {自动生成目录}`
+   - **约束**：涉及自动生成目录时，禁止手动编辑，必须通过框架命令重新生成
+
+5. **手写层 vs 生成层判别**（v3.1 加，三重信号）：
+   - 信号 A：文件头注释 `// Code generated by ... DO NOT EDIT` → 生成层
+   - 信号 B：文件名后缀 `_gen.go` / `dao.go` / `.pb.go` / `wire_gen.go` → 生成层
+   - 信号 C：目录位置 `dao/` `model/do/` `entity/` `pb/` → 生成层；`internal/service/` `pkg/service/` `domain/` → 手写层
+   - 三重信号任一命中即判生成层；三重全无 → 手写层
+   - **目标方法归属判定**：先找该方法签名是否在生成层（如 `dao/user.go` 内）→ 在则改业务层包装（`service/user.go`），不在则直接改
+
+6. **加载历史经验**：`memory_search(query="{语言} coding gotcha", limit=5)`
+7. **工具链探测结果持久化**（v3.0 新增）：若 Step 4 探测到自动生成目录，`memory_store(content="环境: {工具} 关键命令: {命令列表} 自动生成目录: {目录}", tags="coding-{lang}-toolchain")`
+5. 加载历史经验：`memory_search(query="{语言} coding gotcha", limit=5)`
+6. **工具链探测结果持久化**（v3.0 新增）：若 Step 4 探测到自动生成目录，`memory_store(content="环境: {工具} 关键命令: {命令列表} 自动生成目录: {目录}", tags="coding-{lang}-toolchain")`
+
+### 方案（标准/完整路径）
+
+展示：改动范围 + 改动类型 + 风险评级 + 验证计划 + **工具链影响**（若探测到自动生成目录涉及）。**等待用户确认**。
+
+#### 并发原语决策树（v3.1 加，避免 R11 惯例 vs R2 简洁冲突时即兴选择）
+
+```
+是否高争用场景（高频写 + 多 goroutine 真并发）？
+├── No（同 user 不会真并发 / 低 QPS）→ atomic + 单条 SQL update（最简）
+├── Yes + 读多写少 → RWMutex
+├── Yes + 写写争用 → Mutex
+└── Yes + 跨 goroutine 通信 → channel（事件驱动）
+
+惯例优先（R11）：
+- 看项目已有代码：sync.Mutex / atomic.Int64 / channel 谁多 → 跟随
+- 项目无惯例 + 争用不明 → 默认 atomic（最简，R2）
+```
+
+#### 跨模块一致性策略决策树（v3.1 加，audit log / 副作用类）
+
+```
+副作用（audit log / 通知 / 缓存失效）与主操作的关系？
+├── 必须强一致（金融审计 / 合规要求）→ 同事务，DB audit 表 + tx.Err() 链路
+├── 允许最终一致（用户行为日志 / 监控）→ 异步 sink（NSQ/Kafka/Queue）
+│   └── 失败重试：必须幂等（同 message_id 不重复写）
+└── 允许丢失（调试日志）→ 直接 stdout / file logger
+```
+
+**测试策略随一致性选择变化**：
+- 强一致：测试事务回滚时副作用也回滚
+- 最终一致：测试 sink 失败后重试幂等性
+- 允许丢失：不测
+
+### 保护测试（仅完整路径）
+
+识别行为锚点 → 参数化测试 → 全部 PASS。无法测试标注 `[未保护]` + 理由，全部 fallback 必须**用户确认**。
+
+#### 并发专项测试 protocol（v3.1 加，复杂度=并发时强制）
+
+```
+1. 正确性 table-driven（功能语义）
+2. race 测试：N goroutine 并发调 + `go test -race -count=N`
+3. 副作用原子性：每次主操作恰好触发 1 次副作用（audit log 计数）
+4. context cancellation：测试 ctx.Done() 时主操作 + 副作用都取消
+```
+
+**反例**（保护测试漏 race）：只测功能正确性，未跑 `-race`，prod 出 race condition 才发现。
+
+### 执行
+
+先完成所有文件改动，再一次性验证。
+
+| 任务类型 | 流程 |
+|----------|------|
+| 重构 | 本 skill 主导，按风险从低到高 |
+| 新需求 | 委托 tdd + 注入语言上下文 |
+| Bug 修复 | 语义定位 → 修复 → 回归测试 |
+| 简化/删除 | 注入引用安全 → 逐点简化 |
+| 涉及生成目录 | 先执行框架生成命令（如 `gf gen ctrl`），再修改业务逻辑层 |
+
+### 验证
+
+加载 `references/{语言}-verification-loop.md`，执行完整验证链。失败处理：预存问题标注继续；新引入失败回退修复（最多 2 轮）。
+
+## 审查门控（验证通过后，自动触发条件 v3.0 明确）
+
+### Layer 1: 自审（强制触发条件）
+
+| 复杂度 | 是否触发 Layer 1 | 自审范围 |
+|--------|-----------------|---------|
+| 简单 | 跳过 | - |
+| **标准** | **强制触发** | 风格一致性、明显副作用、测试覆盖存在性 + **委托任务语义覆盖复核**（主 agent 用 grep 验证委托 tdd/simplify 输出是否真覆盖目标模块，不仅查存在性） |
+| 复杂 | 强制触发 + 委托 neat-freak | Layer 1 范围 + neat-freak skill（若未安装则 code-review skill） |
+
+### Layer 2: 深度审计（强制触发条件，v3.0 明确）
+
+| 触发条件 | 是否强制 Layer 2 |
+|---------|-----------------|
+| 复杂度 = 复杂（含金额/并发/auth/跨模块） | **强制** |
+| 用户显式触发（"审计代码"/"review diff"/"code audit"） | 强制 |
+| 完整路径执行后 | 强制 |
+| 标准/简单路径，无敏感词 | 不触发 |
+
+委托子 agent 加载 `references/code-audit-protocol.md` 执行隔离审计：
+1. 子 agent 接收：改动文件列表 + 复杂度标签 + 项目语言 + **v3.1 加：复杂度子类型审计 checklist**
+2. 子 agent 执行（建议按此顺序，非强制）：分类审计（按代码类型差异化）→ 测试反模式检测 → 注释完整性 → 不确定项收集
+3. 子 agent 返回：结构化 JSON 报告（findings + uncertainties）
+4. 主 agent 处理：逐个向用户确认不确定项，汇总汇报
+
+#### 复杂度子类型审计 checklist（v3.1 加）
+
+| 子类型 | 必查项 |
+|-------|-------|
+| **并发** | mutex 覆盖所有临界区 / defer Unlock / RWMutex vs Mutex 选择 / channel close 时机 / context cancellation 传播 |
+| **金额** | decimal vs float / 舍入模式 / 事务边界 / audit log 不可篡改 |
+| **auth** | constant-time compare / 凭证不进 log / nonce / TTL / 重放防护 |
+| **跨模块** | 模块边界（包 vs 进程）/ 一致性策略匹配 / RPC 失败回滚 / 重试幂等 |
+| **框架** | 注解 vs 逻辑改 / init 顺序 / 类型解析 / 序列化兼容 |
+
+**用户可直接触发**：意图为"审计代码"/"review diff"/"code audit"时，跳过执行路径，直接进入 Layer 2。审计报告标注 `[基于未验证代码]`（若代码未经完整路径验证）。
+
+## 汇报
+
+汇报格式见 `references/core-protocols.md`。**v3.0 强制新增字段**：
+
+```markdown
+## 改动摘要
+- 语言：{语言} | 文件数：{N} | 类型：{类型} | 风险：{等级}
+
+## references 引用点（v3.0 新增，证明加载是发生而非声明）
+- references/{file}.md → 抽取：{引用片段/规则}
+- references/{file}.md → 抽取：{引用片段/规则}
+（每个改动至少标注 1 个 reference 引用点；无引用 = 未真正加载）
+
+## 编排过程（如有）
+...
+
+## 硬约束执行检查（v3.0 新增，见 references/hard-constraints-check.md）
+- [✓/✗] 上下文加载（已加载 N 个 references）
+- [✓/✗] 工具链探测（探测到 / 无自动生成目录）
+- [✓/✗] 验证链执行（lint/type/test）
+- [✓/✗] 审查门控触发（Layer 1/2 按复杂度）
+- [✓/✗] 经验总结（本次有/无新经验）
+
+## 文件列表 + 验证结果
+...
+```
+
+## 经验总结（汇报后必做，不可跳过，**失败/中断也触发**）
+
+**v3.0 触发条件扩展**：以下三种场景均触发经验总结（不可跳过）：
+1. 任务成功完成
+2. 任务失败回滚（验证链 FAIL 2 轮 / 委托 skill FAIL 重试耗尽）
+3. 任务被用户中断（含中途修改需求导致流程变更）
+
+场景 2/3 强制至少记录"踩坑"或"修正"类经验（负面信号必须持久化，避免下次重复踩）。
+
+汇报完成后，执行以下闭环：
+
+### 1. 经验收集
+
+回顾本次任务全过程：
+
+| 触发条件 | 存储内容 | 标准 tag（v3.0） |
+|----------|----------|------------------|
+| 踩坑（工具报错/降级/重试 2+ 次） | "踩坑: {描述}。正确做法: {做法}" | `coding-{lang}-gotcha` |
+| 用户修正（用户纠正过做法 ≥1 次） | "修正: {原始做法} → {正确做法}" | `coding-{lang}-gotcha` |
+| 新发现（项目特有模式/陷阱/配置） | "发现: {语言/框架} 中 {模式} 的规律" | `coding-{lang}-convention` |
+| 工具链发现（新探测到的构建命令） | "环境: {工具} 关键命令: {命令列表}" | `coding-{lang}-toolchain` |
+| 审计发现（深度审计中的非代码问题模式） | "审计: {代码类型} 常见问题: {模式描述}" | `coding-{lang}-audit` |
+
+### 2. 展示总结
+
+将收集的经验以紧凑列表展示给用户：
+
+```
+📋 本次会话经验总结
+- 踩坑: {描述}。正确做法: {做法}
+- 用户修正: {原始} → {正确}
+- 发现: ...
+```
+
+### 3. 用户确认
+
+```
+Q1: 是否持久化到 memory？（全部/选择部分/不保存）
+Q2: 是否需要更新 references 文档？（是/否/指定文件）
+  - 若是 → 展示建议更新的文件和改动 → 用户确认后写入
+```
+
+**快速路径简化**：跳过交互确认，自动保存踩坑类经验（其他类型不保存），不更新 references。
+
+### 4. 执行持久化
+
+- **memory**：使用 memory_store 存储，去重规则见 core-protocols.md
+- **references**：使用 Edit 更新指定文件，变更需用户确认
+- 输出：`✅ 经验已保存（{N} 条）`
+
+## 约束
+
+- 不改范围外文件
+- 单文件 ≤ 800 行，超出需拆分
+- 每次输出包含：当前步骤、语言、风险等级
+- 发现异常标注: "T{n} 异常: {类型} | {现象} | {已尝试} | {建议}"
+- 涉及自动生成目录时，禁止手动编辑，必须通过框架命令重新生成
+- 经验总结不可跳过（即使无新经验也输出"本次无新经验"确认）
+- **Token 预算**（v3.0 新增）：单次任务主上下文 ≤ 30k tokens；长文件（>300 行 / >2000 字）必须用 `ctx_index` + `ctx_search` 取关键段，不全文进上下文（详见 `references/token-budget.md`）
+- **references 加载证据**（v3.0 新增）：加载后输出 `📂 已加载: [列表]`；汇报含 "references 引用点" 字段
+- **硬约束自验证**（v3.0 新增）：汇报末尾输出 "硬约束执行检查" 清单（见 `references/hard-constraints-check.md`）
+- **复杂度不可主观降级**（v3.0 新增）：含金额/并发/auth/跨模块关键词时强制完整路径，agent 不可降级为标准/快速
