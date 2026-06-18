@@ -1,0 +1,119 @@
+{
+  "agent_id": "a1a496b29656811a0",
+  "task": "借鉴搜索 skill-search 类 skill",
+  "model": "sonnet",
+  "subagent_type": "researcher",
+  "duration_ms": 438440,
+  "tool_uses": 51,
+  "total_tokens": 4078,
+  "completed_at": "2026-06-18",
+  "top_candidates": [
+    {
+      "name": "vercel-labs/skills — find-skills",
+      "rank": "skills.sh #1, 1.9M installs",
+      "highlight": "唯一把搜索→验证→推荐做成显式协议的 meta-skill"
+    },
+    {
+      "name": "skills.sh leaderboard",
+      "highlight": "install count 单一信号做 ranking，35K+ skills/27+ 平台"
+    },
+    {
+      "name": "yan-labs/skillsmp",
+      "stars": 8,
+      "highlight": "170 万+ SKILL.md 索引；9 语言 + 800+ 职业；明确放弃官方评分"
+    },
+    {
+      "name": "Karanjot786/agent-skills-cli",
+      "stars": 161,
+      "highlight": "跨平台 CLI，40K+ skills，关键词 + AI semantic search 双模式"
+    },
+    {
+      "name": "Rito-w/skills-manager",
+      "stars": 187,
+      "highlight": "跨 IDE 一键安装（Claude/Cursor/Windsurf/Trae/Antigravity）+ marketplace 搜索"
+    },
+    {
+      "name": "SkillHub.cn",
+      "highlight": "中文端，Top 50 精选 + 安全审核 + 多维度评估"
+    },
+    {
+      "name": "kevinaimonster/skill-hub",
+      "stars": 2,
+      "highlight": "中文技能宝，主打智能推荐"
+    }
+  ],
+  "key_design_patterns": [
+    {
+      "id": "P1",
+      "name": "Leaderboard 优先 → CLI 兜底的两段式",
+      "source": "vercel find-skills Step 2-3",
+      "rule": "先查 leaderboard（按 install count 排序的 battle-tested 集合），命中即推荐；未命中再做 keyword 兜底",
+      "apply": "skill-search 应建立本地「已知高质量 skill 缓存」（如 mattpocock/skills、anthropics/skills、vercel-labs/skills、本仓库 33 个），先查缓存再走 GitHub API"
+    },
+    {
+      "id": "P2",
+      "name": "显式四维质量门，禁止搜到即推荐",
+      "source": "vercel find-skills Step 4 (加粗原文)",
+      "dimensions": [
+        "Install count (≥1K 优先，<100 警告)",
+        "Source reputation (官方源 vercel-labs/anthropics/microsoft > 个人作者)",
+        "GitHub stars",
+        "维护活跃度"
+      ],
+      "apply": "skill-search 必须在 SKILL.md 写出硬阈值表，标注'单源不可推荐'"
+    },
+    {
+      "id": "P3",
+      "name": "多语言 + 职业分类作为一等公民",
+      "source": "SkillsMP",
+      "rule": "9 种语言、800+ 职业分类、按职业看不同领域正在出现哪些 skill",
+      "apply": "skill-search 分类轴支持 (a) 主语言 (b) 任务域 (c) agent 平台 三维过滤；中文 trigger 与英文 trigger 等价"
+    },
+    {
+      "id": "P4",
+      "name": "触发词矩阵而非单关键词",
+      "source": "vercel find-skills When to Use",
+      "triggers": [
+        "how do I do X",
+        "find a skill for X",
+        "is there a skill that can X",
+        "can you do X",
+        "扩展能力",
+        "wish I had help with X domain"
+      ],
+      "apply": "description frontmatter 列出中英双语触发模板，覆盖显式请求 + 隐式能力缺口识别两类"
+    },
+    {
+      "id": "P5",
+      "name": "放弃绝对评分，转向地图+来源可追溯",
+      "source": "SkillsMP 关于页",
+      "quote": "怎样评价一个 skill 的好坏这件事还没有简单答案。在这个问题想清楚之前，SkillsMP 会先把地图、分类和来源做好。",
+      "apply": "skill-search 不假装绝对评分；输出候选清单+来源链接+install/stars/维护时间，判断权交回调用方（符合 coding-rules R12）"
+    }
+  ],
+  "pitfalls_to_avoid": [
+    {
+      "id": "Trap1",
+      "name": "单一信号 ranking 的马太效应",
+      "source": "skills.sh 用 install count 单维",
+      "example": "vercel-labs/agent-skills (100K+ installs) 永久霸榜，新 skill 永远上不去",
+      "lesson": "排序应混合 install/stars/更新时间/官方源加权，而不是单维"
+    },
+    {
+      "id": "Trap2",
+      "name": "无质量校验的 marketplace 列表污染信号",
+      "source": "ComposioHQ (65K stars) / antigravity-awesome-skills (41K stars)",
+      "evidence": "65K stars 但只有 830/3 open issues 的反差——把所有提交都收进来，无 trigger 验证、无 held-out 测试",
+      "lesson": "输出必须包含'为什么推荐这个'的字段（命中哪个 trigger/满足哪个质量门），可审计"
+    }
+  ],
+  "knowledge_gaps": [
+    "BenchClaw 的 quality gate 具体维度（README 提到但未拿到 rubric）",
+    "SkillHub.cn 的多维度评估维度（landing page 只宣称做了评估，未公开 rubric）",
+    "skills.sh 排名算法细节（推测为纯 install count）",
+    "agent-skills-cli 的 semantic search 实现（未公开是 embedding 还是 LLM rerank）"
+  ],
+  "fallback_chain_used": [
+    "ctx_fetch(github.com blob) × 4 失败 → ctx_fetch(raw.githubusercontent.com) + api.github.com/contents 成功恢复"
+  ]
+}

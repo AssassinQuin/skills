@@ -2,26 +2,6 @@
 
 评估维度共 8 项，每项 1-5 分。总分 40 分，用于 P4 深读阶段对候选 Skill 打分。
 
-## 评分谦逊化声明（Axis 14，强制阅读）
-
-**D1-D8 是启发式信号，不是绝对真理。**
-
-借鉴 SkillsMP 关于页原话：
-> "怎样评价一个 skill 的好坏这件事还没有简单答案。在这个问题想清楚之前，SkillsMP 会先把地图、分类和来源做好。"
-
-借鉴 vercel-labs/skills `find-skills` Step 4 加粗原文：
-> "Do not recommend a skill based solely on search results."
-
-**含义**：
-1. D1-D8 分数用于**横向对比同任务域的候选**（如评估 3 个 code-review skill 时排序），**不用于跨域排名**
-2. 报告核心输出仍是**候选清单 + 来源链接 + install/stars/维护时间 + 命中的 trigger/质量门**，分数降为辅助参考
-3. **禁止把分数作为唯一决策依据**。即使某候选 D1-D8 总分 40/40，如果四维质量门 signature 含 ✗（如维护活跃度 ✗），也不可推荐
-4. 评级 A/B/C/D/F 是**相对排序**，不是**绝对质量**
-
-符合 coding-rules R12"失败必须显性化"：评估不确定性必须显式标注（如"D1 给 4/5 但基于未深读 references，可信度中"）。
-
----
-
 ## 评分标准
 
 ### D1: 问题定义（Problem Clarity）
