@@ -1,6 +1,6 @@
 ---
 name: skill-deepener
-version: "1.3"
+version: "1.2"
 description: >
   Skill 内容深化器。专门给已有但内容空泛的 skill 补专家深度。与 skill-evolver
   互补：skill-evolver 做结构合规（robustness），skill-deepener 做内容深化（depth）。
@@ -62,19 +62,19 @@ user-invocable: true
 ## 流程
 
 ```
-P1 缺口诊断 → P2 反推通道 → P3 内容采集 → P4 内容重写 → P5 多专家评审 → P5.5 对比验证 → P6 持久化
-     ↓             ↓            ↓            ↓            ↓              ↓
- [exit-check]  [exit-check]  [exit-check]  [exit-check]  [exit-check]   [exit-check]
- 不通过→补完   不通过→补完   不通过→补完   不通过→补完   不通过→补完    REGRESS→回滚
+P1 缺口诊断 → P2 反推通道 → P3 内容采集 → P4 内容重写 → P5 多专家评审 → P6 持久化
+     ↓             ↓            ↓            ↓            ↓
+ [exit-check]  [exit-check]  [exit-check]  [exit-check]  [exit-check]
+ 不通过→补完   不通过→补完   不通过→补完   不通过→补完   不通过→补完
 ```
 
 每个 Phase 完成后必须 AskUserQuestion 展示结果等确认。见 [phase-gates.md](references/phase-gates.md)。
 
 ---
 
-### P1: 缺口诊断（7 维度 + 5 verdict，v1.3 完整版）
+### P1: 缺口诊断（6 维度 + 5 verdict，v1.2 完整版）
 
-用 ECC `skill-stocktake` 4 维度 + 自补 3 维度（Content Depth / Trigger Precision / Size Discipline）评估目标 skill。详见 [gap-diagnosis.md](references/gap-diagnosis.md)。
+用 ECC `skill-stocktake` 4 维度 + 自补 2 维度（Content Depth / Trigger Precision）评估目标 skill。详见 [gap-diagnosis.md](references/gap-diagnosis.md) + [industry-patterns.md](references/industry-patterns.md) 来源 4 + 7。
 
 | 维度 | 评分标准 |
 |------|---------|
@@ -84,12 +84,10 @@ P1 缺口诊断 → P2 反推通道 → P3 内容采集 → P4 内容重写 → 
 | **Currency** | 技术参考是否过期？（用 WebSearch 验证） |
 | **Content Depth**（v1.1） | 是否有真实案例 / 具体方法论 / 可操作判断标准？ |
 | **Trigger Precision**（v1.2） | description 是否含具体触发场景 + 隐式 trigger + do/don't 边界？ |
-| **Size Discipline**（v1.3） | 深化后行数是否超 Anthropic 反 monolithic 阈值（原 × 1.5）？ |
 
 > 💡 **专家视角（Modeling）**：
 > - Content Depth 存在因为 Actionability 不能捕获"缺方法论"
-> - Trigger Precision 存在因为 Anthropic Skill 系统底层纯靠 description 语义匹配，**description 是唯一营销渠道**
-> - **Size Discipline 存在因为 v1.2 漏判导致 web-research v2.2 行数触顶 1.51x，需要 v2.3 拆分修复。Size Discipline ≤ 2 强制 Improve + 必须拆分**
+> - Trigger Precision 存在因为 Anthropic Skill 系统底层纯靠 description 语义匹配，**description 是唯一营销渠道**（来源 7）。Trigger Precision ≤ 2 即使其他全 5 也强制 Improve。
 
 **输出 verdict**（5 种，v1.2 加，来自 ECC skill-stocktake）：
 
@@ -101,7 +99,7 @@ P1 缺口诊断 → P2 反推通道 → P3 内容采集 → P4 内容重写 → 
 | **Retire** | Uniqueness ≤ 2（不深化，建议退役） |
 | **Merge** | Scope fit ≤ 2（合并到其他 skill） |
 
-**P1 Exit**: 7 维度全评分 + verdict 输出 + 用户确认。verdict ∈ {Retire, Merge} 时退出不深化。Size Discipline ≤ 2 时 verdict 强制 Improve + 必须走 P4 分发架构建议。
+**P1 Exit**: 6 维度全评分 + verdict 输出 + 用户确认。verdict ∈ {Retire, Merge} 时退出不深化。
 
 ---
 
@@ -337,28 +335,7 @@ Agent(
 - DON'T：跳过 lint 因为"改动很小"
 ```
 
-**P4 Exit**: 至少 3 段新增内容（专家视角 / 脚手架 / 失败案例 / do-don't）+ 结构未变 + 用户确认 + **v1.3 Size Discipline 自检通过**（行数 ≤ 原 × 1.5）。
-
-### Step 4e: 分发架构建议（v1.3 新增，基于 web-research v2.3 实战）
-
-**触发条件**：P1 Size Discipline ≤ 3 OR 用户深化目标是元 skill。
-
-**建议**（基于 revfactory/harness + ECC + Voyager 模式）：
-
-| 当前 skill 类型 | 建议架构 |
-|---------------|---------|
-| **元 skill**（编排型，如 web-research） | 元 skill（流程 + 路由）+ N 个垂直子 agent（每个解决一类问题）|
-| **执行型 skill**（如 coder） | 元 skill（决策树 + 编排）+ 语言/场景子 agent（如 go-deepener / python-deepener）|
-| **研究型 skill**（如 skill-search） | 元 skill（搜索流程）+ 类型子 agent（按 skill 类型路由）|
-| **文档型 skill** | 一般不需分发，单文件 OK |
-
-**子 agent 设计原则**（来自 web-research v2.3 实战）：
-- 每个 agent 80-100 行
-- 自带：触发条件 + 多源验证 + 头脑风暴 + 输出 schema + 跑偏自查
-- 元 skill 只做编排，**不重复 agent 内部工作**
-- 元 skill 行数控制在 300 行内
-
-**反例**（v1.3 修复）：web-research v2.2 单文件 351 行（1.51x 触顶）→ v2.3 拆为 SKILL.md 287 + 5 agents + references。**v1.3 在 P4 主动建议拆分，避免后期修复**。
+**P4 Exit**: 至少 3 段新增内容（专家视角 / 脚手架 / 失败案例 / do-don't）+ 结构未变 + 用户确认。
 
 ---
 
@@ -374,21 +351,7 @@ Agent(
 
 > 💡 **专家视角（v1.1 评分边界）**：3 vs 4 vs 5 分的明确边界见 [expert-role-audit.md](references/expert-role-audit.md) §"评分边界细则"。**禁止给 4 分无证据**（4 分必须说明"差什么到 5"）。
 
-#### P5 简化触发条件（v1.3 新增，基于实战 token 经济）
-
-| 场景 | 用单 auditor | 用 3 角色 |
-|------|------------|----------|
-| self-deepening（深化 skill-deepener 自身） | ✅ | - |
-| 单 Phase 改动（< 30 行 diff） | ✅ | - |
-| token 预算紧张（剩余 < 30k） | ✅ | - |
-| 单一深化方向（只补 Content Depth） | ✅ | - |
-| 专业深化（多维度改动 + 跨段落） | - | ✅ |
-| 用户要求严格评审 | - | ✅ |
-| 涉及领域专业度（金融/医学/法律） | - | ✅ |
-
-**单 auditor 时**：用方法论严谨者角色（覆盖度最高），跳过案例真实者 + 领域准确者。
-
-**Step 5a: 并行 spawn N 个 auditor**（N ∈ {1, 3}，按上表选）
+**Step 5a: 并行 spawn 3 个 auditor**
 
 ```
 Agent(
@@ -418,62 +381,25 @@ Agent(
 **改进清单**：{汇总}
 ```
 
-**P5 Exit**: N 角色全评审 + 综合 verdict + 改进清单 + 用户确认。
+**P5 Exit**: 3 角色全评审 + 综合 verdict + 改进清单 + 用户确认。
 
 ---
 
-### P5.5: 对比验证（v1.3 新增，BEFORE vs AFTER reward 对比）
-
-**触发条件**：P5 accept 后，**强制执行**（不简化）。
-
-**目的**：检测"深化无效"（reward 不变）或"深化退化"（reward 下降）。
-
-**Step 5.5a: spawn Domain-Skill Agent 跑同一任务两次**
-
-```
-任务 = P2 用过的真实任务（held-out 一个）
-跑 1：BEFORE skill（从 .deepen/snapshots/BEFORE-*.md）→ reward_before
-跑 2：AFTER skill（当前 SKILL.md）→ reward_after
-```
-
-**Step 5.5b: 对比 + verdict**
-
-| 对比结果 | verdict | 行动 |
-|---------|---------|------|
-| reward_after > reward_before | **PASS** | 进 P6 持久化 |
-| reward_after == reward_before | **NO-OP** | 标注"深化无效"，进 P6 但标 ⚠️ |
-| reward_after < reward_before | **REGRESS** | git reset 回滚 + 重写 P4 |
-
-**P5.5 Exit**: reward 对比完成 + verdict 输出 + 用户确认。
-
----
-
-### P6: 持久化（v1.3 精简）
-
-**v1.3 改动**：从 v1.2 的 6+ 文件精简为 **2 文件 + raw/**（实战证明前 5 个文件中只有 BEFORE + summary 有真正价值）。
+### P6: 持久化
 
 **本地保存**：
 
 ```
 {target_skill}/.deepen/{YYYYMMDD}/
-├── BEFORE-SKILL.md           # 深化前快照（v1.3 保留）
-├── summary.md                # v1.3 合并：P1 诊断 + P2 gaps + P5 verdict + P5.5 reward 对比
+├── p1-gap-diagnosis.md       # P1 4 维度诊断
+├── p2-reverse-channel.md     # P2 失败案例 + expert gap
+├── p3-research.md            # P3 采集结果
+├── p4-rewrite-diff.md        # P4 改动 diff
+├── p5-expert-audit.md        # P5 多专家评审
+├── BEFORE-SKILL.md           # 深化前快照
 └── raw/
-    ├── domain-skill-agent-p2.json     # P2 轨迹
-    ├── domain-skill-agent-p5.5.json   # P5.5 对比轨迹
-    └── audit-{role}-{N}.json          # P5 评审报告（按角色拆）
+    └── domain-skill-agent-trajectory.json
 ```
-
-**v1.2 → v1.3 精简对照**：
-
-| v1.2 文件 | v1.3 处置 |
-|----------|----------|
-| p1-gap-diagnosis.md | 合并到 summary.md |
-| p2-reverse-channel.md | 合并到 summary.md + raw/p2.json |
-| p3-research.md | 不持久化（已在 SKILL.md 体现） |
-| p4-rewrite-diff.md | 不持久化（用 git diff 替代） |
-| p5-expert-audit.md | raw/audit-{role}.json |
-| BEFORE-SKILL.md | 保留 |
 
 **Memory 持久化 + Episodic Memory Buffer**（v1.2 加，来自 Reflexion）：
 

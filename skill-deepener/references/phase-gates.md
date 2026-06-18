@@ -9,12 +9,37 @@
 □ Scope fit 评分完成 + 证据
 □ Uniqueness 评分完成 + 证据
 □ Currency 评分完成 + 证据
-□ Content Depth 评分完成（v1.1 新增，1-5）+ 证据
-□ Trigger Precision 评分完成（v1.2 新增，1-5）+ 证据
+□ Content Depth 评分完成（1-5）+ 证据
+□ Trigger Precision 评分完成（1-5）+ 证据
+□ Size Discipline 评分完成（v1.3 新增，1-5）+ 证据（预判深化后行数）
 □ Currency 验证：用 WebSearch 查工具/命令/API 是否过期
-□ 6 维度综合 verdict（Keep/Improve/Update/Retire/Merge，v1.2 新增）
+□ 7 维度综合 verdict（Keep/Improve/Update/Retire/Merge）
+□ Size Discipline ≤ 3 时强制 P4 Step 4e 分发架构建议
 □ 优先深化方向明确（P2-P4 重点）
 □ AskUserQuestion 展示诊断报告等用户确认
+```
+
+## P5 Exit（多专家评审，v1.3 加简化触发）
+
+```
+□ 按简化触发条件表选 N（1 单 auditor 或 3 角色）
+□ N 个 auditor 全 spawn（subagent_type="evolver-auditor", model="opus"）
+□ 每个角色独立 fresh context
+□ 综合 verdict 输出（accept / revise / reject）
+□ 改进清单（如 revise）
+□ 改进后重新评审（如 reject）
+□ AskUserQuestion 展示评审报告等用户确认
+```
+
+## P5.5 Exit（对比验证，v1.3 新增）
+
+```
+□ spawn Domain-Skill Agent 跑 P2 用过的 held-out 任务
+□ BEFORE skill 跑一遍 → reward_before
+□ AFTER skill 跑同一任务 → reward_after
+□ 对比输出 verdict（PASS / NO-OP / REGRESS）
+□ REGRESS → git reset HEAD~1 回滚到 BEFORE
+□ AskUserQuestion 展示对比报告等用户确认
 ```
 
 ## P2 Exit（反推通道）
