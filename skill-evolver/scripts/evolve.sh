@@ -1,114 +1,35 @@
 #!/usr/bin/env bash
-# evolve.sh — skill-evolver 标准化操作 + 流程控制
+# evolve.sh — SkillEvolver v8 辅助脚本（精简版）
+#
+# v8 重构：从 v7 的 13+ 命令精简到 5 个。
+# 删除：score(D1-D5)、pp-*、metrics-update、quick-fix-check、diff-budget-check、
+#       rejected-edit-record、test-record、branch-check、regression-check、
+#       silent-bypass-check、skill-validate、phase-check、phase-start、slow-update-check
+# 原因：包装 jq 一行无额外能力；新架构（论文 Algorithm 1）不需要这些概念。
+#
 # 用法: source evolve.sh && <command>
 
 set -euo pipefail
 
-# ============ 评分计算 ============
-# 公式唯一定义于此。其他文件引用本命令。
-score() {
-  local d1="${1:?D1 required (0-10)}"
-  local d2="${2:?D2 required (0-10)}"
-  local d3="${3:?D3 required (0-10)}"
-  local d4="${4:?D4 required (0-10)}"
-  local d5="${5:?D5 required (0-10)}"
-
-  for d in "$d1" "$d2" "$d3" "$d4" "$d5"; do
-    if (( $(echo "$d < 0 || $d > 10" | bc -l) )); then
-      echo "ERROR: dimension $d out of range [0,10]" >&2; return 1
-    fi
-  done
-
-  echo "scale=1; ($d1*0.10 + $d2*0.20 + $d3*0.15 + $d4*0.20 + $d5*0.35)" | bc
-}
-
-# ============ Metrics 更新 ============
-metrics-update() {
+# ============ Trace 记录（替代 v7 的 pp-*/test-record/rejected-edit-record）============
+# 所有进化过程的结构化数据都写入 traces.jsonl，主 agent 直接 jq 操作
+trace-record() {
   local dir="${1:?skill dir required}"
-  local round="$2" strategy="$3" before="$4" after="$5"
-  local d1="$6" d2="$7" d3="$8" d4="$9" d5="${10}"
-  local t_train="${11:-null}" t_val="${12:-null}"
-  local metrics="$dir/.evolve/metrics.json"
+  local type="${2:?type required (trial|audit|deployment)}"
+  local data="${3:?json data required}"
 
-  if [ ! -f "$metrics" ]; then
-    echo '{"total_rounds":0,"history":[]}' > "$metrics"
-  fi
+  local file="$dir/.evolve/traces.jsonl"
+  mkdir -p "$(dirname "$file")"
 
-  local delta
-  delta=$(echo "scale=1; $after - $before" | bc)
-  local date
-  date=$(date +%Y-%m-%d)
-
-  jq --arg round "$round" --arg strategy "$strategy" \
-     --arg before "$before" --arg after "$after" --arg delta "$delta" \
-     --arg date "$date" \
-     --arg d1 "$d1" --arg d2 "$d2" --arg d3 "$d3" --arg d4 "$d4" --arg d5 "$d5" \
-     --arg t_train "$t_train" --arg t_val "$t_val" \
-  '
-    .total_rounds += 1 |
-    .last_round = {date: $date, strategy: $strategy, score: ($after | tonumber)} |
-    .history += [{
-      round: ($round | tonumber),
-      date: $date,
-      strategy: $strategy,
-      score_before: ($before | tonumber),
-      score_after: ($after | tonumber),
-      delta: ($delta | tonumber)
-    }]
-  ' "$metrics" > "${metrics}.tmp" && mv "${metrics}.tmp" "$metrics"
-}
-
-# ============ Pain Points CRUD ============
-pp-create() {
-  if [ $# -lt 6 ]; then
-    echo "Usage: pp-create <skill_dir> <id> <desc> <symptom> <source> <round>" >&2
-    return 1
-  fi
-  local dir="${1:?skill dir}" id="$2" desc="$3" symptom="$4" source="$5" round="$6"
-  local ts
-  ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-  local pp="$dir/.evolve/pain-points.jsonl"
-  mkdir -p "$(dirname "$pp")"
-
-  # printf 比 echo 安全（不解释转义序列）
-  local desc_json symptom_json
-  desc_json=$(printf '%s' "$desc" | jq -Rs .)
-  symptom_json=$(printf '%s' "$symptom" | jq -Rs .)
-
-  printf '{"id":"%s","skill":"%s","description":%s,"symptom":%s,"source":"%s","status":"open","created_at":"%s","resolved_at":null,"resolved_by":null,"round":%s,"regression_count":0}\n' \
-    "$id" "$(basename "$dir")" "$desc_json" "$symptom_json" "$source" "$ts" "$round" >> "$pp"
-}
-
-pp-resolve() {
-  local dir="${1:?skill dir}" id="$2" resolved_by="$3"
-  local ts
-  ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-  local pp="$dir/.evolve/pain-points.jsonl"
-
-  [ -f "$pp" ] || { echo "ERROR: $pp not found" >&2; return 1; }
-
-  # --slurp 一次性读取所有行，-c '.[]' 逐条输出回 JSONL
-  jq --arg id "$id" --arg by "$resolved_by" --arg ts "$ts" \
-    --slurp -c '.[] | if .id == $id then .status = "resolved" | .resolved_at = $ts | .resolved_by = $by else . end' \
-    "$pp" > "${pp}.tmp" && mv "${pp}.tmp" "$pp"
-}
-
-pp-regress() {
-  local dir="${1:?skill dir}" id="$2"
-  local pp="$dir/.evolve/pain-points.jsonl"
-
-  [ -f "$pp" ] || { echo "ERROR: $pp not found" >&2; return 1; }
-
-  jq --arg id "$id" \
-    --slurp -c '.[] | if .id == $id then .status = "regressed" | .regression_count += 1 else . end' \
-    "$pp" > "${pp}.tmp" && mv "${pp}.tmp" "$pp"
+  local ts; ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  echo "{\"ts\":\"$ts\",\"type\":\"$type\",$data}" >> "$file"
+  echo "trace recorded: type=$type"
 }
 
 # ============ Git 操作 ============
-
-# 检测 skill 所在的 git repo root。不在 skill_dir 内时返回空。
 _git-root() {
-  local dir="${1:?directory required}"
+  local dir="${1:-.}"
+  dir=$(cd "$dir" && pwd)
   git -C "$dir" rev-parse --show-toplevel 2>/dev/null || echo ""
 }
 
@@ -116,19 +37,17 @@ git-setup() {
   local skill="${1:?skill name required}"
   local skill_dir="${2:-.}"
   local branch="evolve/${skill}/$(date +%Y%m%d)"
-  local git_root
-  git_root=$(_git-root "$skill_dir")
+  local git_root; git_root=$(_git-root "$skill_dir")
 
   if [ -z "$git_root" ]; then
     echo "WARN: $skill_dir is not in a git repo. Operating in CWD." >&2
     git_root="$(pwd)"
   fi
 
-  local existing
-  existing=$(git -C "$git_root" branch --list "$branch" | tr -d ' ')
-
+  local existing; existing=$(git -C "$git_root" branch --list "$branch" | tr -d ' ')
   if [ -n "$existing" ]; then
-    echo "ERROR: Branch $branch already exists in $git_root. Delete first: git -C $git_root branch -D $branch" >&2
+    echo "ERROR: Branch $branch already exists in $git_root." >&2
+    echo "Delete first: git -C $git_root branch -D $branch" >&2
     return 1
   fi
 
@@ -140,504 +59,96 @@ git-setup() {
 git-checkpoint() {
   local msg="${1:?commit message required}"
   local skill_dir="${2:-.}"
-  local git_root
-  git_root=$(_git-root "$skill_dir")
+  local git_root; git_root=$(_git-root "$skill_dir")
 
   if [ -z "$git_root" ]; then
-    echo "WARN: No git repo detected for $skill_dir. Operating in CWD." >&2
-    git_root="$(pwd)"
+    echo "WARN: not in a git repo, skipping commit" >&2
+    return 0
   fi
 
-  git -C "$git_root" add -A
+  git -C "$git_root" add -A "$skill_dir"
+  if git -C "$git_root" diff --cached --quiet; then
+    echo "No changes to commit"
+    return 0
+  fi
+
   git -C "$git_root" commit -m "$msg"
-  echo "Committed to repo: $git_root"
+  echo "Committed: $msg"
 }
 
-# ============ 验证 ============
-verify-metrics() {
-  local dir="${1:?skill dir}"
-  local metrics="$dir/.evolve/metrics.json"
-
-  if [ ! -f "$metrics" ]; then
-    echo "ERROR: $metrics not found" >&2; return 1
-  fi
-
-  local invalid
-  invalid=$(jq '[.history[].score_before, .history[].score_after, .last_round.score] | map(select(. < 0 or . > 10)) | length' "$metrics")
-
-  if [ "$invalid" -gt 0 ]; then
-    echo "ERROR: Found $invalid scores outside [0,10] range in $metrics" >&2
-    return 1
-  fi
-
-  echo "OK: All scores in [0,10] range"
-}
-
-# ============ Silent-bypass 检测 ============
-# 检查 skill 是否被实际调用，而非仅存在于 SKILL.md 中
-silent-bypass-check() {
-  local dir="${1:?skill dir required}"
-  local skill_name
-  skill_name=$(basename "$dir")
-  local evolve_dir="$dir/.evolve"
-  local issues=0
-
-  echo "=== Silent-bypass Check: $skill_name ==="
-
-  # Check 1: SKILL.md 有触发词但无执行标记
-  if [ -f "$dir/SKILL.md" ]; then
-    local has_triggers
-    has_triggers=$(grep -c "Trigger:" "$dir/SKILL.md" 2>/dev/null || echo "0")
-    local has_markers
-    has_markers=$(find "$evolve_dir" -name "*.marker" 2>/dev/null | wc -l | tr -d ' ')
-
-    if [ "$has_triggers" -gt 0 ] && [ "$has_markers" -eq 0 ]; then
-      echo "WARN: Skill has triggers but no execution markers. Never evolved?" >&2
-      issues=$((issues + 1))
-    fi
-  fi
-
-  # Check 2: 约束是否只有文字声明，无执行层保障
-  if [ -f "$dir/SKILL.md" ]; then
-    local hard_constraints
-    hard_constraints=$(grep -cE "(硬约束|不可跳过|MUST|mandatory)" "$dir/SKILL.md" 2>/dev/null || echo "0")
-    local script_enforced
-    script_enforced=$(grep -c "phase-check\|AskUserQuestion\|silent-bypass" "$dir/SKILL.md" 2>/dev/null || echo "0")
-
-    if [ "$hard_constraints" -gt "$script_enforced" ]; then
-      echo "WARN: $((hard_constraints - script_enforced)) constraint(s) declared but not script-enforced" >&2
-      issues=$((issues + 1))
-    fi
-  fi
-
-  # Check 3: 阶段标记完整性（缺中间阶段 = 可能被跳过）
-  if [ -d "$evolve_dir" ]; then
-    local markers
-    markers=$(ls "$evolve_dir"/.*.marker 2>/dev/null | wc -l | tr -d ' ')
-    if [ "$markers" -gt 0 ] && [ "$markers" -lt 3 ]; then
-      echo "WARN: Only $markers phase markers found (expected 5 for full evolution). Phases may have been skipped." >&2
-      issues=$((issues + 1))
-    fi
-  fi
-
-  # Check 4: evolution-log 存在但无 round 记录
-  if [ -f "$evolve_dir/evolution-log.jsonl" ]; then
-    local rounds
-    rounds=$(wc -l < "$evolve_dir/evolution-log.jsonl" | tr -d ' ')
-    if [ "$rounds" -eq 0 ]; then
-      echo "WARN: evolution-log.jsonl exists but has no round records" >&2
-      issues=$((issues + 1))
-    fi
-  fi
-
-  if [ "$issues" -eq 0 ]; then
-    echo "OK: No silent-bypass signals detected"
-  else
-    echo "FOUND: $issues silent-bypass signal(s)"
-  fi
-}
-
-# ============ 流程控制（新增） ============
-
-# 前置条件检查：验证阶段可执行
-phase-check() {
-  local phase="${1:?phase required: baseline|exploration|application|audit|deployment}"
-  local dir="${2:?skill dir required}"
-  local evolve_dir="$dir/.evolve"
-
-  case "$phase" in
-    baseline)
-      [ -f "$dir/SKILL.md" ] || { echo "ERROR: SKILL.md not found in $dir" >&2; return 1; }
-      ;;
-    exploration)
-      [ -f "$evolve_dir/.baseline.marker" ] || { echo "ERROR: baseline phase not completed" >&2; return 1; }
-      ;;
-    application)
-      [ -f "$evolve_dir/.exploration.marker" ] || [ -f "$evolve_dir/.quick-fix.marker" ] || \
-        { echo "ERROR: exploration or quick-fix phase not completed" >&2; return 1; }
-      ;;
-    audit)
-      local git_root
-      git_root=$(_git-root "$dir")
-      if [ -n "$git_root" ]; then
-        git -C "$git_root" diff --quiet HEAD 2>/dev/null && \
-          { echo "ERROR: no uncommitted changes to audit in $git_root (commit first)" >&2; return 1; }
-      else
-        git diff --quiet HEAD 2>/dev/null && \
-          { echo "ERROR: no uncommitted changes to audit (commit first)" >&2; return 1; }
-      fi
-      ;;
-    deployment)
-      [ -f "$evolve_dir/.audit.marker" ] || { echo "ERROR: audit phase not completed" >&2; return 1; }
-      ;;
-    *)
-      echo "ERROR: unknown phase '$phase'" >&2; return 1
-      ;;
-  esac
-  echo "OK: $phase preconditions met"
-}
-
-# 阶段开始：写标记文件
-phase-start() {
-  local phase="${1:?phase required}"
-  local dir="${2:?skill dir required}"
-  local evolve_dir="$dir/.evolve"
-
-  mkdir -p "$evolve_dir"
-  echo "{\"phase\":\"$phase\",\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "$evolve_dir/.$phase.marker"
-  echo "Phase started: $phase"
-}
-
-# Quick Fix 判定（三条件全部满足）
-# Condition 1: 有 open + user-stated 痛点
-# Condition 2: 恰好 1 个（修复策略可唯一确定）
-# Condition 3: 预估改动文件数 ≤ 3（由主 agent 传入）
-quick-fix-check() {
-  local dir="${1:?skill dir required}"
-  local estimated_files="${2:-999}"
-  local pp="$dir/.evolve/pain-points.jsonl"
-
-  if [ ! -f "$pp" ] || [ ! -s "$pp" ]; then
-    echo "FULL_EVOLUTION"
-    return 0
-  fi
-
-  # Condition 1 + 2: 恰好 1 个 open + user-stated 痛点
-  # --slurp (-s) 将 JSONL 多行聚合为数组，否则 .[] 无法迭代
-  local user_stated_open
-  user_stated_open=$(jq -s '[.[] | select(.status=="open" and .source=="user-stated")] | length' "$pp" 2>/dev/null || echo "0")
-
-  if [ "$user_stated_open" -eq 0 ]; then
-    echo "FULL_EVOLUTION"
-    return 0
-  fi
-
-  if [ "$user_stated_open" -gt 1 ]; then
-    echo "FULL_EVOLUTION"
-    return 0
-  fi
-
-  # Condition 3: 改动范围 ≤ 3 个文件
-  if [ "$estimated_files" -gt 3 ]; then
-    echo "FULL_EVOLUTION"
-    return 0
-  fi
-
-  echo "QUICK_FIX_OK"
-}
-
-# ============ 轻量质量验证（Mode H / 编辑后触发） ============
-skill-validate() {
-  local dir="${1:?skill dir required}"
-  local skill_name
-  skill_name=$(basename "$dir")
-  local issues=0
-
-  echo "=== Skill Validate: $skill_name ==="
-
-  # Check 1: SKILL.md exists
-  [ -f "$dir/SKILL.md" ] || { echo "ERROR: SKILL.md not found in $dir" >&2; return 1; }
-
-  # Check 2: Frontmatter required fields
-  local has_name has_desc
-  has_name=$(grep -c "^name:" "$dir/SKILL.md" 2>/dev/null || echo "0")
-  has_desc=$(grep -c "^description:" "$dir/SKILL.md" 2>/dev/null || echo "0")
-  [ "$has_name" -ge 1 ] || { echo "ERROR: frontmatter missing 'name'" >&2; issues=$((issues + 1)); }
-  [ "$has_desc" -ge 1 ] || { echo "ERROR: frontmatter missing 'description'" >&2; issues=$((issues + 1)); }
-
-  # Check 3: Patch saturation (check metrics.json if exists)
-  local metrics_file
-  metrics_file="$dir/.evolve/metrics.json"
-  if [ -f "$metrics_file" ]; then
-    local rounds
-    rounds=$(jq -r '.total_rounds // 0' "$metrics_file" 2>/dev/null || echo "0")
-    if [ "$rounds" -ge 5 ]; then
-      echo "WARN: $rounds evolution rounds (>=5 = patch saturation, consider content simplification)" >&2
-      issues=$((issues + 1))
-    fi
-  fi
-
-  # Check 4: Reference files count
-  if [ -d "$dir/references" ]; then
-    local refs
-    refs=$(find "$dir/references" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
-    if [ "$refs" -gt 10 ]; then
-      echo "WARN: $refs reference files (>10 = bloat threshold)" >&2
-      issues=$((issues + 1))
-    fi
-  fi
-
-  # Check 5: Silent-bypass
-  silent-bypass-check "$dir" 2>/dev/null || issues=$((issues + 1))
-
-  # Check 6: Constraint count
-  local constraints
-  constraints=$(grep -cE "^\d+\.\s" "$dir/SKILL.md" 2>/dev/null || echo "0")
-  if [ "$constraints" -gt 15 ]; then
-    echo "WARN: $constraints constraints (>15 = constraint bloat)" >&2
-    issues=$((issues + 1))
-  fi
-
-  # Summary
-  local lines
-  lines=$(wc -l < "$dir/SKILL.md" | tr -d ' ')
-  if [ "$issues" -eq 0 ]; then
-    echo "OK: All quality checks passed ($lines lines)"
-  else
-    echo "FOUND: $issues issue(s) — consider running full evolution (/skill-evolver 进化 $skill_name)"
-  fi
-  return $issues
-}
-
-# ============ 快照保存（BEFORE 副本） ============
+# ============ 快照保存 ============
 snapshot-save() {
   local dir="${1:?skill dir required}"
-  local skill_name
-  skill_name=$(basename "$dir")
+  local label="${2:-BEFORE}"  # BEFORE | v1 | v2 | ... | vSTAR
+  local skill_name; skill_name=$(basename "$dir")
   local snap_dir="$dir/.evolve/snapshots"
-  local ts
-  ts=$(date +%Y%m%dT%H%M%S)
-  local snap_file="$snap_dir/${skill_name}-${ts}.md"
-  local manifest_file="$snap_dir/${skill_name}-${ts}-manifest.txt"
+  local snap_file="$snap_dir/${skill_name}-${label}.md"
 
   [ -f "$dir/SKILL.md" ] || { echo "ERROR: SKILL.md not found in $dir" >&2; return 1; }
 
   mkdir -p "$snap_dir"
   cp "$dir/SKILL.md" "$snap_file"
 
-  # Save directory manifest (all files excluding .evolve/)
+  # 多文件 skill 时同时保存 manifest
+  local manifest_file="$snap_dir/${skill_name}-${label}-manifest.txt"
   find "$dir" -not -path '*/.evolve/*' -not -path '*/.git/*' -type f | \
     sed "s|$dir/||" | sort | while read -r f; do
       lines=$(wc -l < "$dir/$f" 2>/dev/null || echo "?")
-      size=$(wc -c < "$dir/$f" 2>/dev/null || echo "?")
-      printf "%-6s %-8s %s\n" "$lines" "$size" "$f"
+      printf "%-6s %s\n" "$lines" "$f"
     done > "$manifest_file"
 
-  # Also create "latest" symlinks
-  ln -sf "$snap_file" "$snap_dir/${skill_name}-latest.md"
-  ln -sf "$manifest_file" "$snap_dir/${skill_name}-latest-manifest.txt"
+  # latest symlink（仅 BEFORE）
+  if [ "$label" = "BEFORE" ]; then
+    ln -sf "$snap_file" "$snap_dir/${skill_name}-latest.md"
+    ln -sf "$manifest_file" "$snap_dir/${skill_name}-latest-manifest.txt"
+  fi
 
   echo "Snapshot saved: $snap_file"
-  echo "Manifest saved: $manifest_file"
 }
 
-# ============ 双轨编辑（v7.0 SkillOpt inspired） ============
-
-# 编辑模式判定：≤3 段 bounded edit，>3 段 full rewrite
-diff-budget-check() {
+# ============ v* 选择（论文 Algorithm 1 line 13）============
+# 从 traces.jsonl 统计每轮 trial 的通过率，输出 argmax
+v-star-select() {
   local dir="${1:?skill dir required}"
-  local segments="${2:?affected segment count required}"
+  local file="$dir/.evolve/traces.jsonl"
 
-  if [ "$segments" -le 3 ]; then
-    echo "BOUNDED_EDIT"
-  else
-    echo "FULL_REWRITE"
-  fi
+  [ -f "$file" ] || { echo "ERROR: traces.jsonl not found" >&2; return 1; }
+
+  # 只统计 type=trial 的记录，按 round 分组算 pass_rate
+  jq -s '
+    [ .[] | select(.type == "trial") ]
+    | group_by(.round)
+    | map({
+        round: .[0].round,
+        total: length,
+        pass: [.[] | select(.y == 1 or .y == "1" or .y == true)] | length,
+        fail: [.[] | select(.y == 0 or .y == "0" or .y == false)] | length,
+        unverified: [.[] | select(.y == "UNVERIFIED" or .y == null)] | length
+      })
+    | map(.pass_rate = (if .total > 0 then (.pass / .total) else 0 end))
+    | sort_by(-.pass_rate)
+    | .[0]
+  ' "$file"
 }
 
-# ============ Rejected-Edit Buffer（v7.0 SkillOpt inspired） ============
+# ============ 自检（source 时打印可用命令）============
+evolve-help() {
+  cat <<'EOF'
+SkillEvolver v8 commands:
 
-# 审计失败时记录到 rejected-edits.jsonl（滚动 50 条）
-rejected-edit-record() {
-  local dir="${1:?skill dir required}"
-  local strategy="${2:?strategy name}"
-  local reason="${3:?failure reason}"
-  local evolve_dir="$dir/.evolve"
-  local re="$evolve_dir/rejected-edits.jsonl"
+  trace-record <dir> <type> <json>     Record a trace to traces.jsonl
+                                        types: trial | audit | deployment
+  git-setup <skill> [dir]              Create evolve branch
+  git-checkpoint <msg> [dir]           Stage + commit
+  snapshot-save <dir> [label]          Save SKILL.md snapshot
+                                        labels: BEFORE | v1 | v2 | ... | vSTAR
+  v-star-select <dir>                  Pick v* = argmax pass_rate(traces.jsonl)
+  evolve-help                          This message
 
-  mkdir -p "$evolve_dir"
-
-  local ts strategy_json reason_json
-  ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-  strategy_json=$(printf '%s' "$strategy" | jq -Rs .)
-  reason_json=$(printf '%s' "$reason" | jq -Rs .)
-
-  printf '{"ts":"%s","strategy":%s,"reason":%s}\n' \
-    "$ts" "$strategy_json" "$reason_json" >> "$re"
-
-  # 滚动保留最近 50 条
-  local count
-  count=$(wc -l < "$re" | tr -d ' ')
-  if [ "$count" -gt 50 ]; then
-    tail -50 "$re" > "${re}.tmp" && mv "${re}.tmp" "$re"
-  fi
-
-  echo "Rejected edit recorded: $strategy — $reason"
-}
-
-# ============ 测试结果记录（v7.0 结构化输出） ============
-
-# 将子 agent 测试结果结构化存储到 test-results.json
-test-record() {
-  local dir="${1:?skill dir required}"
-  local label="${2:?test label (T_train/T_val)}"
-  local json_string="${3:?JSON test results array}"
-
-  local evolve_dir="$dir/.evolve"
-  local tr="$evolve_dir/test-results.json"
-
-  mkdir -p "$evolve_dir"
-
-  # 验证 json_string 是有效 JSON 数组
-  if ! echo "$json_string" | jq -e 'type == "array"' > /dev/null 2>&1; then
-    echo "ERROR: test-record received invalid JSON array" >&2
-    return 1
-  fi
-
-  # 追加记录，带 label 和时间戳
-  local ts entry
-  ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-  entry=$(echo "$json_string" | jq --arg ts "$ts" --arg label "$label" \
-    '[.[] | . + {"ts": $ts, "label": $label}]')
-
-  if [ -f "$tr" ]; then
-    echo "$entry" | jq -s '.[0] + .[1]' "$tr" - > "${tr}.tmp" && mv "${tr}.tmp" "$tr"
-  else
-    echo "$entry" > "$tr"
-  fi
-
-  local total passed
-  total=$(echo "$entry" | 'length')
-  passed=$(echo "$entry" | '[.[] | select(.verdict == "PASS")] | length')
-  echo "Test results recorded: $label — $passed/$total passed"
-}
-
-# ============ Slow Update 检测（v7.0 SkillOpt inspired） ============
-
-# 连续 2 轮同维度 ≤4 触发 slow update
-slow-update-check() {
-  local dir="${1:?skill dir required}"
-  local metrics="$dir/.evolve/metrics.json"
-
-  [ -f "$metrics" ] || { echo "NO_HISTORY"; return 0; }
-
-  # 检查是否存在连续 2 轮退化（delta < 0 或 score <= 基线）
-  local recent_count
-  recent_count=$(jq '.history | length' "$metrics" 2>/dev/null || echo "0")
-
-  if [ "$recent_count" -lt 2 ]; then
-    echo "OK"
-    return 0
-  fi
-
-  # 简单检测：最近 2 轮 delta 都 < 0.5
-  local last_two_deltas
-  last_two_deltas=$(jq '[.history[-2:].[] | .delta] | map(select(. < 0.5)) | length' "$metrics" 2>/dev/null || echo "0")
-
-  if [ "$last_two_deltas" -ge 2 ]; then
-    echo "SLOW_UPDATE_TRIGGERED"
-  else
-    echo "OK"
-  fi
-}
-
-# ============ Deployment 质量门（v7.1 PP-SE19 修复） ============
-
-# 分支验证：确保 T_val 测试在 evolve 分支而非 main 上执行
-# 防止 AFTER 测试读错文件（R13 暴露的问题）
-branch-check() {
-  local dir="${1:?skill dir required}"
-  local skill_name
-  skill_name=$(basename "$dir")
-  local git_root
-  git_root=$(_git-root "$dir")
-
-  if [ -z "$git_root" ]; then
-    echo "WARN: no git repo — skipping branch check" >&2
-    return 0
-  fi
-
-  local current_branch expected_pattern
-  current_branch=$(git -C "$git_root" branch --show-current)
-  expected_pattern="evolve/${skill_name}/"
-
-  if [[ "$current_branch" == "$expected_pattern"* ]]; then
-    echo "OK: on evolve branch '$current_branch'"
-  else
-    echo "ERROR: current branch '$current_branch' is NOT an evolve branch (expected '$expected_pattern*'). T_val tests will read the wrong file." >&2
-    echo "Fix: git -C $git_root checkout -b evolve/${skill_name}/$(date +%Y%m%d)" >&2
-    return 1
-  fi
-}
-
-# 痛点回归检查：验证关键结构元素是否仍存在（resolved_by 存策略 ID 不可 grep）
-# 检查项：(1) 核心脚本函数 (2) 核心约束 (3) 核心 Phase 模块 (4) resolved 痛点计数
-regression-check() {
-  local dir="${1:?skill dir required}"
-  local pp="$dir/.evolve/pain-points.jsonl"
-  local skill_name
-  skill_name=$(basename "$dir")
-  local issues=0
-
-  echo "=== Regression Check: $skill_name ==="
-
-  # 1. 核心脚本函数必须存在
-  local required_fns="score pp-create pp-resolve pp-regress git-setup git-checkpoint phase-check phase-start snapshot-save"
-  echo "1. Core script functions:"
-  for fn in $required_fns; do
-    if grep -q "^${fn}()" "$dir/scripts/evolve.sh" 2>/dev/null; then
-      echo "  PASS: $fn()"
-    else
-      echo "  REGRESSION: $fn() missing from evolve.sh" >&2
-      issues=$((issues + 1))
-    fi
-  done
-
-  # 2. 核心约束必须存在（防约束被意外删除）
-  echo "2. Core constraints:"
-  local required_patterns=("绝对不做" "AskUserQuestion" "phase-check" "score D1")
-  for pat in "${required_patterns[@]}"; do
-    if grep -q "$pat" "$dir/SKILL.md" 2>/dev/null; then
-      echo "  PASS: '$pat' present in SKILL.md"
-    else
-      echo "  REGRESSION: '$pat' missing from SKILL.md" >&2
-      issues=$((issues + 1))
-    fi
-  done
-
-  # 3. 核心 Phase 模块必须存在
-  echo "3. Phase modules:"
-  for phase in baseline exploration application audit deployment; do
-    if [ -f "$dir/references/modules/${phase}.md" ]; then
-      echo "  PASS: ${phase}.md"
-    else
-      echo "  REGRESSION: references/modules/${phase}.md missing" >&2
-      issues=$((issues + 1))
-    fi
-  done
-
-  # 4. 痛点计数（resolved 不应变为 open/regressed）
-  if [ -f "$pp" ]; then
-    local total resolved regressed
-    total=$(jq -s 'length' "$pp" 2>/dev/null || echo "0")
-    resolved=$(jq -s '[.[] | select(.status=="resolved")] | length' "$pp" 2>/dev/null || echo "0")
-    regressed=$(jq -s '[.[] | select(.status=="regressed")] | length' "$pp" 2>/dev/null || echo "0")
-    echo "4. Pain points: total=$total resolved=$resolved regressed=$regressed"
-    if [ "$regressed" -gt 0 ]; then
-      echo "  REGRESSION: $regressed pain point(s) have regressed" >&2
-      issues=$((issues + 1))
-    fi
-  fi
-
-  echo "---"
-  if [ "$issues" -gt 0 ]; then
-    echo "FOUND: $issues regression(s)"
-    return 1
-  fi
-  echo "OK: No structural regressions detected"
-}
-
-# ============ 审计报告保存 ============
-audit-save() {
-  local dir="${1:?skill dir required}"
-  local round="${2:?round number required}"
-  local skill_name
-  skill_name=$(basename "$dir")
-  local report_dir="$dir/.evolve/audit-reports"
-  local report_file="$report_dir/${skill_name}-R${round}.md"
-
-  mkdir -p "$report_dir"
-
-  echo "Audit report path: $report_file"
-  echo "Write the audit report to this file. Main agent must save the content."
+Removed in v8 (use jq directly or main agent handles):
+  score, pp-create/resolve/regress, metrics-update, quick-fix-check,
+  diff-budget-check, rejected-edit-record, test-record, branch-check,
+  regression-check, silent-bypass-check, skill-validate, phase-check,
+  phase-start, slow-update-check
+EOF
 }
