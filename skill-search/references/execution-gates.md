@@ -5,12 +5,14 @@
 ## P0 Exit Checklist（本地缓存查询）
 
 ```
-□ 私有库已查询：glob("/Users/ganjie/skills/*/SKILL.md") + grep("{功能词}")
-□ 历史档案已查询：glob("skill-search/data/**/*.md") + grep("{功能词}")
+□ 私有库已查询：glob("{SKILL_LIBRARY_ROOT}/*/SKILL.md") + grep("{功能词}")
+□ 历史档案已查询：glob("{SKILL_LIBRARY_ROOT}/skill-search/data/**/*.md") + grep("{功能词}")
 □ 排行榜已查询：searxng_web_search("site:skills.sh {功能词}") + searxng_web_search("site:skillsmp.com {功能词}")
 □ 缓存命中数已记录（即使 0 也要记录）
 □ 若命中：跳过 P2/P3，直接进 P4 并标注"缓存来源：私有库/历史/排行榜"
 ```
+
+`SKILL_LIBRARY_ROOT` 默认 `~/.claude/skills`（见 SKILL.md 变量定义）。
 
 ## P1 Exit Checklist（需求解析 + 主语言检测）
 

@@ -8,22 +8,24 @@
 
 | 桶 | 来源 | 数量 | 可信度 |
 |---|---|---|---|
-| **私有库** | `/Users/ganjie/skills/` | 34 个 | 最高（用户自维护） |
-| **历史评估** | `skill-search/data/**/*.md` | 累积 | 高（已通过四维质量门） |
+| **私有库** | `{SKILL_LIBRARY_ROOT}/` | TBD | 最高（用户自维护） |
+| **历史评估** | `{SKILL_LIBRARY_ROOT}/skill-search/data/**/*.md` | 累积 | 高（已通过四维质量门） |
 | **Anthropic 官方** | anthropics/skills | TBD | 最高（官方源） |
 | **Vercel Labs** | vercel-labs/skills | TBD | 高（知名组织） |
 | **Matt Pocock** | mattpocock/skills | 12 个 | 高（104k stars 作者） |
 | **公共排行榜** | skills.sh / skillsmp.com | 35K+ | 中（混合质量） |
 
+`SKILL_LIBRARY_ROOT` 默认 `~/.claude/skills`（见 SKILL.md 变量定义）。各桶数量为参考，实际以 glob 结果为准。
+
 ## 查询优先级（Leaderboard 优先 → 全量兜底）
 
 ```
 1. 本地 glob + grep
-   glob("/Users/ganjie/skills/*/SKILL.md") + grep("{功能词}", ...)
+   glob("{SKILL_LIBRARY_ROOT}/*/SKILL.md") + grep("{功能词}", ...)
    → 命中：直接进 P4 深读，跳过 P2/P3
 
 2. skill-search/data/ 历史档案
-   glob("skill-search/data/**/*.md") + grep("{功能词}", ...)
+   glob("{SKILL_LIBRARY_ROOT}/skill-search/data/**/*.md") + grep("{功能词}", ...)
    → 命中：用历史评分 + 标注"已评估 YYYY-MM-DD"
 
 3. 排行榜检索
@@ -42,7 +44,7 @@
 ```python
 # 伪代码
 cache_query_log = {
-    "private_lib": glob("/Users/ganjie/skills/*/SKILL.md"),
+    "private_lib": glob("{SKILL_LIBRARY_ROOT}/*/SKILL.md"),
     "history": glob("skill-search/data/**/*.md"),
     "leaderboard": searxng_search("site:skills.sh ..."),
     "github_full": None  # 仅在 1-3 都未命中时执行

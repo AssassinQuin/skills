@@ -91,7 +91,7 @@ GitHub repo metadata `language` 字段返回的是**编程语言**（HTML/Python
 | Skill 仓库（.md 为主） | Markdown 或 HTML | 看 SKILL.md description | 用 SKILL.md 触发器语言 |
 | 代码库 | Python/Go/Rust | 看 README.md + docs/ | 用 README 字符分布 |
 
-**revfactory/harness 案例**：metadata.language = "HTML"（landing page），但 SKILL.md description 是韩文 → 主语言应判 `ko`（韩文触发器），不是 HTML。
+**典型案例**：某 landing-page 类仓库 `metadata.language = "HTML"`，但 `SKILL.md description` 用韩文 → 主语言应判 `ko`（韩文触发器），不是 HTML。判定优先级：**SKILL.md description > README 字符分布 > metadata.language**。
 
 ## Step 3: 搜索词主语言化
 
@@ -112,7 +112,7 @@ site:news.ycombinator.com "{功能词英文}"
 "{功能词中文}" site:weibo.com OR site:jike.city
 ```
 
-### 韩文仓库示例（如 revfactory/harness）
+### 韩文仓库示例
 ```
 # 优先（韩文）
 site:blog.naver.com "{功能词韩文}"
@@ -123,7 +123,7 @@ site:tistory.com "{功能词韩文}"
 site:reddit.com "{功能词英文}" skill
 
 # 第三层（中文，看中译）
-"하네스" OR "revfactory" site:zhihu.com
+"{仓库名韩文译名}" OR "{owner}" site:zhihu.com
 ```
 
 ## Step 4: 触发词等价化

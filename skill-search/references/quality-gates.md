@@ -28,7 +28,7 @@
 **rule**: commit ✓ + 版本管理 ⚠ → activity ⚠（不能给 ✓）
 **rule**: commit ⚠ → activity ⚠ 起步
 
-**理由**（v5.1 修复）：revfactory/harness 在 v5.0 验证时 list_releases / list_tags 都返回 `[]`，但 activity 仍给 ✓，这是 bug。纯 main 分支开发意味着无回滚锚点、无版本对比、用户无法锁定稳定版。所以即使 commit 活跃，版本管理缺失也应降级为 ⚠。
+**理由**（v5.1 修复）：纯 main 分支开发（无 release 无 tag）意味着无回滚锚点、无版本对比、用户无法锁定稳定版。即使 commit 活跃，版本管理缺失也应降级为 ⚠。这避免"commit 活跃但版本管理缺失"仍给 ✓ 的误评。
 
 ## 评分聚合
 
@@ -39,7 +39,7 @@ signature = "✓✓⚠✗"  # install=✓ source=✓ stars=⚠ activity=✗
 gate_status = "通过" if signature.count("✓") >= 2 else "待观察/拒绝"
 ```
 
-**v5.1 修正案例**：revfactory/harness 应该是 `⚠⚠✓⚠`（不是 v5.0 误评的 `⚠⚠✓✓`），因 list_releases / list_tags 返回 `[]` → activity 降级为 ⚠。signature 仍通过（2 维 ✓），但应该标注"版本管理缺失警告"。
+**规则应用示例**（参数化，非具体仓库）：某候选 `list_releases` / `list_tags` 返回 `[]` 但 `list_commits` 显示近期活跃 → activity 降级为 ⚠（不是 ✓），signature 标注"版本管理缺失警告"。
 
 ## 新仓库豁免（避免马太效应）
 
