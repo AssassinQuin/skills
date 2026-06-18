@@ -69,27 +69,6 @@ Agent(
 
 Check 9 必须从 traces 拿证据，不能从 skill 文本判断。
 
-### Check 10（v8.1 新增）：硬约束自验证
-
-| # | Check | 触发条件 | 严重度 |
-|---|------|---------|-------|
-| 10 | **硬约束自验证** | candidate skill 声明了硬约束（"必须 X" / "禁止 Y" / 强制 gate），但**主 agent 在 Phase 4 Validate 时实际未执行该硬约束**——典型表现：硬约束写在 SKILL.md 里，但执行轨迹里看不到对应的工具调用 | critical |
-
-**检测方式**（Auditor 必须主动验证）：
-
-1. 从 candidate skill 提取所有硬约束语句（含"必须"/"禁止"/"强制"/"gate"关键词的句子）
-2. 对照 Phase 4 Validate 报告或 evolution-log 里的 traces
-3. 每条硬约束必须能在 traces 里找到至少 1 次对应的工具调用 / 行为证据
-4. 若某硬约束零执行证据 → Check 10 命中
-
-**反例**（v8.1 修复的 v8.0 bug）：
-- 某 skill 声明硬约束"长文档必须 ctx_index"，但 Phase 4 验证时长 references 文件全文进上下文，零 ctx_index 调用 → Check 10 应命中
-- 但 v8.0 audit 只有 9 check，没发现这个问题 → v8.1 补 Check 10
-
-**Note**：Check 10 不是论文 Appendix A.2 的原版检查，是基于实战复盘新增的"执行落地保障"。与 Check 9 的差异：
-- Check 9：primary_script 是否被调用（论文）
-- Check 10：硬约束语句是否被执行（v8.1，更广覆盖）
-
 ## 2. 输出契约（必须严格遵守）
 
 Auditor 返回单个 markdown 块：

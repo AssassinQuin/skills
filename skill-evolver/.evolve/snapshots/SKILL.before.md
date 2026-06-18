@@ -70,52 +70,6 @@ Phase 4: Finalize + Validate
 
 **默认参数**（论文 Appendix A.4）：R=2, K=4, V=5。可按 skill 复杂度调整。
 
-## v8.1 增强（基于 v8.0 实战复盘）
-
-v8.0 Algorithm 1 假设执行型 skill（有 binary reward），研究型 skill 硬套导致流程形似神不至。v8.1 加 4 个强制 gate，详见 [skill-taxonomy.md](references/modules/skill-taxonomy.md) + [research-track.md](references/modules/research-track.md)。
-
-### Gate 1: Skill 类型检测（Phase 1 Initialize 强制）
-
-Phase 1 必须先检测 skill 类型（执行型 / 研究型 / 文档型），决定 reward 协议：
-
-| 类型 | Domain-Skill Agent 角色 | Reward |
-|------|------------------------|--------|
-| 执行型 | Domain-Skill Agent（论文原版） | binary y ∈ {0, 1} |
-| 研究型 | **Evaluation-Trace Agent**（v8.1 新角色） | qualitative y ∈ {A, B, C, D, F} |
-| 文档型 | Reviewer Checkpoint（降级） | 5-question review |
-
-**检测协议**：见 [skill-taxonomy.md](references/modules/skill-taxonomy.md)。
-
-### Gate 2: 每轮 Audit 强制（不允许"最后才 audit"）
-
-每个 ṽ_{r+1} patch 完成后**立即** spawn Auditor（不允许批量延迟）。`SKILL.md §绝对不做 #2` 是硬约束，违反则整个 round 无效。
-
-```
-patch ṽ_{r+1}
-  ↓ 立即
-spawn evolver-auditor (opus, fresh context)
-  ↓
-accept → 进入下一轮或 Phase 4
-reject → 用 E_r 做 targeted patch（同 r 重试，不进 r+1）
-```
-
-### Gate 3: T_train ≠ T_val（held-out 强制）
-
-Phase 1 拒绝 `T_train = T_val`（同一任务/同一评估对象）。研究型 skill 特别严：
-
-```
-T_train = [评估对象 1, 2, 3]（不同类型）
-T_val = [评估对象 4, 5]（held-out，类型不同）
-```
-
-Phase 4 Validate(v*, T_val, V) 在 held-out 上跑，**T_train 上过拟合的 v* 会在此暴露**。
-
-### Gate 4: Token 预算（v8.1 新增）
-
-每轮进化最大 token 预算：**主上下文 ≤ 50k + 子 agent 独立 context ≤ 30k/agent**。超出立即停止，展示当前结果。
-
-长文档（>300 行 / >2000 字）必须用 `ctx_index` + `ctx_search`，不全文进上下文（避免主上下文 token 爆炸）。
-
 ## 决策入口
 
 | 意图 | 路径 |
