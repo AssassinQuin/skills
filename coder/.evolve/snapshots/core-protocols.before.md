@@ -70,31 +70,15 @@ memory_search(query="{language} coding gotcha", limit=5)
 
 找到经验后在步骤 1 末尾展示为 `⚠️ 历史经验提醒` 区块（≤1 行/条）。
 
-### 标准化 tag 命名（v3.0 新增）
-
-memory_store 时必须用以下 tag 命名（便于跨会话检索 + skill-evolver 跨进化追踪）：
-
-| 经验类型 | tag 格式 | 例 |
-|---------|---------|-----|
-| 踩坑 | `coding-{lang}-gotcha` | `coding-go-gotcha`, `coding-python-gotcha` |
-| 用户修正 | `coding-{lang}-gotcha` | （并入 gotcha，加 `correction` 子标记） |
-| 编码惯例发现 | `coding-{lang}-convention` | `coding-go-convention` |
-| 工具链命令 | `coding-{lang}-toolchain` | `coding-go-toolchain` |
-| 审计模式 | `coding-{lang}-audit` | `coding-python-audit` |
-
-`{lang}` 必须小写：`go` / `python` / `typescript` / `rust`。
-
-**反例**（PP-20 重现风险）：禁止用 `coder-Python`、`feedback-Python` 等不一致 tag——会导致 `memory_search(query="python coding gotcha")` 返回空。
-
 ### 保存新经验（任务结束，SKILL.md 经验总结阶段触发）
 
-| 触发条件 | 存储内容 | tag（v3.0 标准） |
-|----------|----------|------------------|
-| 踩坑（工具报错/降级/重试 2+ 次） | "踩坑: {描述}。正确做法: {做法}" | `coding-{lang}-gotcha` |
-| 用户修正（用户纠正过做法 ≥1 次） | "修正: {原始做法} → {正确做法}" | `coding-{lang}-gotcha` |
-| 发现模式（重复代码结构） | "发现: {语言/框架} 项目中 {模式} 的规律" | `coding-{lang}-convention` |
-| 工具链配置（版本/环境问题） | "环境: {工具} {版本} 在 {条件} 下的行为" | `coding-{lang}-toolchain` |
-| 工具链发现（新探测到的构建命令） | "环境: {工具} 关键命令: {命令列表}" | `coding-{lang}-toolchain` |
+| 触发条件 | 存储内容 |
+|----------|----------|
+| 踩坑（工具报错/降级/重试 2+ 次） | "踩坑: {描述}。正确做法: {做法}" |
+| 用户修正（用户纠正过做法 ≥1 次） | "修正: {原始做法} → {正确做法}" |
+| 发现模式（重复代码结构） | "发现: {语言/框架} 项目中 {模式} 的规律" |
+| 工具链配置（版本/环境问题） | "环境: {工具} {版本} 在 {条件} 下的行为" |
+| 工具链发现（新探测到的构建命令） | "环境: {工具} 关键命令: {命令列表}" |
 
 **去重**：存储前 `memory_search(query="{关键词}", limit=3)`，核心描述重合 >50% 则更新而非新建。
 
