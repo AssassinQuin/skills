@@ -20,7 +20,7 @@
   "diff": "git diff 输出（仅 staged/unstaged 变更部分）",
   "language": "go|python|...",
   "complexity": "简单|标准|复杂",
-  "project_context": "框架/工具链信息（如 GoFrame v2.9）",
+  "project_context": "框架/工具链信息（如 {框架名} {版本号}）",
   "audit_scope": "full|用户指定范围"
 }
 ```
