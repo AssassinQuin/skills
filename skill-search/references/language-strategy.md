@@ -46,6 +46,53 @@ def detect_lang(text):
 | **韩文 (ko)** | Naver Blog / Tistory / Namuwiki / Reddit r/korea | Reddit / HN / Medium | 知乎 / V2EX（看是否有中译） |
 | **日文 (ja)** | Qiita / Zenn / Hatena / Twitter JP | Reddit / HN / Dev.to | 知乎 / V2EX |
 
+## Step 2.1: SearXNG 盲区降级链（v5.1 新增）
+
+**问题**：SearXNG 对部分本土社区源（韩文 Naver/Tistory、日文 Qiita 子路径）覆盖能力差。`site:blog.naver.com` 或 `site:tistory.com` 经常返回 0 结果，**不代表该社区零讨论，而是 SearXNG 索引未覆盖**。
+
+**降级链**（v5.1 强制）：
+
+```
+1. searxng_web_search("site:blog.naver.com {关键词}")
+   ↓ 返回 0 结果
+
+2. 标注"主语言源 SearXNG 盲区"（不要直接结论"零讨论"）
+
+3. 降级方案 A（推荐）：mcp__web-search-prime__web_search_prime
+   search_query = "{关键词韩文} 리뷰 OR 추천"（不限 site，让 Google/Bing 索引覆盖）
+   location = "cn" 或 "us"（韩文项目用 us 让国际引擎索引覆盖）
+
+4. 降级方案 B（如果 A 也 0 结果）：mcp__searxng__searxng_web_search
+   query = "{关键词} {仓库名}"（去掉 site:，让通用搜索覆盖）
+
+5. 降级方案 C（最后兜底）：直接 WebFetch naver.com 搜索页
+   WebFetch("https://search.naver.com/search.naver?query={关键词}")
+   提取前 5 条结果标题 + URL
+```
+
+**报告标注模板**：
+
+```markdown
+**主语言（韩文）反馈**：
+- 第 1 层（Naver/Tistory via SearXNG）：0 结果 [SearXNG 盲区]
+- 第 1.5 层（web-search-prime 不限 site）：X 条（来源 + 日期）
+- 第 2 层（英文）：...
+```
+
+**禁止**：在 SearXNG 返回 0 结果时直接结论"主语言社区零讨论"。必须经过降级链验证至少 2 个方案后才能下结论。
+
+## Step 2.2: 主语言检测准确度（v5.1 新增）
+
+GitHub repo metadata `language` 字段返回的是**编程语言**（HTML/Python/Rust），**不是文档语言**。检测时注意：
+
+| 项目类型 | GitHub metadata.language | 实际文档主语言 | 检测策略 |
+|---|---|---|---|
+| 纯 landing page | HTML | 看 README.md | 用 README 字符分布，不用 metadata |
+| Skill 仓库（.md 为主） | Markdown 或 HTML | 看 SKILL.md description | 用 SKILL.md 触发器语言 |
+| 代码库 | Python/Go/Rust | 看 README.md + docs/ | 用 README 字符分布 |
+
+**revfactory/harness 案例**：metadata.language = "HTML"（landing page），但 SKILL.md description 是韩文 → 主语言应判 `ko`（韩文触发器），不是 HTML。
+
 ## Step 3: 搜索词主语言化
 
 按主语言调整搜索词模板（替换 Scout-Community 的 `{功能词}`）：

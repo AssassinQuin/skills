@@ -13,7 +13,22 @@
 | **Install count** | ≥1K | 100-999 | <100（新仓库 < 6 个月豁免） | skills.sh / skillsmp.com / plugin marketplace |
 | **Source reputation** | 官方源（anthropics/vercel-labs/microsoft/知名组织） | 个人作者但活跃 | 匿名/不可追溯/无 README | GitHub owner type + README 完整度 |
 | **GitHub stars** | ≥100 | 10-99 | <10（新仓库 < 6 个月豁免） | `mcp__github__search_repositories` |
-| **维护活跃度** | 6 个月内有 commit + 有 release | 6-12 个月无 commit | >12 个月僵尸 | `mcp__github__list_commits` + `list_releases` |
+| **维护活跃度**（含版本管理细分） | 6 个月内有 commit **且** 有 release/tag | 6 个月内有 commit **但** 无 release/tag（纯 main 分支开发） | >12 个月僵尸 | `mcp__github__list_commits` + `list_releases` + `list_tags` |
+
+## 维护活跃度子维度（v5.1 新增，避免纯 commit 拿 ✓ 但版本管理缺失）
+
+维护活跃度 ✓ 需要同时满足两个子条件：
+
+| 子维度 | ✓ 标准 | ⚠ 标准 | 数据源 |
+|---|---|---|---|
+| commit 节奏 | 6 个月内有 commit | 6-12 个月无 commit | `list_commits` |
+| 版本管理 | 有 release **或** 有 tag | **无 release 也无 tag**（纯 main 开发） | `list_releases` + `list_tags` |
+
+**rule**: commit ✓ + 版本管理 ✓ → activity ✓
+**rule**: commit ✓ + 版本管理 ⚠ → activity ⚠（不能给 ✓）
+**rule**: commit ⚠ → activity ⚠ 起步
+
+**理由**（v5.1 修复）：revfactory/harness 在 v5.0 验证时 list_releases / list_tags 都返回 `[]`，但 activity 仍给 ✓，这是 bug。纯 main 分支开发意味着无回滚锚点、无版本对比、用户无法锁定稳定版。所以即使 commit 活跃，版本管理缺失也应降级为 ⚠。
 
 ## 评分聚合
 
@@ -23,6 +38,8 @@
 signature = "✓✓⚠✗"  # install=✓ source=✓ stars=⚠ activity=✗
 gate_status = "通过" if signature.count("✓") >= 2 else "待观察/拒绝"
 ```
+
+**v5.1 修正案例**：revfactory/harness 应该是 `⚠⚠✓⚠`（不是 v5.0 误评的 `⚠⚠✓✓`），因 list_releases / list_tags 返回 `[]` → activity 降级为 ⚠。signature 仍通过（2 维 ✓），但应该标注"版本管理缺失警告"。
 
 ## 新仓库豁免（避免马太效应）
 

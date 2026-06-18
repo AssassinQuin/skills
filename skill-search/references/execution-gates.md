@@ -52,6 +52,7 @@
    - mcp__github__list_tags (版本管理)
 □ Install count 数据已采集（skills.sh / skillsmp.com / plugin marketplace）
 □ 每个候选输出 4 位 signature：✓✓⚠✗
+□ **维护活跃度子维度（v5.1）已检查**：commit 节奏 + 版本管理（release/tag）双重判断，纯 main 分支开发降级为 ⚠
 □ 通过质量门（≥2 维 ✓）的候选 >= 5 个
 □ 淘汰记录已生成（每个含 signature + 拒绝维度，不只是"stars 不够"）
 □ "为什么推荐这个"字段已起草（命中 trigger + 命中质量门）
@@ -69,6 +70,10 @@
 □ 长文档 token 策略已执行：
    - SKILL.md > 300 行 → ctx_index + ctx_search
    - Issue body > 2000 字 → ctx_execute_file 过滤
+□ **长文件决策门（v5.1）已执行**：
+   - zread_read_file 后立即检查返回行数
+   - 行数 > 300（韩/日 > 150）→ 强制 ctx_index 转换
+   - 决策门执行记录已写入 P6 透明度声明
 □ 每个候选已按 evaluation-rubric.md D1-D8 打分（8 维 40 分制，作为启发式信号）
 □ **评分谦逊化声明已附加**（D1-D8 非绝对真理，仅启发式参考）
 ```
@@ -78,6 +83,7 @@
 ```
 □ Top 3-5 候选的 GitHub Issues 已读取（含 closed issues，看维护者响应速度）
 □ **主语言源已搜索**（韩文 → Naver/Tistory；日文 → Qiita/Zenn；中文 → 知乎/V2EX；英文 → Reddit/HN）
+□ **SearXNG 盲区降级链（v5.1）已执行**：searxng 返回 0 结果时，按降级链 web-search-prime → 通用 searxng → WebFetch 验证至少 2 个方案
 □ 英文源已补充搜索（Reddit/HN/Medium/Dev.to）
 □ 中文源已补充搜索（知乎/V2EX/掘金/CSDN）
 □ 每条反馈标注：来源语言 + 平台 + 日期 + 一句话观点
