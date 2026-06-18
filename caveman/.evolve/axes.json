@@ -1,0 +1,19 @@
+{
+  "skill": "caveman",
+  "v_current": "v1 (BEFORE)",
+  "axes": [
+    {"name": "compression_aggression", "options": ["literal-strict", "intent-compress", "balanced"], "type": "parametric"},
+    {"name": "retention_scope", "options": ["tech-only", "tech+time+quantity", "all-specifics"], "type": "parametric"},
+    {"name": "exception_trigger", "options": ["subjective-judgement", "operationalized-rule"], "type": "parametric", "weakness": true},
+    {"name": "pattern_applicability", "options": ["all-sentences", "declarative-only"], "type": "parametric"}
+  ],
+  "training_constants": [
+    {"name": "compression_target", "value": "~75%", "type": "descriptive-not-imperative"},
+    {"name": "pattern_form", "value": "[thing] [action] [reason]", "type": "invariant"},
+    {"name": "example_sentences", "value": ["auth middleware", "DB pool", "React re-render"], "type": "generic-examples-not-training"}
+  ],
+  "known_weaknesses": [
+    "Auto-Clarity Exception 触发条件主观（来自 domain-skill-agent trial 观察）",
+    "Pattern [thing] [action] [reason] 偏陈述句式，疑问/请求类输入需自行转换"
+  ]
+}

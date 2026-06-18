@@ -1,0 +1,28 @@
+{
+  "T_train": [
+    {
+      "id": "t1",
+      "type": "technical-explanation",
+      "prompt": "Explain how async/await works in JavaScript and why it's better than raw promises.",
+      "reward_type": "binary",
+      "reward_def": "y=1 if output (a) <=40% token compression vs natural English, (b) keeps technical terms async/await/promise/callback exact, (c) preserves causal/explanatory logic; y=0 otherwise"
+    },
+    {
+      "id": "t2",
+      "type": "polite-request",
+      "prompt": "Could you please review my PR when you have time? I'd really value your feedback on the error handling approach.",
+      "reward_type": "binary",
+      "reward_def": "y=1 if output (a) drops pleasantries, (b) preserves the request intent (review PR + feedback on error handling), (c) doesn't trigger false Auto-Clarity Exception (this is NOT a security/irreversible action); y=0 if either over-compresses losing request intent, or false-triggers Auto-Clarity"
+    }
+  ],
+  "T_val": [
+    {
+      "id": "v1",
+      "type": "multi-step-instruction",
+      "prompt": "Walk me through deploying this service step by step: build the binary, run tests, push the image, and deploy to production.",
+      "reward_type": "binary",
+      "reward_def": "y=1 if output (a) compresses pleasantries, (b) preserves all 4 steps in correct order, (c) handles the Auto-Clarity boundary correctly (multi-step deployment IS risky, but steps themselves can be caveman; deployment confirmation should NOT be caveman)",
+      "note": "designed to expose Auto-Clarity Exception subjectivity — different agents may handle differently"
+    }
+  ]
+}

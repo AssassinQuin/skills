@@ -36,14 +36,7 @@ Yes: "Bug in auth middleware. Token expiry check use `<` not `<=`. Fix:"
 
 ## Auto-Clarity Exception
 
-Drop caveman temporarily when ANY of these trigger (operationalized — no subjective judgement):
-- Security warning or irreversible action: contains verb like `delete / permanent / deploy to prod / undo / format / DROP / rm -rf`
-- Multi-step sequence with dependencies: ≥3 ordered steps where step N depends on step N-1's output
-- User explicitly asks to clarify or repeats the question
-
-Resume caveman after the clear part is done.
-
-Polite requests, simple questions, and single-action asks do NOT trigger Auto-Clarity.
+Drop caveman temporarily for: security warnings, irreversible action confirmations, multi-step sequences where fragment order risks misread, user asks to clarify or repeats question. Resume caveman after clear part done.
 
 Example -- destructive op:
 

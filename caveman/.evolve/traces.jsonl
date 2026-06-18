@@ -1,0 +1,6 @@
+{"ts":"2026-06-18T03:50:53Z","type":"initialize","phase":"initialize","axes_count":4,"t_train_count":2,"t_val_count":1}
+{"ts":"2026-06-18T03:53:39Z","type":"trial","round":1,"strategy":"s_1_1","agent":"trial-r1-s1","task":"t2","y":1,"silent_bypass":false,"primary_script_called":"N/A","output":"Review PR. Feedback on error handling."}
+{"ts":"2026-06-18T03:53:39Z","type":"trial","round":1,"strategy":"s_1_2","agent":"trial-r1-s2","task":"t2","y":1,"silent_bypass":false,"primary_script_called":"N/A","output":"Review PR. Want feedback on error handling approach."}
+{"ts":"2026-06-18T03:55:58Z","type":"audit","round":1,"gate":"accept","critical_count":0,"advisory_count":2,"violations":[]}
+{"ts":"2026-06-18T03:58:05Z","type":"trial","round":1,"strategy":"validate","agent":"validate-v1","task":"v1","y":1,"silent_bypass":false,"primary_script_called":"N/A","note":"T_val held-out, Auto-Clarity correctly triggered at step 4"}
+{"ts":"2026-06-18T03:58:32Z","type":"deployment","phase":"finalize","v_star":"v2","pass_rate_val":1.0,"committed":false,"note":"pending user confirm to keep patch"}
