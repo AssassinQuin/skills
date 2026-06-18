@@ -2,7 +2,32 @@
 
 借鉴 ECC `skill-stocktake` 的 holistic AI judgment（**不是 numeric rubric 死算**）。
 
-## 4 维度定义
+## 5 维度定义（v1.1 加 Content Depth）
+
+> v1.0 是 4 维度。v1.1 加第 5 维度 Content Depth，捕获 Actionability 不能覆盖的"缺方法论 / 缺案例 / 缺判断标准"用户痛点。
+
+### 维度 5: Content Depth（内容深度，v1.1 新增）
+
+**问**：有真实案例 / 具体方法论 / 可操作判断标准吗？还是全是流程模板？
+
+| 评分 | 标准 | 反例 |
+|------|------|------|
+| 5/5 | 含真实失败案例库 + 可证伪方法论 + 具体 do/don't | harness 的 6 架构模式 + SatangSlide 7 bug |
+| 4/5 | 有方法论但案例不足 / 案例有但方法论模糊 | coder v3.0（流程清晰但缺真实 bug 库） |
+| 3/5 | 流程清晰但全是抽象指导，无 expert reasoning | skill-search v4.0（流程合规但无深度） |
+| 1/5 | 纯流程模板，零案例零方法论 | "1.理解 2.执行 3.验证" |
+
+**检测方式**：随机抽 3 个 Phase 步骤，问"专家会怎么判断这步？SKILL.md 说了吗？"
+
+**与其他维度区别**：
+- Actionability: "能立即行动吗？"（命令级）
+- Content Depth: "知道为什么这样行动吗？"（专家级）
+
+例：coder v3.0 的"运行 lint"Actionability 5/5（命令具体）但 Content Depth 3/5（无"为什么这步是 lint 不是 type check"的 expert reasoning）。
+
+---
+
+## 4 维度定义（v1.0 原版，仍有效）
 
 ### 1. Actionability（可操作性）
 

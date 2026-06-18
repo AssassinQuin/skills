@@ -9,7 +9,10 @@
 □ Scope fit 评分完成 + 证据
 □ Uniqueness 评分完成 + 证据
 □ Currency 评分完成 + 证据
+□ Content Depth 评分完成（v1.1 新增，1-5）+ 证据
+□ Trigger Precision 评分完成（v1.2 新增，1-5）+ 证据
 □ Currency 验证：用 WebSearch 查工具/命令/API 是否过期
+□ 6 维度综合 verdict（Keep/Improve/Update/Retire/Merge，v1.2 新增）
 □ 优先深化方向明确（P2-P4 重点）
 □ AskUserQuestion 展示诊断报告等用户确认
 ```

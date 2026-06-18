@@ -1,6 +1,6 @@
 ---
 name: skill-deepener
-version: "1.2"
+version: "1.0"
 description: >
   Skill 内容深化器。专门给已有但内容空泛的 skill 补专家深度。与 skill-evolver
   互补：skill-evolver 做结构合规（robustness），skill-deepener 做内容深化（depth）。
@@ -72,34 +72,33 @@ P1 缺口诊断 → P2 反推通道 → P3 内容采集 → P4 内容重写 → 
 
 ---
 
-### P1: 缺口诊断（6 维度 + 5 verdict，v1.2 完整版）
+### P1: 缺口诊断（4 维度）
 
-用 ECC `skill-stocktake` 4 维度 + 自补 2 维度（Content Depth / Trigger Precision）评估目标 skill。详见 [gap-diagnosis.md](references/gap-diagnosis.md) + [industry-patterns.md](references/industry-patterns.md) 来源 4 + 7。
+用 ECC `skill-stocktake` 4 维度（[gap-diagnosis.md](references/gap-diagnosis.md)）评估目标 skill：
 
 | 维度 | 评分标准 |
 |------|---------|
-| **Actionability** | code examples / commands / steps 能否立即行动？ |
-| **Scope fit** | name / trigger / content 是否对齐？ |
+| **Actionability** | code examples / commands / steps 能否立即行动？还是泛泛而谈？ |
+| **Scope fit** | name / trigger / content 是否对齐？是否过宽或过窄？ |
 | **Uniqueness** | 是否能被 MEMORY.md / CLAUDE.md / 其他 skill 替代？ |
-| **Currency** | 技术参考是否过期？（用 WebSearch 验证） |
-| **Content Depth**（v1.1） | 是否有真实案例 / 具体方法论 / 可操作判断标准？ |
-| **Trigger Precision**（v1.2） | description 是否含具体触发场景 + 隐式 trigger + do/don't 边界？ |
+| **Currency** | 技术参考是否过期？（用 WebSearch 验证工具/命令/API） |
 
-> 💡 **专家视角（Modeling）**：
-> - Content Depth 存在因为 Actionability 不能捕获"缺方法论"
-> - Trigger Precision 存在因为 Anthropic Skill 系统底层纯靠 description 语义匹配，**description 是唯一营销渠道**（来源 7）。Trigger Precision ≤ 2 即使其他全 5 也强制 Improve。
+每个维度 1-5 分，输出**缺口报告**：
 
-**输出 verdict**（5 种，v1.2 加，来自 ECC skill-stocktake）：
+```markdown
+## P1 缺口诊断
 
-| Verdict | 触发条件 |
-|---------|---------|
-| **Keep** | 全 6 维度 ≥ 4（不需深化） |
-| **Improve** | 1-2 维度 ≤ 3（进 P2 局部深化） |
-| **Update** | Currency ≤ 3（仅时效更新） |
-| **Retire** | Uniqueness ≤ 2（不深化，建议退役） |
-| **Merge** | Scope fit ≤ 2（合并到其他 skill） |
+| 维度 | 评分 | 证据 | 深化方向 |
+|------|------|------|---------|
+| Actionability | X/5 | {引用 SKILL.md 具体段落} | {补什么} |
+| Scope fit | X/5 | {引用} | {补什么} |
+| Uniqueness | X/5 | {引用} | {补什么} |
+| Currency | X/5 | {引用} | {补什么} |
 
-**P1 Exit**: 6 维度全评分 + verdict 输出 + 用户确认。verdict ∈ {Retire, Merge} 时退出不深化。
+**优先深化方向**：{P2-P4 重点}
+```
+
+**P1 Exit**: 4 维度全评分 + 优先方向明确 + 用户确认。
 
 ---
 
@@ -130,7 +129,7 @@ Agent(
 
 **Step 2b: 萃取失败案例 + expert reasoning gap**
 
-从 Domain-Skill Agent 轨迹萃取。**v1.1 标准化 expert_reasoning_gaps 输出 schema**：
+从 Domain-Skill Agent 轨迹萃取：
 
 ```markdown
 ## P2 反推通道
@@ -142,32 +141,12 @@ Agent(
 - 当前 SKILL.md 缺什么：{具体段落 / 缺什么原则}
 
 ### Expert reasoning gap 清单
-
-每个 gap 必须 5 字段齐全（缺一不可，否则 P3 无法分类）：
-
-| Gap # | trigger（触发场景） | failure（失败模式） | expert_action（专家正确做法） | missing_rule（SKILL.md 缺什么） | evidence（轨迹行号 + 时间） |
-|-------|---------|----------|--------------|---------------|------------|
-| 1 | {具体触发条件} | {agent 实际怎么错} | {专家怎么做} | {对应规则} | {trajectory:LXX-LYY} |
-| 2 | ... | ... | ... | ... | ... |
-
-#### 5 字段反例（必须避免）
-
-```
-# 错误（缺字段）
-{"gap": "agent 不知道如何处理 nil map"}
-
-# 正确（5 字段齐全）
-{
-  "trigger": "Go 项目修 panic，agent 看到 nil map dereference",
-  "failure": "直接在 panic 行加 nil check，未追根因到 init 顺序",
-  "expert_action": "go test 复现 + delve 跟踪 + 排查 init/map 赋值顺序",
-  "missing_rule": "coder/SKILL.md L150 缺 'panic 修复必须先复现+追根因' 步骤",
-  "evidence": "trajectory:L45-L62, 2026-06-18 T3"
-}
-```
+1. {gap 描述}
+2. {gap 描述}
+...
 ```
 
-**P2 Exit**: 至少 2 个失败案例 + 3 个 expert reasoning gap（每个 5 字段齐全）+ 用户确认。
+**P2 Exit**: 至少 2 个失败案例 + 3 个 expert reasoning gap + 用户确认。
 
 ---
 
@@ -186,40 +165,29 @@ Agent(
 | 缺踩坑经验 | `memory_search` 历史经验 + `Agent` 跑踩坑场景 | 失败案例库 |
 | 缺判断标准 | 主 agent 综合 P1/P2 + 调研 | do/don't 清单 |
 
-**Step 3b: Cognitive Apprenticeship 四要素提炼（v1.1 加 gap→要素映射，v1.2 加 skill 类型权重）**
+**Step 3b: Cognitive Apprenticeship 四要素提炼**
 
-每个 gap 都用 [cognitive-apprenticeship.md](references/cognitive-apprenticeship.md) 四要素过滤。**v1.2 skill 类型 → CA 要素权重**（详见 [industry-patterns.md](references/industry-patterns.md) 来源 9）：
-
-| skill 类型 | Modeling | Coaching | Scaffolding | Fading |
-|-----------|----------|----------|-------------|--------|
-| 执行型 | 40% | 30% | 20% | 10% |
-| 研究型 | 50% | 15% | 30% | 5% |
-| 文档型 | 60% | 10% | 30% | 0% |
-| 元 skill | 35% | 25% | 25% | 15% |
-| 创意型 | 45% | 20% | 25% | 10% |
-
-**Step 3c: 5 步专家知识 codify 流程**（v1.2 加，来自 Codified Human Expertise）：
+每个 gap 都用 [cognitive-apprenticeship.md](references/cognitive-apprenticeship.md) 四要素过滤：
 
 ```
-1. Elicitation: 从 P2 轨迹萃取 expert reasoning
-2. Structuring: 转为 do/don't 规则 + trigger + violation risk
-3. Validation: held-out case 测规则可证伪性
-4. Injection: 按 P4 Phase 段落映射插入
-5. Verification: P5 多专家评审
+Modeling（专家出声思考）：
+  - "专家这一步会想什么？"
+  - "专家为什么这样判断，不那样？"
+
+Coaching（练习时反馈）：
+  - "如果用户输入是 X，专家会怎么回应？"
+  - "这种情况下，专家会停下来澄清什么？"
+
+Scaffolding（搭脚手架）：
+  - "执行前必须问用户的 1-2 个问题？"
+  - "用户的什么回答会改变流程？"
+
+Fading（逐步撤支撑）：
+  - "什么信号表示用户已经熟练，可以省略这一步？"
+  - "什么场景下，新手需要详细脚手架，老手不需要？"
 ```
 
-**Step 3d: 决策规则 contrastive 过滤**（v1.2 加，来自 Prompt Distillation）：
-
-```
-对 P3 采集的每条"专家规则"：
-  - teacher (opus) 跑 held-out case A：有规则 → 答案 X
-  - teacher 跑同一 case A：无规则 → 答案 Y
-  - X == Y → 规则冗余，删
-  - X != Y → 规则有价值，留
-保留通过 contrastive 的 top 5-10 条
-```
-
-**P3 Exit**: 每个分类至少 3 条采集结果 + CA 要素权重应用 + 5 步 codify 流程完成 + contrastive 过滤完成 + 用户确认。
+**P3 Exit**: 每个分类至少 3 条采集结果 + Cognitive Apprenticeship 过滤完成 + 用户确认。
 
 ---
 
@@ -227,56 +195,9 @@ Agent(
 
 **核心原则**：只改 SKILL.md 内容，不改结构（不改 frontmatter / Phase 划分 / references 引用）。
 
-**v1.1 Phase 段落 → 内容类型映射**（缺映射会导致 4 类段乱放）：
+**Step 4a: 加"专家出声思考"段**
 
-| Phase 段落 | 适合的内容类型（按优先级） | 不适合 |
-|----------|------------------------|--------|
-| 决策树 / 步骤说明 | Modeling 专家视角 + Scaffolding 反问 | 失败案例库（放 references） |
-| 执行前 | Scaffolding 必问表 | Modeling（已在决策树） |
-| 执行中 | Coaching 检查点表 | Fading（执行中无法撤支撑） |
-| 执行后 / 汇报 | Fading 熟练度调整 + Modeling 总结 | Scaffolding（已过执行前） |
-| 约束段 | do/don't 判断标准 | 失败案例（在 references） |
-| references/ | 失败案例库 + 方法论详解 | 专家视角（应在 SKILL.md） |
-
-**v1.2 输出 6 verdict 格式**（每条改动必须标，来自 ECC rules-distill）：
-
-```
-对每条 P4 改动：
-  - verdict ∈ {Append, Revise, New Section, New File, Already Covered, Too Specific}
-  - 必含 3 层过滤证据：
-    1. 可操作行为变化（"do X" 非 "X 重要"）
-    2. 清晰违反风险（忽略这条出什么问题，1 句话）
-    3. 可证伪（held-out case 能验证）
-```
-
-**v1.2 反直觉任务结构化原则**（来自 ACL WASP）：
-
-```
-反直觉任务识别（任一命中即强制结构化输出）：
-  - 金融合规 / 风控 / 支付 / 结算
-  - 安全审计 / 渗透测试 / 权限管理
-  - 法务 / 合同 / 隐私 / PII
-  - 跨系统数据迁移 / schema 变更
-  - 删除 / 销毁 / 不可逆操作
-
-强制输出三段式：
-  1. 风险等级：高/中/低 + 理由
-  2. 证据：具体代码行 / 配置项 / 数据
-  3. 反证：什么场景下这个判断会错
-```
-
-**Step 4a: 加"专家出声思考"段（Modeling）**
-
-按映射，**只在"决策树 / 步骤说明"段落**加 `> 💡 专家视角：{为什么这样判断 / 边角案例}`。
-
-**专家语言标杆**（v1.2 加，来自 andrej-karpathy-skills 4 原则）：
-
-| 原则 | 专家语言 | 反例（流程化） |
-|------|---------|--------------|
-| Think Before Coding | "State assumptions explicitly. If uncertain, ask." | "理解需求" |
-| Simplicity First | "Would a senior engineer say overcomplicated?" | "保持简洁" |
-| Surgical Changes | "Every changed line should trace to user's request." | "外科手术式" |
-| Goal-Driven | "Transform 'Fix bug' → 'Write test that reproduces, then pass'." | "目标驱动" |
+在每个 Phase 步骤后加 `> 💡 专家视角：{为什么这样判断 / 边角案例}`。
 
 **反例**（流程化）：
 ```
@@ -349,8 +270,6 @@ Agent(
 | **案例真实者** | 案例是否真实可追溯？是否包含失败模式？ |
 | **领域准确者** | 领域术语是否准确？是否符合 expert 共识？ |
 
-> 💡 **专家视角（v1.1 评分边界）**：3 vs 4 vs 5 分的明确边界见 [expert-role-audit.md](references/expert-role-audit.md) §"评分边界细则"。**禁止给 4 分无证据**（4 分必须说明"差什么到 5"）。
-
 **Step 5a: 并行 spawn 3 个 auditor**
 
 ```
@@ -401,24 +320,13 @@ Agent(
     └── domain-skill-agent-trajectory.json
 ```
 
-**Memory 持久化 + Episodic Memory Buffer**（v1.2 加，来自 Reflexion）：
+**Memory 持久化**：
 
 ```
-对每个 P2 失败案例，存 episodic memory：
-
 memory_store(
-  content="{skill-name} 深化经验 #{N}: {trigger 简述} → {failure 简述} → {expert_action 简述}",
-  metadata={
-    "tags": "deepen-{skill-name}, episodic-memory, case-{N}",
-    "type": "learning",
-    "source_skill": "skill-deepener",
-    "target_skill": "{skill-name}"
-  }
+  content="{skill-name} 深化经验: {核心 finding}",
+  tags="deepen-{skill-name}, deepen-experience"
 )
-
-下次类似场景：
-  target skill 启动时 memory_search(query="{similar trigger}")
-  命中 → 加载历史 expert_action 提醒
 ```
 
 ---
@@ -429,7 +337,7 @@ memory_store(
 2. **不删现有内容** — 增量深化，禁止删除 v_n 已有段落
 3. **案例必须真实** — 不能编造失败案例 / 数据 / URL（违反 coding-rules R12）
 4. **专家语言必须具体** — 禁止"重视 X" / "X 很重要"，必须 "do X" / "don't Y" + 具体场景
-5. **P2 必须 spawn Domain-Skill Agent** — 禁止主 agent 模拟执行（主 agent 模拟会引入 confirmation bias，独立 agent 才能产生真实失败轨迹；self-deepening 是唯一合法例外）
+5. **P2 必须 spawn Domain-Skill Agent** — 禁止主 agent 模拟执行（论文 §3.1 价值锚定）
 6. **P5 必须 3 角色** — 不能合并为单 auditor
 7. **Cognitive Apprenticeship 四要素全过滤** — 不能只用 Modeling 跳过其他三个
 8. **不超过 SKILL.md 行数预算** — 深化后总行数 ≤ 原行数 × 1.5（避免膨胀，Anthropic 反 monolithic）
