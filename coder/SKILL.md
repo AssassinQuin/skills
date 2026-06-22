@@ -47,19 +47,42 @@ metadata:
 
 ## 2. 7 Phase 路由表（核心）
 
-| Phase | 名字 | 执行者 | 输入 | 输出 | 下一 Phase |
-|---|---|---|---|---|---|
-| 0 | 需求捕获 | orchestrator（内联）| 用户请求 | 意图 + 验收 checklist | 1 |
-| 1 | 元数据 + 架构 | 🌟 **3 路并发**: explorer(haiku) + get_architecture(orch) + researcher(sonnet, 触发式) | 意图 | metadata + S.U.P.E.R 热图 | 2 |
-| 2 | 语言路由 | orchestrator（内联）| metadata | spawn `{lang}-coder` | 3 或 4 |
-| 3 | 设计方案 | 🌟 **N oracle 并发**（2-4，按复杂度，仅复杂任务）| metadata + 热图 | 2-4 方案 + 推荐 | 4 |
-| 4 | 执行 | `{lang}-coder`（sonnet，可多语言并发）| 方案 + memory 注入 | diff + drift 遥测 | 5 |
-| 5 | 验证 | 🌟 **3 reviewer 并发**: 正确性 / S.U.P.E.R / 安全 | diff + checklist | 审查报告 | 6 |
-| 6 | 持久化 | orchestrator（内联）| 全部产出 | memory + MASTER.md + 索引 | — |
+| Phase | 名字 | 执行者 | 输入 | 输出 | 下一 Phase | **前置 gate**（MUST） |
+|---|---|---|---|---|---|---|
+| 0 | 需求捕获 | orchestrator（内联）| 用户请求 | 意图 + 验收 checklist | 1 | AskUserQuestion 或用户已明确意图 |
+| 1 | 元数据 + 架构 | 🌟 **3 路并发**: explorer(haiku) + get_architecture(orch) + researcher(sonnet, 触发式) | 意图 | metadata + S.U.P.E.R 热图 | 2 | **codebase-memory-mcp.get_architecture 必须触发**（失败需显式标记 fallback） |
+| 2 | 语言路由 | orchestrator（内联）| metadata | spawn `{lang}-coder` | 3 或 4 | Phase 1 产出已记录（不能"我熟悉"跳过） |
+| 3 | 设计方案 | 🌟 **N oracle 并发**（2-4，按复杂度，仅复杂任务）| metadata + 热图 | 2-4 方案 + 推荐 | 4 | 复杂度评估（见 §2.1） |
+| 4 | 执行 | `{lang}-coder`（sonnet，可多语言并发）| 方案 + memory 注入 | diff + drift 遥测 | 5 | **MUST spawn 子 agent**（orchestrator 不允许直接编码，唯一例外见 §2.2） |
+| 5 | 验证 | 🌟 **3 reviewer 并发**: 正确性 / S.U.P.E.R / 安全 | diff + checklist | 审查报告 | 6 | **至少 1 个 reviewer 子 agent**（自审只在 reviewer 全失败时降级，必须显式标注 ⚠️） |
+| 6 | 持久化 | orchestrator（内联）| 全部产出 | memory + MASTER.md + 索引 | — | — |
 
 **Phase 详执行协议**：见 [`references/phase-{N}-*.md`](references/)。
 
 **简单任务跳过 Phase 3**：改动 <3 文件 / 无 public API 变更 / 无跨模块影响 / 无新依赖。
+
+### 2.1 复杂度评估（决定是否跳过 Phase 3）
+
+任务**任一**条件命中 → 走 Phase 3：
+- 改动 ≥3 文件
+- public API / CLI 接口变更
+- 跨模块影响（service + store + 命令层联动）
+- 引入新依赖
+- 用户表达含"重构""统一""架构调整"
+
+全部不命中 → 跳过 Phase 3，**但仍必须**走 Phase 4 spawn + Phase 5 reviewer。
+
+### 2.2 Phase 4 唯一允许 orchestrator 直接编码的情况
+
+仅当满足**全部**条件：
+- 改动 **1 个文件**
+- 改动 **<20 行**
+- 不涉及第三方库语法
+- 无 public API 变更
+
+任一不满足 → MUST spawn `{lang}-coder` 子 agent。
+
+orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_direct_coding` 并说明依据本节哪条。
 
 ---
 
@@ -175,8 +198,11 @@ metadata:
 | oracle 并发失败 ≥50% | 串行 1 oracle | ⚠️ 方案多样性降低 |
 | reviewer 并发失败 | orchestrator 自审 | ⚠️ 审查深度降低 |
 | drift ≥ 0.4 | spawn oracle 重新分解 | 🔒 用户确认新计划 |
+| **orchestrator 借口"熟悉项目"跳过 Phase 1 扫描** | **不允许降级**——必须跑 codebase-memory-mcp.get_architecture，失败也必须显式标记 fallback | 🔒 严禁静默跳过 |
+| **orchestrator 借口"任务简单"直接编码（违反 §2.2）** | **不允许降级**——必须 spawn 子 agent；唯一例外见 §2.2 全部条件 | 🔒 严禁静默跳过 |
+| **Phase 5 reviewer 简化为"自审 + 跑测试"** | 必须至少 spawn 1 个 reviewer 子 agent（正确性维度）；自审只在全部 reviewer 失败时降级 | 🔒 严禁静默简化 |
 
-**绝不静默降级**（R12）。
+**绝不静默降级**（R12）。本次执行（fcli 命令重构 2026-06-22）的三大偏离都属于"静默降级"，已加入 §11 Anti-pattern。
 
 ---
 
