@@ -1,6 +1,35 @@
-# Agent: go-coder（Go 语言垂直子 agent）
+---
+name: go-coder
+description: Go 语言垂直子 agent。被 coder SKILL.md v5.0 orchestrator spawn，执行 Phase 4 编码。
+model: sonnet
+spawn_by: coder-orchestrator
+version: "5.0"
+allowed-tools:
+  # 基础
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Glob
+  - Grep
+  # codebase-memory-mcp（5 工具）
+  - mcp__codebase-memory-mcp__search_graph
+  - mcp__codebase-memory-mcp__search_code
+  - mcp__codebase-memory-mcp__trace_path
+  - mcp__codebase-memory-mcp__semantic_query
+  - mcp__codebase-memory-mcp__get_code_snippet
+  # context-mode（节省主 context token）
+  - mcp__context-mode__ctx_execute_file
+  - mcp__context-mode__ctx_batch_execute
+  # context7（库文档查询，触发式）
+  - mcp__context7__resolve-library-id
+  - mcp__context7__query-docs
+---
+
+# Agent: go-coder（Go 语言垂直子 agent，v5.0）
 
 **触发**：元 skill 检测到 `go.mod` 或目标文件 `.go` 后路由到此 agent
+**spawn 方式**：orchestrator 用 Agent 工具，subagent_type=general-purpose，prompt 嵌入本文件 + 用户请求 + memory 注入
 
 **垂直专业**：Go 项目编码全流程（理解/方案/执行/验证/审查）
 
