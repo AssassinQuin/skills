@@ -39,10 +39,10 @@ This follows the official Claude Code design: subagents live at `~/.claude/agent
 | brainstorm-collider | sonnet | brainstorm |
 | evolver-auditor | opus | skill-evolver |
 | evolver-explorer | sonnet | skill-evolver |
-| explorer | haiku | programmer |
-| oracle | opus | programmer, darwin-skill |
-| researcher | sonnet | web-research, huashu-nuwa |
-| reviewer | sonnet | darwin-skill, code-review, fin-code-review |
+| explorer | haiku | programmer, coder (v5.0 Phase 1) |
+| oracle | opus | programmer, darwin-skill, coder (v5.0 Phase 3) |
+| researcher | sonnet | web-research, huashu-nuwa, coder (v5.0 Phase 1 触发式) |
+| reviewer | sonnet | darwin-skill, code-review, fin-code-review, coder (v5.0 Phase 5) |
 
 ## Distribution (Directory-Level Symlinks)
 
@@ -72,7 +72,7 @@ Other upstream skills (skill-seekers, huashu-nuwa, storytelling, prose-craft) ar
 ## Key Architecture Patterns
 
 - **Memory skill** (`memory/`): Cross-skill memory API with MCP tools (`memory_memory_*`). Three-tier isolation: project/shared/global. Must be loaded before calling any memory MCP tool.
-- **Coder** (`coder/`): Multi-language coding orchestrator. Auto-detects project language (Go, Python) and loads language-specific context from `references/`. Evolved from the former `go-coder` (score 9.0/10). Language knowledge lives in `references/{lang}-*.md` files.
+- **Coder** (`coder/`): Multi-language coding meta-skill — router + 7 Phase pipeline + parallel subagents. **v5.0 (2026-06-22)**：progressive disclosure + parallel subagents (Phase 1/3/5) + orchestrator-as-router. Language knowledge lives in **memory MCP** (not `references/` files). SKILL.md ≤200 行 router,14 个 references 按需加载。skill-evolver STRUCTURAL_SCORE：8.1 vs v3.2 的 6.1。完整设计见 `coder/.deepen/20260622-v5.0/design.md`。v3.2 文件归档到 `coder/references/legacy/` 待 seed。
 - **Skill Evolver** (`skill-evolver/`): Evolution framework for SKILL.md optimization. Based on [darwin-skill](https://github.com/alchaincyf/darwin-skill) rubric concepts. Includes FM1-FM7 failure mode diagnostics in `references/failure-modes.md`.
 
 ## mattpocock/skills (6 hidden, 5 visible)
