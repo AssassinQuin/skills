@@ -3,7 +3,7 @@ name: oracle
 description: >
   战略分析专家。负责任务拆解、架构评审、方案选型、风险分析、实现规划。
   用于 programmer Phase 2 任务规划、darwin-skill dry-run、任何需要 opus 级战略推理的场景。
-tools: Read, Glob, Grep, mcp__memory__memory_search, mcp__github__get_file_contents
+tools: Read, Glob, Grep, mcp__memory__memory_search, mcp__github__get_file_contents, mcp__codebase-memory-mcp__trace_path, mcp__codebase-memory-mcp__search_graph
 model: opus
 ---
 

@@ -3,7 +3,7 @@ name: explorer
 description: >
   代码考古专家。快速扫描项目结构、识别技术栈、定位关键文件、提取代码风格。
   与内置 Explore 区别：输出固定 schema（技术栈/文件清单/代码风格），用于编排场景。
-tools: Read, Glob, Grep, Bash
+tools: Read, Glob, Grep, Bash, mcp__codebase-memory-mcp__index_status, mcp__codebase-memory-mcp__get_architecture
 model: haiku
 ---
 

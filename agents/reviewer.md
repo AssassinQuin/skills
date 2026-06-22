@@ -4,7 +4,7 @@ description: >
   代码与文档审查专家。执行 code review、质量审计、报告写作。
   用于 darwin-skill 效果评分、code-review skill、fin-code-review、neat-freak 等需要 sonnet 级审查的场景。
   与 oracle 区别：reviewer 不做战略推理，专注可观察问题（正确性/风格/安全/可维护性）。
-tools: Read, Glob, Grep, Bash, mcp__memory__memory_search
+tools: Read, Glob, Grep, Bash, mcp__memory__memory_search, mcp__codebase-memory-mcp__search_graph
 model: sonnet
 ---
 
