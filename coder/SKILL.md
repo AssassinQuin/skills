@@ -99,6 +99,22 @@ orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_
 **spawn `{lang}-coder` 前**：orchestrator 必调 `memory_search(tags=["coding-{lang}-*"])`
 注入语言上下文。若返回空 → 触发 seed 流程（§5 + [`references/memory-tier-strategy.md`](references/memory-tier-strategy.md)）。
 
+### 3.1 MCP 触发条件表（MUST / SHOULD / OPTIONAL）
+
+避免"我熟悉所以不用查"的偷懒——MCP 触发是**条件驱动**，不是"感觉驱动"。
+
+| MCP | 何时 MUST 触发 | 何时 SHOULD 触发 | 何时 OPTIONAL |
+|---|---|---|---|
+| **codebase-memory-mcp** (`get_architecture` / `search_graph`) | 任何**多文件改动前**（Phase 1）；service/store 有方法可能复用时 | 改动 1 文件但牵涉调用方追踪 | 单文件 <20 行改动 |
+| **context7** (library docs) | 使用**第三方库 API 不确定**时（如 Typer 参数类型、Pydantic Field 行为）；写新库集成代码 | 用了库但 API 是常用部分 | 纯 stdlib 代码 |
+| **context-mode** (`ctx_batch_execute`/`ctx_execute`) | 命令输出 >20 行；读 >1 个大文件；批量 grep | 单文件 Read | 短输出观察 |
+| **github MCP** | 任务涉及 PR/issue/上游 | 查 CI 状态 | 纯本地 |
+| **memory MCP** (`memory_search`) | spawn 子 agent 前（注入语言 context）；Phase 6 写决策 | 涉及历史决策追溯 | — |
+
+**Anti-pattern**："我熟悉这个项目/库"**不构成**跳过 MCP 的理由。本次执行（2026-06-22）正是因为以"熟悉 fcli"为由跳过 codebase-memory-mcp，导致漏掉 service.get_history 已存在，返工一次。
+
+**判断规则**：触发条件是**任务属性**（改动范围/库确定性/输出规模），不是 orchestrator 的自信程度。
+
 ---
 
 ## 4. 硬约束（12 条摘要）
