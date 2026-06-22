@@ -53,3 +53,6 @@
 {"ts":"2026-06-16T06:48:22Z","type":"skill","skill":"coder","duration_ms":10,"session_id":"8bb7a1ed-07ba-4c88-a9ab-f9e3fc63c46d","tokens":null}
 {"ts":"2026-06-16T07:28:50Z","type":"skill","skill":"skill-evolver","duration_ms":11,"session_id":"8bb7a1ed-07ba-4c88-a9ab-f9e3fc63c46d","tokens":null}
 {"ts":"2026-06-18T03:29:22Z","type":"skill","skill":"skill-search","duration_ms":9,"session_id":"5ba779b3-7dfd-48eb-b7fb-16347138f32f","tokens":null}
+{"ts":"2026-06-18T05:26:10Z","type":"skill","skill":"web-research","duration_ms":9,"session_id":"5ba779b3-7dfd-48eb-b7fb-16347138f32f","tokens":null}
+{"ts":"2026-06-18T07:38:28Z","type":"skill","skill":"web-research","duration_ms":19,"session_id":"5ba779b3-7dfd-48eb-b7fb-16347138f32f","tokens":null}
+{"ts":"2026-06-22T05:02:57Z","type":"skill","skill":"skill-stats","duration_ms":8,"session_id":"df1df929-09f1-4ed8-984d-50592bd00d3a","tokens":null}

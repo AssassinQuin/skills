@@ -58,9 +58,8 @@ bash ~/.claude/skills/scripts/setup-agents.sh   # 注册 skill agents → ~/.cla
 
 ## Nested Git Repos
 
-Two skills are nested git repos (NOT submodules) — changes inside them require separate git operations from within their directories:
+One skill is a nested git repo (NOT a submodule) — changes inside it require separate git operations from within its directory:
 
-- `planning-with-files/` — branch: master, upstream: OthmanAdi/planning-with-files
 - `humanizer/` — branch: main, upstream: blader/humanizer
 
 Update pattern for nested repos:
@@ -76,9 +75,9 @@ Other upstream skills (skill-seekers, huashu-nuwa, storytelling, prose-craft) ar
 - **Coder** (`coder/`): Multi-language coding orchestrator. Auto-detects project language (Go, Python) and loads language-specific context from `references/`. Evolved from the former `go-coder` (score 9.0/10). Language knowledge lives in `references/{lang}-*.md` files.
 - **Skill Evolver** (`skill-evolver/`): Evolution framework for SKILL.md optimization. Based on [darwin-skill](https://github.com/alchaincyf/darwin-skill) rubric concepts. Includes FM1-FM7 failure mode diagnostics in `references/failure-modes.md`.
 
-## mattpocock/skills (6 hidden, 6 visible)
+## mattpocock/skills (6 hidden, 5 visible)
 
-12 skills sourced from [mattpocock/skills](https://github.com/mattpocock/skills) (104k stars). Visible: tdd, diagnose, caveman, handoff, to-prd, to-issues. Hidden: grill-with-docs, improve-codebase-architecture, prototype, triage, git-guardrails-claude-code, agent-browser. Hidden skills can still be invoked but don't clutter the skill list.
+11 skills sourced from [mattpocock/skills](https://github.com/mattpocock/skills) (104k stars). Visible: tdd, diagnose, handoff, to-prd, to-issues. Hidden: grill-with-docs, improve-codebase-architecture, prototype, triage, git-guardrails-claude-code, agent-browser. Hidden skills can still be invoked but don't clutter the skill list.
 - **Huashu-nuwa** (`huashu-nuwa/`): Generates perspective skills from research. Contains 8 example sub-skills in `examples/`.
 
 ## Docker / MCP Servers
