@@ -1,0 +1,71 @@
+{
+  "skill": "coder",
+  "purpose": "v5.0 evaluation against v3.2 baseline — not for evolution training",
+  "comparison_axis": [
+    "(1) Anthropic skill spec compliance (progressive disclosure)",
+    "(2) Router form clarity and executability",
+    "(3) Parallel subagents structural soundness (Phase 1/3/5)",
+    "(4) memory MCP replacing language references design validity",
+    "(5) Net progress vs regress relative to v3.2"
+  ],
+  "T_train": [
+    {
+      "id": "t1-simple-typo",
+      "prompt": "Fix the typo 'recieve' → 'receive' in internal/handlers/user.go line 42",
+      "v5_0_expected": "Phase 0/1/3 should skip (simple task). Phase 2 route to go-coder. Phase 4 fix. Phase 5 light verification.",
+      "v3_2_expected": "Phase 1 detect .go. Phase 2 简单 path. Phase 3 go-coder. Phase 4 fix.",
+      "reward_type": "binary",
+      "reward_def": "typo fixed + lint pass + no unrelated changes"
+    },
+    {
+      "id": "t2-add-handler",
+      "prompt": "Add a GET /users/:id handler in internal/handlers/users.go, returns user JSON from DB",
+      "v5_0_expected": "Phase 0 may skip (clear intent). Phase 1 metadata scan. Phase 3 trigger (2 oracle). Phase 4 spawn go-coder with memory injection.",
+      "v3_2_expected": "Phase 2 标准复杂度. Phase 3 go-coder.",
+      "reward_type": "binary",
+      "reward_def": "handler added + test passes + Phase 3 oracle triggered"
+    },
+    {
+      "id": "t3-refactor-module",
+      "prompt": "Refactor internal/auth/ to split login/logout/refresh into separate files",
+      "v5_0_expected": "Phase 3 trigger (3 oracle parallel: minimal / DDD / external). User confirm. Phase 5 S.U.P.E.R regression.",
+      "v3_2_expected": "Phase 2 复杂. Phase 3 go-coder. Layer 2 audit.",
+      "reward_type": "binary",
+      "reward_def": "3 files created + tests pass + 3 oracle parallel + S.U.P.E.R check"
+    },
+    {
+      "id": "t4-fix-bug-with-test",
+      "prompt": "Fix #123: nil pointer in user service when email is empty. Add regression test.",
+      "v5_0_expected": "github MCP issue_read(#123). Phase 0 issue context. Phase 5 3-reviewer (correctness/security/S.U.P.E.R).",
+      "v3_2_expected": "diagnose→修复→tdd chain.",
+      "reward_type": "binary",
+      "reward_def": "bug fixed + regression test + 3 reviewer parallel + github integration"
+    },
+    {
+      "id": "t5-cross-lang",
+      "prompt": "Update Go backend /version endpoint to v2 + Python script that polls it",
+      "v5_0_expected": "Phase 2 route to BOTH go-coder AND python-coder. Phase 4 parallel spawn. Independent memory injection per lang.",
+      "v3_2_expected": "Sequential go-coder then python-coder (no parallel).",
+      "reward_type": "binary",
+      "reward_def": "both changed + parallel spawn + integration test passes"
+    }
+  ],
+  "T_val": [
+    {
+      "id": "v1-perf-optimize",
+      "prompt": "Optimize internal/search/ N+1 query problem",
+      "v5_0_expected": "trace_path heavy use. Phase 3 oracle design.",
+      "reward_type": "binary",
+      "reward_def": "query count reduced + benchmark improved + tests pass (held-out)"
+    },
+    {
+      "id": "v2-migrate-lib",
+      "prompt": "Migrate from gin to net/http (remove gin dependency entirely)",
+      "v5_0_expected": "Phase 3 trigger (4 oracle: minimal/adapter/rewrite/mixed). Large-scope. Phase 5 security reviewer.",
+      "reward_type": "binary",
+      "reward_def": "gin removed + all routes work + tests pass (held-out, large-scope)"
+    }
+  ],
+  "evaluation_method": "Static + structural analysis. NOT real Domain-Skill Agent execution (per v8.1 honesty gate: model is allowed to score based on skill structure, but must mark as STRUCTURAL_SCORE not EMPIRICAL_SCORE).",
+  "limitation": "T_train tasks not actually run by Domain-Skill Agent. Scores are based on (a) SKILL.md structural analysis, (b) reference completeness check, (c) Anthropic spec compliance rubric. Real execution validation requires Phase 2-4 of skill-evolver full algorithm."
+}

@@ -1,0 +1,52 @@
+{
+  "skill": "coder",
+  "version": "v5.0-evaluation",
+  "axes": [
+    {
+      "name": "phase_3_oracle_count",
+      "options": ["2", "3", "4", "skip"],
+      "type": "parametric",
+      "notes": "Dynamic oracle count per task complexity (Q1 decided)"
+    },
+    {
+      "name": "memory_injection_tags",
+      "options": ["convention", "trap", "tooling", "verification", "gotcha", "all-five"],
+      "type": "parametric",
+      "notes": "Which coding-{lang}-* tags to query before spawn"
+    },
+    {
+      "name": "mcp_primary",
+      "options": ["codebase-memory-mcp", "context-mode", "context7", "github", "memory-mcp"],
+      "type": "parametric",
+      "notes": "Primary MCP per phase (varies)"
+    },
+    {
+      "name": "failure_degradation",
+      "options": ["abort", "fallback-grep", "fallback-read", "skip-with-warning"],
+      "type": "parametric",
+      "notes": "Per R12: skip-with-warning is default; abort reserved for destructive"
+    },
+    {
+      "name": "spawn_vs_inline",
+      "options": ["spawn-subagent", "inline-orchestrator"],
+      "type": "parametric",
+      "notes": "Per phase: P0/P2/P6 inline; P1/P3/P4/P5 spawn"
+    },
+    {
+      "name": "user_confirm_gate",
+      "options": ["phase-0-only", "phase-3-only", "both", "none"],
+      "type": "parametric",
+      "notes": "P0 = intent clarification; P3 = scheme selection"
+    }
+  ],
+  "training_constants": [
+    {"name": "primary_language", "value": "go", "type": "parametric"},
+    {"name": "test_runner", "value": "go test", "type": "parametric"},
+    {"name": "linter", "value": "golangci-lint", "type": "parametric"},
+    {"name": "framework", "value": "gin", "type": "parametric"}
+  ],
+  "parametric_invariant_check": {
+    "rule": "All training_constants are parametric (concrete project values, must be derived at runtime via metadata.yaml, not hardcoded in SKILL.md)",
+    "v5_0_compliance": "PASS — SKILL.md uses {lang} placeholder, no hardcoded 'go' or 'gin'"
+  }
+}
