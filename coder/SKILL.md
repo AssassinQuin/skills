@@ -243,3 +243,47 @@ orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_
 - v3.2 语言 references（待 seed）：`references/legacy/`
 - 完整设计文档：[`.deepen/20260622-v5.0/design.md`](.deepen/20260622-v5.0/design.md)（716 行）
 - v3.2 SKILL.md 备份：[`snapshots/SKILL-v3.2.md.bak`](snapshots/SKILL-v3.2.md.bak)
+
+---
+
+## 11. Anti-pattern（从历次执行偏离中提炼）
+
+以下反例全部来自真实执行，下次遇到类似情境**必须**识别并拒绝。
+
+### 11.1 "我熟悉项目" → 跳过 Phase 1 扫描
+
+**案例**（fcli 命令重构 2026-06-22）：orchestrator 在 fcli 项目里工作过几小时，判定"已熟悉"，跳过 codebase-memory-mcp.get_architecture，直接手动 grep。
+
+**直接损失**：漏掉 `GoldReserveService.get_history` 方法已存在，gold history 第一次 Edit 用 `container.gold_reserve_store` 直接访问，Pyright 报错后返工。
+
+**正确做法**：`get_architecture` 是**依赖发现**工具，不是"熟悉度检查"。即使昨天刚改过这个项目，今天仍必须跑——代码可能已被别的 session 改动，依赖图可能已变。
+
+### 11.2 "任务简单" → orchestrator 直接编码
+
+**案例**（同上）：判定"命令重构不算复杂"，orchestrator 直接 Edit 5 个命令文件 + 2 个测试，完全没 spawn python-coder。
+
+**直接损失**：主上下文被 9 个文件的代码 diff 污染（本会话已经做过多次重构，上下文压力极大）；gpr 子命令 `-h` 被截获的 UX 问题没被独立 reviewer 发现。
+
+**正确做法**：按 §2.2 判定——5 个命令文件改动不满足"1 个文件 + <20 行"，MUST spawn 子 agent。
+
+### 11.3 "测试过就算验证通过" → 简化 Phase 5
+
+**案例**（同上）：Phase 5 只跑了 `pytest + ruff + 命令 help`，没 spawn reviewer 子 agent。
+
+**直接损失**：UX 层面的问题（`fcli gpr compare -h` 输出根 help 而非子命令 help）在自审中被忽略，最后用户用才发现。
+
+**正确做法**：Phase 5 至少 spawn 1 个 reviewer 子 agent（正确性维度）。自审只在全部 reviewer 失败时降级，必须显式标注 ⚠️。
+
+### 11.4 "靠记忆写第三方库代码"
+
+**案例**（同上）：Typer 的 `list_rates` 函数命名会生成 `list-rates` 命令，需要显式 `name="list"`——orchestrator 靠记忆写错，返工一次。
+
+**直接损失**：1 次返工 + 主上下文多消耗一次 Edit。
+
+**正确做法**：涉及 Typer/Pydantic/aiohttp 等第三方库 API 不确定时，MUST 触发 context7（见 §3.1）。
+
+### 11.5 "汇报时只写完成的"
+
+**案例**（同上）：Phase 5 汇报写"103 passed + ruff clean"，但没显式标注"0 子 agent spawn / 0 reviewer / 2 MCP 跳过"。
+
+**正确做法**：汇报（§6）的"并发产出"和"MCP 调用"字段必须如实列出，偏离协议必须显式标注（不能只写成功的）。这是 R12（失败显性化）在 skill 执行层面的体现。
