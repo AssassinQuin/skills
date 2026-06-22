@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "medium_refactor_spawn_check",
+    "prompt": "用 coder skill 重构 fcli/commands/gpr.py：把所有 -c/--country option 改成位置参数，compare 命令的 countries 参数从逗号分隔改成多位置参数。改完跑测试。",
+    "expected": "应该 spawn python-coder 子 agent 执行（不 orchestrator 直接编码）；Phase 1 应触发 codebase-memory-mcp.get_architecture 扫描依赖；完成后有 Phase 5 reviewer 审查",
+    "pain_point": "本次执行中 orchestrator 直接编码 + 跳过 Phase 1 扫描 + 简化 Phase 5 reviewer"
+  },
+  {
+    "id": 2,
+    "name": "simple_task_skip_phase3",
+    "prompt": "用 coder skill 给 fcli/core/code_mapper.py 加一个 is_index_code(code) 方法，判断是否是指数代码（如 'SP500' / 'NASDAQ'）。",
+    "expected": "应该识别为简单任务（<3 文件 + 无 public API 变更），跳过 Phase 3 设计方案，但仍走 Phase 4 spawn 子 agent + Phase 5 reviewer",
+    "pain_point": "区分'简单任务跳过 Phase 3' 和 '所有任务都必须 spawn 子 agent' 的边界"
+  },
+  {
+    "id": 3,
+    "name": "third_party_lib_context7",
+    "prompt": "用 coder skill 在 fcli/commands/fx.py 加一个 list 子命令，用 typer.Argument 接收 base 货币，命令名要叫 'list'（不能 shadow 内置）。",
+    "expected": "涉及 Typer 命名/参数语法不确定时，应该触发 context7 查 Typer 文档；不应该靠记忆写代码导致 shadow 内置 list 返工",
+    "pain_point": "本次执行没触发 context7，导致 list_rates 命名返工"
+  }
+]
