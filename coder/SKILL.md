@@ -82,7 +82,7 @@ metadata:
 
 任一不满足 → MUST spawn `{lang}-coder` 子 agent。
 
-orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_direct_coding` 并说明依据本节哪条。
+orchestrator 直接编码时必须在 **Edit 调用前的文本里即时**标注 `⚠️ orchestrator_direct_coding` + 依据本节哪条（**不能事后在最终汇报里补**）。R12 在 skill 执行层面的体现。
 
 ---
 
@@ -117,7 +117,7 @@ orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_
 
 ---
 
-## 4. 硬约束（12 条摘要）
+## 4. 硬约束（13 条摘要）
 
 | # | 约束 | 出处 |
 |---|---|---|
@@ -133,6 +133,7 @@ orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_
 | 10 | 外科手术式修改（R3） | R3 |
 | 11 | 简洁优先（R2） | R2 |
 | 12 | 编码前先思考（R1） | R1 |
+| 13 | **Edit 前 grep 同类模式**（防"只修一处"漏修） | R8 扩展，见 §11.7 |
 
 **完整版**（含检查命令 + 例子）：[`references/hard-constraints.md`](references/hard-constraints.md)。
 
@@ -170,8 +171,8 @@ orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_
 ## MCP 调用
 - codebase-memory-mcp / context-mode / memory / github / context7: {触发列表}
 
-## 硬约束执行检查（§4 的 12 条）
-- [✓/✗] 1-12
+## 硬约束执行检查（§4 的 13 条）
+- [✓/✗] 1-13
 
 ## drift_score（若触发 adaptive control）
 - {file_overrun}/{loc_overrun}/{unplanned_deps}/{super_decay} → drift = {0.X}
@@ -287,3 +288,31 @@ orchestrator 直接编码时必须在汇报里显式标注 `⚠️ orchestrator_
 **案例**（同上）：Phase 5 汇报写"103 passed + ruff clean"，但没显式标注"0 子 agent spawn / 0 reviewer / 2 MCP 跳过"。
 
 **正确做法**：汇报（§6）的"并发产出"和"MCP 调用"字段必须如实列出，偏离协议必须显式标注（不能只写成功的）。这是 R12（失败显性化）在 skill 执行层面的体现。
+
+### 11.6 "简单任务滑坡" → 逐项跳协议
+
+**案例**（fcli 三连修复 2026-06-23）：一次会话连修 3 个 bug（159xxx fund name / gold history rich 渲染 / WGC URL 错误）。每处单独看都"简单"——1 行 / 18 行 / 12 行——于是滑坡：
+- 第 1 处：spawn 了 reviewer ✅
+- 第 2 处：1 行改动，跳 reviewer ❌
+- 第 3 处：18 行 + 真实验证通过，跳 reviewer ❌
+- 三处都没调 `memory_search`、都没写 Phase 6 memory、`⚠️ orchestrator_direct_coding` 全部事后在汇报里补
+
+**直接损失**：协议偏离没被即时拦截，最终一次性总结时已经晚了。元层面问题是**"任务看起来简单 → 放松警惕"**——简单的任务恰恰最容易让人跳协议。
+
+**正确做法**：
+- **简单的任务更**需要严格走协议——因为容易放松警惕。把"看起来简单"当作**加强**协议执行的信号，而非放松。
+- 每次 Edit 前自问：这一处是否触发了 §2.2 / Phase 5 reviewer / memory_search 任一项？触发就必须做。
+- 一次会话连续修多个 bug 时，**每个 bug 都重做 Phase 1**（哪怕只是 grep 一次外部依赖），不能"我熟悉了"。
+
+### 11.7 "Edit 前没排查同类模式" → 只修一处
+
+**案例**（fcli 三连修复 2026-06-23）：修 `gold_presenter.py:217` 的 `curr["date"]` 渲染 bug（rich 15.0 不自动 `str()` date 对象），只改了这一处，没 grep 其他 `*_presenter.py` 是否有同样的 `date` 对象直传 `rich.table.add_row` 模式。
+
+**直接损失**：可能漏修同类 bug（fund_presenter / gpr_presenter 等若有同样模式，用户下次又会遇到）。
+
+**正确做法**：**Edit 前 grep 同类模式**（硬约束 #13）。具体执行：
+- 修渲染 bug → `grep -rn 'add_row.*date\|\[.date.\]' fcli/utils/`
+- 修 URL 构造 → grep 调用方
+- 修字段名 → grep 全部引用
+
+只多花一次 grep，避免漏修 + 下一轮返工。这是 R8（先读再写）在"横向排查"维度的扩展。

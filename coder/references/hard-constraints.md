@@ -1,11 +1,11 @@
 ---
 name: hard-constraints
-description: 12 条硬约束完整版（含检查命令 + 例子 + 反例）。orchestrator + 所有子 agent 永远加载。
-source: "design.md §2（设计原则）+ v3.2 继承"
+description: 13 条硬约束完整版（含检查命令 + 例子 + 反例）。orchestrator + 所有子 agent 永远加载。
+source: "design.md §2（设计原则）+ v3.2 继承 + v5.0 §11.7 反例"
 status: skeleton
 ---
 
-# 12 条硬约束（完整版）
+# 13 条硬约束（完整版）
 
 > **加载时机**：永远加载（orchestrator + 所有子 agent）。
 
@@ -86,6 +86,14 @@ status: skeleton
 
 **规则**：明确陈述假设；不确定就提问，不要猜。暴露权衡，列出多种方案的优缺点。如果存在更简单的方法，要反驳当前方案。
 
+## 13. Edit 前 grep 同类模式（R8 扩展）
+
+**规则**：每次 Edit 前 grep 同类模式（修渲染 bug → grep 其他 presenter 同样模式；修字段名 → grep 所有引用；修 URL 构造 → grep 调用方），防"只修一处"漏修。
+
+**检查**：trace 里每个 Edit 前有 grep 同类模式的步骤。
+
+**反例**（fcli 2026-06-23）：修 `gold_presenter.py:217` 的 `curr["date"]` rich 渲染 bug，只改一处，没 grep 其他 `*_presenter.py`。可能漏修 `fund_presenter / gpr_presenter` 的同类 bug。详见 SKILL.md §11.7。
+
 ## 检查清单（每次汇报必填）
 
 ```markdown
@@ -102,6 +110,7 @@ status: skeleton
 - [✓/✗] 10. 外科手术式修改
 - [✓/✗] 11. 简洁优先
 - [✓/✗] 12. 编码前先思考
+- [✓/✗] 13. Edit 前 grep 同类模式
 ```
 
 任一 ✗ 必须在汇报里解释。
