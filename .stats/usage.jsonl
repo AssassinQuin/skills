@@ -56,3 +56,13 @@
 {"ts":"2026-06-18T05:26:10Z","type":"skill","skill":"web-research","duration_ms":9,"session_id":"5ba779b3-7dfd-48eb-b7fb-16347138f32f","tokens":null}
 {"ts":"2026-06-18T07:38:28Z","type":"skill","skill":"web-research","duration_ms":19,"session_id":"5ba779b3-7dfd-48eb-b7fb-16347138f32f","tokens":null}
 {"ts":"2026-06-22T05:02:57Z","type":"skill","skill":"skill-stats","duration_ms":8,"session_id":"df1df929-09f1-4ed8-984d-50592bd00d3a","tokens":null}
+{"ts":"2026-06-22T06:31:27Z","type":"skill","skill":"skill-evolver","duration_ms":5,"session_id":"8c5cc130-6780-45d7-b8d4-50305a6587ec","tokens":null}
+{"ts":"2026-06-22T07:07:12Z","type":"skill","skill":"coder","duration_ms":8,"session_id":"f9552143-a915-46d6-b289-a47d570e6104","tokens":null}
+{"ts":"2026-06-22T07:21:27Z","type":"skill","skill":"darwin-skill","duration_ms":37,"session_id":"f9552143-a915-46d6-b289-a47d570e6104","tokens":null}
+{"ts":"2026-06-23T02:57:32Z","type":"skill","skill":"coder","duration_ms":5,"session_id":"d4621762-98a9-4696-ad32-d949229e7c4c","tokens":null}
+{"ts":"2026-06-23T03:08:05Z","type":"skill","skill":"novel-plotcraft","duration_ms":4,"session_id":"34986c0d-af04-4a92-8699-f9c2715b5348","tokens":null}
+{"ts":"2026-06-23T03:43:13Z","type":"skill","skill":"memory","duration_ms":20,"session_id":"d4621762-98a9-4696-ad32-d949229e7c4c","tokens":null}
+{"ts":"2026-06-24T04:08:43Z","type":"skill","skill":"coder","duration_ms":18,"session_id":"2d882200-8241-40fd-832d-5873d987ba4c","tokens":null}
+{"ts":"2026-06-24T04:44:07Z","type":"skill","skill":"memory","duration_ms":12,"session_id":"2d882200-8241-40fd-832d-5873d987ba4c","tokens":null}
+{"ts":"2026-06-24T06:04:31Z","type":"skill","skill":"coder","duration_ms":36,"session_id":"fc0dd887-5133-4207-9995-c06c2abcd98c","tokens":null}
+{"ts":"2026-06-24T06:35:39Z","type":"skill","skill":"code-review","duration_ms":6,"session_id":"1f585c8a-c87e-4d0c-b12b-0699d6b958b8","tokens":null}

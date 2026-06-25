@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A unified AI skill library. 34 skills distributed via directory-level symlinks to 6 tool directories (Claude, OpenCode, Trae, Cursor, Agents, opencode). No build system, no tests, no CI. Skills are Markdown files consumed by AI tools at runtime. Includes 13 skills from mattpocock/skills (hidden by default).
+A unified AI skill library. 50 skills distributed via directory-level symlinks to 7 tool directories (Claude, OpenCode, Trae, Cursor, Agents, opencode, cc-switch). No build system, no tests, no CI. Skills are Markdown files consumed by AI tools at runtime. Includes 13 skills from mattpocock/skills (hidden by default).
 
 ## Skill Structure
 
