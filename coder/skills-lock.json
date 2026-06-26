@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "skills": {
+    "coder-spec": {
+      "source": "./skills/coder-spec",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "d59a1546aa49f291dd6e516744156cc54330b0060854206af3ec25cbae188973"
+    },
+    "coder-reuse": {
+      "source": "./skills/coder-reuse",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "4adbd4c94c21d3af7d28b06009b5b3b7f3d32a835629eeb102270ad0fd8c50d8"
+    },
+    "coder-debug": {
+      "source": "./skills/coder-debug",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "dfdb9c74dac03d472a344d41ce8a8f29e39bb1601edb78a25a23089b5af35764"
+    },
+    "coder-metadata": {
+      "source": "./skills/coder-metadata",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "dc60da79c15fbcf887e10084fcbf7cd84a7e527532f7b017a3980d80be5d07fe"
+    },
+    "coder-prototype": {
+      "source": "./skills/coder-prototype",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "f094c79d6eed6ed77eec1b5c4366a7f9161af5cc47baa0b60b52cecaa3664448"
+    },
+    "coder-design": {
+      "source": "./skills/coder-design",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "a4b6011ab56d2f5a01ed7d7b9b15fe8e27da6aeebc0f64805d7893ff4315b1c4"
+    },
+    "coder-execute": {
+      "source": "./skills/coder-execute",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "a467122c295e7aa4f0aef38ccc0dd9b0a0489a09a59ee500ba131375f326aa80"
+    },
+    "coder-deliver": {
+      "source": "./skills/coder-deliver",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "39a61b2b51b4ddaf62190917374b34e0e678d49ff97ad5915f1209701f94f12a"
+    },
+    "coder-verify": {
+      "source": "./skills/coder-verify",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "cbda06aa67dfbd7489cf5a395c9ac31fad6a645b54556957e273fed96c5fa2c0"
+    },
+    "coder-persist": {
+      "source": "./skills/coder-persist",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "4d5cc65c02f34c3b92fe0cac9e9af2a56abce099f80d41298838564858406c37"
+    },
+    "coder-archive": {
+      "source": "./skills/coder-archive",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "87ec05c1d1b929f2f8dc8b95273e1d4c5150aed07ec143b6f4e7bb924dcbb3cc"
+    },
+    "coder-constraints": {
+      "source": "./skills/coder-constraints",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "aca2ce348d49df89d4680217c53384736211c3f8278d00e21791d58e86d55c4e"
+    },
+    "coder-antipatterns": {
+      "source": "./skills/coder-antipatterns",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "ff0c821c3478ed991dcea49844731e6651044deb4cd8ee176a1b1436bb343f84"
+    },
+    "coder-adaptive": {
+      "source": "./skills/coder-adaptive",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "66491e20c20cf713684434e589a499a927fa534448e0d76bec4cafe1dbc44af2"
+    }
+  }
+}

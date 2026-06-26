@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A unified AI skill library. 50 skills distributed via directory-level symlinks to 7 tool directories (Claude, OpenCode, Trae, Cursor, Agents, opencode, cc-switch). No build system, no tests, no CI. Skills are Markdown files consumed by AI tools at runtime. Includes 13 skills from mattpocock/skills (hidden by default).
+A unified AI skill library. 64 skills (50 + 14 coder-* first-class skills added v7.2) distributed via directory-level symlinks to 7 tool directories (Claude, OpenCode, Trae, Cursor, Agents, opencode, cc-switch). No build system, no tests, no CI. Skills are Markdown files consumed by AI tools at runtime. Includes 13 skills from mattpocock/skills (hidden by default).
 
 ## Skill Structure
 
@@ -88,7 +88,10 @@ Other upstream skills (skill-seekers, huashu-nuwa, storytelling, prose-craft) ar
 ## Key Architecture Patterns
 
 - **Memory skill** (`memory/`): Cross-skill memory API with MCP tools (`memory_memory_*`). Three-tier isolation: project/shared/global. Must be loaded before calling any memory MCP tool.
-- **Coder** (`coder/`): Multi-language coding meta-skill — router + 7 Phase pipeline + parallel subagents. **v5.0 (2026-06-22)**：progressive disclosure + parallel subagents (Phase 1/3/5) + orchestrator-as-router. Language knowledge lives in **memory MCP** (not `references/` files). SKILL.md ≤200 行 router,14 个 references 按需加载。skill-evolver STRUCTURAL_SCORE：8.1 vs v3.2 的 6.1。完整设计见 `coder/.deepen/20260622-v5.0/design.md`。v3.2 文件归档到 `coder/references/legacy/` 待 seed。
+- **Coder 套件（v7.2）** — books_creater 模式：1 个 router + 14 个 first-class skill + 8 个内部 module
+  - `coder/` — 主 router（SKILL.md ≤400 行）+ `skills-lock.json`（sha256 锁 14 子 skill）+ 8 个内部 module 在 `coder/modules/`（v6-execution-protocol 瘦身版 + 5 MCP 集成 + project-init + test-strategy）
+  - `coder-{spec,reuse,debug,metadata,prototype,design,execute,deliver,verify,persist,archive,constraints,antipatterns,adaptive}/` — 14 个顶层 first-class skill，每个独立 SKILL.md + README + scripts + assets
+  - v7.0/v7.1 详细演进：`coder/.deepen/20260625-execution-flow/design.md` + `coder/snapshots/`
 - **Skill Evolver** (`skill-evolver/`): Evolution framework for SKILL.md optimization. Based on [darwin-skill](https://github.com/alchaincyf/darwin-skill) rubric concepts. Includes FM1-FM7 failure mode diagnostics in `references/failure-modes.md`.
 
 ## mattpocock/skills (6 hidden, 5 visible)

@@ -11,34 +11,37 @@ description: >
 
   不触发：纯问答、解释、分析、调研（用 web-research / researcher）、人物思维（用 huashu-nuwa）。
 
-  架构（v7.1）：本 skill 是 router，按 13 Phase 流水线编排 + parallel subagents；
-  22 个 module（modules/{name}/SKILL.md + scripts/ + assets/）符合 Anthropic Cybersec skill anatomy；
-  语言知识在 memory MCP；协议靠 14 个 hook 强制；references/ 已删除（v7.0 直接迁移到 modules/）。
+  架构（v7.2）：本 skill 是 router，按 13 Phase 流水线编排 + parallel subagents；
+  14 个 Phase / 协议核心抽为 first-class skill（coder-{spec,reuse,debug,metadata,prototype,design,execute,deliver,verify,persist,archive,constraints,antipatterns,adaptive}/，见 skills-lock.json）；
+  8 个 module 保留在 modules/（v6-execution-protocol 瘦身版 + 5 MCP 集成 + project-init + test-strategy）；
+  语言知识在 memory MCP；协议靠 14 个 hook 强制。
 metadata:
-  version: "7.1"
+  version: "7.2"
   skill_type: execution
   agent_compatible: true
-  previous_version: "7.0"
+  previous_version: "7.1"
   modular: true
   modules_count: 22
   design_doc: ".deepen/20260625-execution-flow/design.md"
   modularization_doc: ".deepen/20260625-execution-flow/v7.0-skill-modularization.md"
 ---
 
-# Coder v7.1 — Modular Skills + 强制协议 + Token 经济
+# Coder v7.2 — 14 first-class skill + skills-lock + 强制协议
 
 > v5.0 → v6.0：7 Phase → 11 Phase + state 持久化 + delivery schema + 用户主导签字 + 9 hook 强制。
 > v6.0 → v6.1：14 hook 强制（+5）+ reviewer 拆 3 + test-strategist + memory 自动沉淀。
 > v6.1 → v6.2：mattpocock 反哺（tdd vertical cycle + to-issues slice + to-prd deep module + grill-with-docs）。
 > v6.2 → v6.3：bug 诊断 + prototype + handoff + token 经济（from Anthropic Cybersec Skills）。
 > v6.3 → v7.0：22 个 references → 22 个 modular skills（每个独立目录 + scripts + assets）。
-> v7.0 → **v7.1**：单条消息并发子 agent 硬性 [3,5]（§4 #14）+ spawn 时必显式 model（不可全部继承主 agent）。
+> v7.0 → v7.1：单条消息并发子 agent 硬性 [3,5]（§4 #14）+ spawn 时必显式 model（不可全部继承主 agent）。
+> v7.1 → **v7.2**：14 个核心 module 拆为顶层 first-class skill（books_creater 模式）+ skills-lock.json 锁 hash。
 > 完整设计：[`design.md`](.deepen/20260625-execution-flow/design.md) + [`v7.0-skill-modularization.md`](.deepen/20260625-execution-flow/v7.0-skill-modularization.md)。
 > v5.0 SKILL 备份：[`snapshots/`](snapshots/)。
 
-**核心形态（v7.1）**：SKILL.md 是 router（本文件，目标 ≤400 行），22 个 module 在 `modules/{name}/`（每个含 SKILL.md + scripts/ + assets）。
+**核心形态（v7.2）**：SKILL.md 是 router（本文件，目标 ≤400 行）。
+14 个 first-class skill 在顶层 `skills/coder-{name}/`（每个独立 SKILL.md + README + scripts + assets），由 [`skills-lock.json`](skills-lock.json) 锁定。
+8 个 Tier 2 module 在 `coder/modules/{name}/`（v6-execution-protocol 瘦身 + 5 MCP 集成 + project-init + test-strategy）。
 语言约束 / 踩坑 / 经验**不在文件**，全在 memory MCP。
-`references/` 已删除（v7.0 完全迁移到 `modules/`）。
 
 ---
 
@@ -74,7 +77,12 @@ metadata:
 | **6** | 持久化 + 交付清单 + handoff | orchestrator + AskUserQuestion 验收 | 全部产出 | memory + **delivery-checklist.md**（含 handoff 段） | 7 | 用户在 checklist 签字 |
 | **7** | 归档（含 post-mortem）| orchestrator | 全部产出 | **archive.md**（含 handoff + post-mortem）+ state 清除 | — | persistence-guard 检查 + `coder-state.sh archive` |
 
-**Phase 详执行**：见 [`modules/phase-{N}-*/SKILL.md`](modules/)。
+**Phase 详执行**：14 个 first-class skill（v7.2 拆分），见 [`skills-lock.json`](skills-lock.json) 和 `/Users/ganjie/skills/coder-{name}/`：
+- Phase 0 → `coder-spec` / Phase 0.5 → `coder-reuse` / Phase 0.6 → `coder-debug`
+- Phase 1 → `coder-metadata`（含合并的 S.U.P.E.R check） / Phase 2.5 → `coder-prototype`
+- Phase 3 → `coder-design` / Phase 4 → `coder-execute` / Phase 4.5 → `coder-deliver`
+- Phase 5 → `coder-verify` / Phase 6 → `coder-persist` / Phase 7 → `coder-archive`
+- 协议核心（always loaded）：`coder-constraints` / `coder-antipatterns` / `coder-adaptive`（drift 触发）
 
 **简单任务跳过**：Phase 0.5 / 3 / 4.5 / 7 用户在 Phase 0 选。Phase 1/4/5 不可跳。
 
@@ -184,96 +192,68 @@ metadata:
 
 ---
 
-## 7. Modules 索引（v7.0 模块化 + Token 经济 progressive disclosure）
+## 7. Skills 索引（v7.2：14 first-class + 8 内部 module）
 
-> v7.0：22 个 references → 22 个 modular skills（每个 `modules/{name}/SKILL.md` + scripts + assets）。
-> 每个 module 符合 Anthropic Cybersec skill anatomy（独立目录 + frontmatter + keyword-rich）。
-> `references/` 已删除（v7.0），所有内容在 `modules/{name}/SKILL.md`。
+> v7.2：原 22 个 module 拆为 **14 first-class skill**（顶层 `coder-{name}/`，独立 SKILL.md + README + scripts + assets）+ **8 个内部 module**（`coder/modules/{name}/`，按需加载）。
+> 模式参照 books_creater：`skills-lock.json` 锁定 14 个 first-class skill 的 sha256 hash（防本地漂移）。
 
 ### 7.1 Token 预算总览
 
 | Priority | Tokens | 包含 |
 |---|---|---|
-| **always**（每次加载） | ~3500 | hard-constraints + anti-patterns |
-| **high**（v6 协议核心） | ~3500 | v6-execution-protocol |
-| **on-demand**（按 Phase） | ~1000-2500 each | 对应 Phase module |
+| **always**（每次加载） | ~3500 | coder-constraints + coder-antipatterns |
+| **high**（v6 协议核心） | ~2800 | v6-execution-protocol（v7.2 瘦身版） |
+| **on-demand**（按 Phase） | ~800-2200 each | 对应 coder-{phase} skill |
 
-**总预算承诺**：always (~3500) + high (~3500) + 当前 Phase (~1500) ≤ **10000 tokens**
+**总预算承诺**：always (~3500) + high (~2800) + 当前 Phase (~1500) ≤ **8000 tokens**
 
-### 7.2 always（每次必加载）
+### 7.2 Tier 1 — 14 个 first-class skill（v7.2 新）
 
-| Module | Tokens | 用途 |
-|---|---|---|
-| [`modules/hard-constraints/`](modules/hard-constraints/) | ~1500 | 13 硬约束（R1-R12） |
-| [`modules/anti-patterns/`](modules/anti-patterns/) | ~2000 | AP-1 to AP-10 案例库 |
-
-### 7.3 high（v6 协议核心）
-
-| Module | Tokens | 用途 |
-|---|---|---|
-| [`modules/v6-execution-protocol/`](modules/v6-execution-protocol/) | ~3500 | 13 Phase 完整协议 / state / delivery / 断点续跑 / adaptive / memory 自动沉淀 |
-
-### 7.4 Phase 协议 module（on-demand）
-
-| Phase | Module | Tokens | 配套 |
+| Phase | Skill | Tokens | 备注 |
 |---|---|---|---|
-| Phase 0 | [`modules/phase-0-intent-capture/`](modules/phase-0-intent-capture/) | ~1800 | assets/spec-template.md |
-| Phase 0.5 | [`modules/phase-0.5-reuse-analysis/`](modules/phase-0.5-reuse-analysis/) | ~1200 | assets/reuse-report-template.md |
-| Phase 0.6 | [`modules/phase-0.6-bug-diagnosis/`](modules/phase-0.6-bug-diagnosis/) | ~2000 | — |
-| Phase 1 | [`modules/phase-1-metadata-scan/`](modules/phase-1-metadata-scan/) + [`phase-1-super-check/`](modules/phase-1-super-check/) | ~1800 | — |
-| Phase 2.5 | [`modules/phase-2.5-prototype/`](modules/phase-2.5-prototype/) | ~1500 | — |
-| Phase 3 | [`modules/phase-3-design-options/`](modules/phase-3-design-options/) + [`test-strategy/`](modules/test-strategy/) | ~2700 | test-strategy/assets/test-plan-template.md |
-| Phase 4 | [`modules/phase-4-execution-protocol/`](modules/phase-4-execution-protocol/) | ~1800 | assets/ |
-| Phase 4.5 | [`modules/phase-4.5-delivery-validation/`](modules/phase-4.5-delivery-validation/) | ~1200 | **scripts/validate-delivery.py** + assets/delivery-schema.yaml |
-| Phase 5 | [`modules/phase-5-verification/`](modules/phase-5-verification/) | ~1200 | — |
-| Phase 6 | [`modules/phase-6-persistence/`](modules/phase-6-persistence/) | ~1000 | assets/delivery-checklist + archive-template |
-| adaptive（drift ≥ 0.4） | [`modules/adaptive-control/`](modules/adaptive-control/) | ~1000 | — |
+| 0 | [`coder-spec`](../coder-spec/) | ~1800 | assets/spec-template |
+| 0.5 | [`coder-reuse`](../coder-reuse/) | ~1500 | assets/reuse-report-template |
+| 0.6 | [`coder-debug`](../coder-debug/) | ~1600 | 6 步 diagnose |
+| 1 | [`coder-metadata`](../coder-metadata/) | ~2200 | **含合并的 S.U.P.E.R check** |
+| 2.5 | [`coder-prototype`](../coder-prototype/) | ~1700 | 6 rules 强制 |
+| 3 | [`coder-design`](../coder-design/) | ~1900 | 2-4 oracle + test-strategist |
+| 4 | [`coder-execute`](../coder-execute/) | ~1800 | vertical slice |
+| 4.5 | [`coder-deliver`](../coder-deliver/) | ~1600 | validate-delivery.py |
+| 5 | [`coder-verify`](../coder-verify/) | ~2100 | 3 reviewer 并发 |
+| 6 | [`coder-persist`](../coder-persist/) | ~1500 | delivery-checklist |
+| 7 | [`coder-archive`](../coder-archive/) | ~800 | post-mortem + handoff |
+| always | [`coder-constraints`](../coder-constraints/) | ~2200 | 14 条硬约束 |
+| always | [`coder-antipatterns`](../coder-antipatterns/) | ~1400 | AP-1 to AP-10 |
+| drift 触发 | [`coder-adaptive`](../coder-adaptive/) | ~1300 | drift ≥ 0.4 重分解 |
 
-### 7.5 MCP 集成 module（on-demand）
+完整 lock（含 sha256 hash）：[`skills-lock.json`](skills-lock.json)
 
-| Module | Tokens | 何时 |
+### 7.3 Tier 2 — 8 个内部 module（保留 `modules/`）
+
+| Module | Tokens | 用途 |
 |---|---|---|
-| [`modules/codebase-memory-mcp/`](modules/codebase-memory-mcp/) | ~800 | 调 codebase-memory-mcp |
+| [`modules/v6-execution-protocol/`](modules/v6-execution-protocol/) | ~2800 | v7.2 瘦身版（仅 state / delivery / 断点续跑） |
+| [`modules/codebase-memory-mcp/`](modules/codebase-memory-mcp/) | ~800 | codebase-memory-mcp 集成 |
 | [`modules/context-mode-integration/`](modules/context-mode-integration/) | ~800 | 子 agent 读大文件 |
-| [`modules/memory-tier-strategy/`](modules/memory-tier-strategy/) | ~1000 | Phase 6 写 memory |
-| [`modules/github-integration/`](modules/github-integration/) | ~600 | 涉及 issue/PR |
 | [`modules/context7-integration/`](modules/context7-integration/) | ~600 | 写库代码 |
+| [`modules/github-integration/`](modules/github-integration/) | ~600 | 涉及 issue/PR |
+| [`modules/memory-tier-strategy/`](modules/memory-tier-strategy/) | ~1000 | Phase 6 写 memory |
+| [`modules/project-init-protocol/`](modules/project-init-protocol/) | ~2500 | 新项目 init（5 模板） |
+| [`modules/test-strategy/`](modules/test-strategy/) | ~1200 | 测试规范（Phase 3/5 共用） |
 
-### 7.6 项目 init module（on-demand）
-
-| Module | Tokens | 配套 |
-|---|---|---|
-| [`modules/project-init-protocol/`](modules/project-init-protocol/) | ~2500 | assets/ 含 5 个项目模板（CLAUDE.md + 4 个 agent template） |
-
-### 7.7 v7.0 module 全清单（22 个）
+### 7.4 Tier 2 清单（8 个）
 
 ```
-modules/
-├── phase-0-intent-capture/        # + scripts + assets
-├── phase-0.5-reuse-analysis/      # + assets
-├── phase-0.6-bug-diagnosis/
-├── phase-1-metadata-scan/
-├── phase-1-super-check/
-├── phase-2.5-prototype/
-├── phase-3-design-options/
-├── phase-4-execution-protocol/    # + assets
-├── phase-4.5-delivery-validation/ # + scripts + assets
-├── phase-5-verification/
-├── phase-6-persistence/           # + assets
-├── hard-constraints/              # always
-├── anti-patterns/                 # always
-├── v6-execution-protocol/         # high
-├── test-strategy/                 # + assets
-├── adaptive-control/
-├── codebase-memory-mcp/
-├── context-mode-integration/
-├── context7-integration/
-├── github-integration/
-├── memory-tier-strategy/
-└── project-init-protocol/         # + assets (5 项目模板)
+coder/modules/
+├── v6-execution-protocol/         # high（v7.2 瘦身版）
+├── codebase-memory-mcp/           # MCP 集成
+├── context-mode-integration/      # MCP 集成
+├── context7-integration/          # MCP 集成
+├── github-integration/            # MCP 集成
+├── memory-tier-strategy/          # memory tier 规范
+├── project-init-protocol/         # + assets (5 项目模板)
+└── test-strategy/                 # 测试规范
 ```
-
-22 个 module，2 个含 scripts，7 个含 assets。
 
 ---
 
@@ -319,40 +299,75 @@ modules/
 
 ---
 
-## 11. v5.0 → v6.3 关键变化（速查）
+## 11. v5.0 → v7.2 关键变化（速查）
 
-| 维度 | v5.0 | v6.0 | v6.1 | v6.2 | v6.3 |
-|---|---|---|---|---|---|
-| Phase 数 | 7 | 11 | 11 | 11 | **13**（+0.6 bug / +2.5 prototype） |
-| state.json | 无 | 持久化 | 同 | 同 | 同 |
-| delivery-schema | 无 | 子 agent 必须 | 同 | + slice 字段 | 同 |
-| Phase 选择 | 全跑 | 用户选 | 同 | 同 | 同 |
-| 用户签字 | 无 | Phase 0/3/5/6 必签 | 同 | 同 | 同 |
-| test-plan | 无 | Phase 3 输出 | 同 | + vertical cycle | 同 |
-| 复用分析 | 隐含 Phase 1 | 独立 Phase 0.5 | 同 | 同 | 同 |
-| 归档 | 无 | Phase 7 | 同 | 同 | + handoff + post-mortem |
-| 子 agent 并发 | Phase 1/3/5 | 同 + Phase 4 文件并发 | 同 | **+ Phase 4 vertical slice** | 同 |
-| 协议执行 | 靠自觉 | 9 hook | **14 hook** | 同 | 同 |
-| 子 agent 数 | 4 | 4 | 6 | 7 | **8**（+test-strategist / +2 reviewer） |
-| **单条消息并发上限** | 无 | 无 | 无 | 无 | **3-5**（v7.1 §4 #14 硬约束） |
-| **子 agent model 显式** | 隐式 | 同 | 同 | 同 | **强制 frontmatter + spawn 时双校验** |
-| references | 隐式 progressive | 同 | 同 | 同 | **显式 token 估算 + load_priority** |
-| bug 诊断 | 无 | 无 | 无 | 无 | **Phase 0.6（from diagnose）** |
-| prototype | 无 | 无 | 无 | 无 | **Phase 2.5（from prototype）** |
-| grilling loop | 无 | 无 | 无 | **oracle 自我压力测试** | 同 |
-| SKILL.md 行数 | 318 | 717 | 同 | 274 | ≤400（progressive） |
+| 维度 | v5.0 | v6.0 | v6.1 | v6.2 | v6.3 | v7.0 | v7.1 | **v7.2** |
+|---|---|---|---|---|---|---|---|---|
+| Phase 数 | 7 | 11 | 11 | 11 | 13 | 13 | 13 | **13** |
+| state.json | 无 | 持久化 | 同 | 同 | 同 | 同 | 同 | 同 |
+| delivery-schema | 无 | 子 agent 必须 | 同 | + slice | 同 | 同 | 同 | 同 |
+| 子 agent 并发 | Phase 1/3/5 | + Phase 4 | 同 | + vertical slice | 同 | 同 | 同 | 同 |
+| 协议执行 | 靠自觉 | 9 hook | 14 hook | 同 | 同 | 同 | 同 | 同 |
+| 子 agent 数 | 4 | 4 | 6 | 7 | 8 | 8 | 8 | **8** |
+| **单条消息并发上限** | 无 | 无 | 无 | 无 | 无 | 无 | **[3,5]** | **[3,5]** |
+| **子 agent model 显式** | 隐式 | 同 | 同 | 同 | 同 | 同 | **强制** | **强制** |
+| **first-class skill 数** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **14**（拆分） |
+| **skills-lock** | 无 | 无 | 无 | 无 | 无 | 无 | 无 | **sha256 锁 14 skill** |
+| **内部 module 数** | — | — | — | — | — | 22 | 22 | **8**（瘦身） |
+| bug 诊断 | 无 | 无 | 无 | 无 | Phase 0.6 | 同 | 同 | 同 |
+| prototype | 无 | 无 | 无 | 无 | Phase 2.5 | 同 | 同 | 同 |
+| SKILL.md 行数 | 318 | 717 | 同 | 274 | ≤400 | ≤400 | ≤400 | **≤400** |
 
-**向后兼容**：未跑 v6.3 init 的项目按 v5.0/v6.0 跑。跑 init 自动启用最新。
+**向后兼容**：未跑 v6.3 init 的项目按 v5.0/v6.0 跑。state.json 字段是 "Phase 0" 字符串，与 module 路径解耦，v7.2 拆分完全兼容老 state。
 
 详细差异：[`modules/v6-execution-protocol/SKILL.md`](modules/v6-execution-protocol/SKILL.md)。
 
-### v6.3 核心新增（来自 Anthropic Cybersecurity Skills + mattpocock）
+### v7.2 核心新增（from books_creater pattern）
 
 | 新增 | 来源 |
 |---|---|
-| **Phase 0.6 bug 诊断**（6 步 + falsifiable hypotheses） | mattpocock `diagnose` |
-| **Phase 2.5 throwaway prototype**（6 rules） | mattpocock `prototype` |
-| **delivery-checklist + archive 加 handoff 段** | mattpocock `handoff` |
-| **references 显式 tokens_estimate + load_priority** | Anthropic Cybersec Skills |
-| **SKILL.md §7 Token 预算表**（≤10000 tokens 承诺） | Anthropic Cybersec Skills |
-| **每个 reference 加 keywords 字段**（可发现性） | Anthropic Cybersec Skills |
+| **14 module 拆 first-class skill** | books_creater `skills-lock.json` 模式 |
+| **skills-lock.json**（sha256 + sourceType: local） | books_creater 同款 hash 算法 |
+| **coder-metadata 合并 phase-1-super-check** | 减少跨 module 引用 |
+| **coder-archive 从 v6-execution-protocol §11 抽出** | Phase 7 独立可调用 |
+| **v6-execution-protocol 瘦身 442 → ~280** | 协议核心抽走，仅留 state/delivery |
+
+---
+
+## 12. Skills-lock（v7.2 新）
+
+14 个 first-class skill 由 [`skills-lock.json`](skills-lock.json) 锁定：
+
+- **sourceType**: `local`（与 books_creater 的 `github` 模式对应）
+- **source**: `./skills/coder-{name}`
+- **skillPath**: `SKILL.md`
+- **computedHash**: sha256 of SKILL.md content
+
+**校验命令**（read-only，检测 hash 漂移）：
+
+```bash
+cd /Users/ganjie/skills
+python3 -c "
+import json, hashlib, pathlib
+lock = json.load(open('coder/skills-lock.json'))
+for name, e in lock['skills'].items():
+    actual = hashlib.sha256(pathlib.Path(name, 'SKILL.md').read_bytes()).hexdigest()
+    status = '✓' if actual == e['computedHash'] else '✗ DRIFT'
+    print(f'{status} {name}')
+"
+```
+
+**hash 漂移处置**：`coder-{name}/SKILL.md` 改动后 MUST 跑 hash 重算脚本：
+
+```bash
+python3 -c "
+import json, hashlib, pathlib
+lock = json.load(open('coder/skills-lock.json'))
+for name, e in lock['skills'].items():
+    e['computedHash'] = hashlib.sha256(pathlib.Path(name, 'SKILL.md').read_bytes()).hexdigest()
+json.dump(lock, open('coder/skills-lock.json','w'), indent=2, ensure_ascii=False)
+print(f'{len(lock[\"skills\"])} hashes updated')
+"
+```
+
+**主 coder 进 lock？不进**（books_creater 模式：主 router 由 git 直接管）。

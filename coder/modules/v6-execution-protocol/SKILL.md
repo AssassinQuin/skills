@@ -218,34 +218,30 @@ memory_store(
 
 ## 10. adaptive control（drift 触发）
 
-```
-Phase 4.5 计算 max drift（不是 avg）：
-  max_drift = max(d.drift_score for d in deliveries)
-  sum_file_overrun = sum(d.drift_breakdown.file_overrun)
-  sum_loc_overrun = sum(d.drift_breakdown.loc_overrun)
+> v7.2：完整内容抽到独立 first-class skill [`coder-adaptive`](../../../coder-adaptive/SKILL.md)。
+> 本节仅留触发条件速查；公式 + 实施细节见 coder-adaptive/SKILL.md。
 
+```
 触发条件（任一）：
   - max_drift >= 0.4
   - sum_file_overrun >= 3
   - sum_loc_overrun >= 50
 
-触发后：
-  1. 不返工子 agent
-  2. 把 deliveries + drift 信息回传 oracle
-  3. oracle 重新分解（拆更细 / 改方案）
-  4. 用户重新确认 design
-  5. 重新走 Phase 4
+触发后：spawn oracle 重新分解 + 🔒 用户确认新计划（详见 coder-adaptive）
 ```
 
 ## 11. Phase 7 归档流程
 
+> v7.2：完整内容抽到独立 first-class skill [`coder-archive`](../../../coder-archive/SKILL.md)。
+> 本节仅留 6 步速查；archive.md 模板 + handoff 段 + post-mortem 段见 coder-archive/SKILL.md。
+
 ```
-1. signature-guard.sh verify（检查所有必签 Phase）
-2. 生成 archive.md（Phase 历史 + tasks 摘要）
+1. signature-guard.sh verify（必签 Phase 0/3/5/6）
+2. 生成 archive.md（含 handoff + post-mortem）
 3. mv specs-active/{ts}-{slug}/ archive/
 4. 清除 current.json
 5. 更新 MASTER.md 索引
-6. memory MCP 写关键决策（shared tag）
+6. memory MCP 沉淀（详见 coder-archive + coder-persist）
 ```
 
 ## 12. 与 v5.0+ 的兼容性
