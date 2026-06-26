@@ -1,0 +1,104 @@
+{
+  "_comment": "由 coder init 智能合并到项目 .claude/settings.json。这里只是 fragment，合并时只取 hooks 字段。",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/edit-guard.sh",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/phase-guard.sh",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/spec-guard.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/git-guard.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/phase-guard.sh",
+            "timeout": 3
+          },
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/task-progress-guard.sh",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Agent|Task|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/spawn-trace.sh",
+            "timeout": 3
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/phase-guard.sh",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/session-resume.sh",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "${PROJECT_CLAUDE_DIR}/.claude/hooks/session-load.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "_coder_init_meta": {
+    "version": "${CODER_VERSION}",
+    "init_date": "${DATE}",
+    "managed_markers": true,
+    "hooks_summary": {
+      "edit-guard": "PreToolUse Edit/Write — 拦截违反 §2.2 / 硬约束 #13",
+      "phase-guard": "PreToolUse Edit/Agent — v6.0 Phase 状态守卫 + spawn trace",
+      "git-guard": "PreToolUse Bash — 拦截危险 git 命令（force push / reset --hard / clean / branch -D / commit --no-verify 等）",
+      "spawn-trace": "PostToolUse Agent/Bash — 记录 spawn trace + grep 痕迹到 .claude/coder-trace.jsonl",
+      "session-resume": "SessionStart — v6.0 断点续跑检测（current.json 存在 → AskUserQuestion 续跑）",
+      "session-load": "SessionStart — v5.0+ 项目元信息 + drift 检测"
+    },
+    "rollback_hint": "若需回滚，删除 hooks 字段中 _coder_init_meta 标记的 entries"
+  }
+}

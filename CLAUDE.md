@@ -42,7 +42,11 @@ This follows the official Claude Code design: subagents live at `~/.claude/agent
 | explorer | haiku | programmer, coder (v5.0 Phase 1) |
 | oracle | opus | programmer, darwin-skill, coder (v5.0 Phase 3) |
 | researcher | sonnet | web-research, huashu-nuwa, coder (v5.0 Phase 1 触发式) |
-| reviewer | sonnet | darwin-skill, code-review, fin-code-review, coder (v5.0 Phase 5) |
+| reviewer | sonnet | darwin-skill, code-review, fin-code-review |
+| correctness-reviewer | sonnet | coder (v6.1 Phase 5 正确性维度) |
+| project-reviewer | sonnet | coder (v6.1 Phase 5 S.U.P.E.R + 惯例维度) |
+| security-reviewer | sonnet | coder (v6.1 Phase 5 安全维度) |
+| test-strategist | sonnet | coder (v6.1 Phase 3 test-plan) |
 
 ## Distribution (Directory-Level Symlinks)
 
@@ -50,17 +54,29 @@ Each tool's skills directory symlinks directly to this repo. Adding/removing a s
 
 ```bash
 # Re-initialize all symlinks (skill 分发 + agent 注册)
-for dir in ~/.trae/skills ~/.config/opencode/skills ~/.opencode/skills ~/.claude/skills ~/.agents/skills ~/.cursor/skills; do
+for dir in ~/.trae/skills ~/.config/opencode/skills ~/.opencode/skills ~/.claude/skills ~/.agents/skills ~/.cursor/skills ~/.cc-switch/skills; do
   rm -rf "$dir" && ln -s /Users/ganjie/skills "$dir"
 done
 bash ~/.claude/skills/scripts/setup-agents.sh   # 注册 skill agents → ~/.claude/agents/
 ```
 
+## cc-switch Integration (2026-06-25)
+
+`~/.cc-switch/skills/` was migrated from a real directory (cc-switch's own skill store) to a symlink → `/Users/ganjie/skills`. To prevent the cc-switch GUI from auto-syncing over the symlink, `~/.cc-switch/settings.json` was modified:
+
+- `skillSyncMethod`: `auto` → `manual`
+- `skillStorageLocation`: `cc_switch` → `external`
+
+Backup before migration: `~/.cc-switch-backup-20260625-115628.tar.gz` (42M). Rollback: `cd ~/.cc-switch && tar xzf ~/cc-switch-backup-*.tar.gz && rm ~/.cc-switch/skills`.
+
 ## Nested Git Repos
 
-One skill is a nested git repo (NOT a submodule) — changes inside it require separate git operations from within its directory:
+Four skills are nested git repos (NOT submodules) — changes inside each require separate git operations from within their directories:
 
 - `humanizer/` — branch: main, upstream: blader/humanizer
+- `darwin-skill/` — branch: main, upstream: alchaincyf/darwin-skill (migrated from cc-switch on 2026-06-25)
+- `planning-with-files/` — migrated from cc-switch on 2026-06-25 (GitHub clone)
+- `skill-audit-skills/` — added 2026-06-25, upstream: LeeFeee/skill-audit-skills
 
 Update pattern for nested repos:
 ```bash

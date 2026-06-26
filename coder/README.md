@@ -61,7 +61,7 @@ coder/
 ├── agents/                    # 编码子 agent（被 orchestrator spawn）
 │   ├── go-coder.md            # + v5.0 frontmatter + 15 allowed-tools
 │   └── python-coder.md        # 同上
-├── references/                # 14 个 v5.0 references（progressive disclosure）
+├── modules/                   # 22 个 modular skills（v7.0，progressive disclosure）
 │   ├── phase-0-intent-capture.md
 │   ├── phase-1-metadata-scan.md
 │   ├── phase-1-super-check.md

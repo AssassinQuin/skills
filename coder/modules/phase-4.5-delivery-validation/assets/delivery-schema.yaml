@@ -1,0 +1,82 @@
+# 子 agent delivery-schema v6.0
+#
+# 每个 spawn 的子 agent（lang-coder / reviewer / explorer / oracle）必须返回此格式。
+# Phase 4.5（validate-delivery.py）会校验。
+# 不合格 → orchestrator 拒绝接收，要求返工。
+#
+# 使用：子 agent 完成任务后，在最终输出末尾 append 这个 YAML 块（用 ```yaml fences）。
+
+delivery:
+  # ---- 必填：身份 ----
+  agent: <str>              # 例：python-coder-project / go-coder-project / project-reviewer / oracle
+  task_id: <str>            # 对应 state.json 的 task id（如 p4-impl-login-handler）
+  phase: <str>              # Phase 4 / Phase 5 等
+  model: <str>              # sonnet / opus / haiku
+
+  # ---- v6.2 必填：vertical slice 元数据 ----
+  slice:
+    name: <str>             # slice 名（如 "用户登录"），完整 user behavior
+    type: <AFK|HITL>        # AFK = 可独立 merge；HITL = 需人决策
+    layers_covered:         # 贯穿的层（验证 vertical）
+      - <schema|api|logic|tests|ui|migrations>
+    independently_demoable: <bool>  # 这个 slice 能独立 demo 吗
+    cycle_in_plan: <int>    # 对应 test-plan.md 的 cycle 编号
+
+  # ---- 必填：输入清单 ----
+  inputs_received:
+    - <str>                 # 例：spec.md / design.md (alt-2) / test-plan.md / reuse-report.md
+
+  # ---- 必填：输出 ----
+  outputs:
+    files_changed:
+      - path: <str>         # 相对项目根
+        lines_added: <int>
+        lines_removed: <int>
+        new_methods: [<str>]      # 新增方法名
+        modified_methods: [<str>] # 修改的方法名
+        risk_level: <str>         # low / medium / high / critical
+
+    new_dependencies: [<str>]     # 必须为空除非 spec.allowed_deps 明确允许
+    deleted_files: [<str>]
+
+    drift_score: <float>          # 0.0-1.0，0.4 以上触发 adaptive control
+    drift_breakdown:
+      file_overrun: <int>         # 计划 N 文件 - 实际 N 文件（正 = 超出）
+      loc_overrun: <int>          # 计划 N 行 - 实际 N 行
+      unplanned_deps: <int>       # 未在 spec 的依赖
+      super_decay: <int>          # S.U.P.E.R 衰减项数
+
+  # ---- 必填：自验证 ----
+  verification_self:
+    lint: <PASS|FAIL|SKIP>     # ruff / golangci-lint / eslint
+    type_check: <PASS|FAIL|SKIP>  # pyright / go vet / tsc
+    tests: <str>               # "8/8 PASS" 或 "3/5 PASS (2 failed: ...)"
+    build: <PASS|FAIL|SKIP>
+    notes: <str>               # 其他自验证说明
+
+  # ---- 选填：已知问题 ----
+  known_caveats:
+    - description: <str>       # 例："rate limit TODO at line 45"
+      severity: <str>          # low / medium / high
+      location: <str>          # file:line
+
+  # ---- 必填：交接 ----
+  handoff:
+    to_reviewer:
+      focus_areas: [<str>]     # 例："commit_user 的 transaction 安全性"
+      skip_areas: [<str>]      # 例："logging 格式（简单 wrapper）"
+      risk_notes: <str>        # 整体风险评估
+
+    to_orchestrator:
+      next_actions: [<str>]    # 例："Phase 5 spawn reviewer"
+      blockers: [<str>]        # 阻塞下一步的问题
+      suggested_followup: [<str>]  # 建议后续任务（不强求本次做）
+
+# ---- 校验规则（validate-delivery.py 检查）----
+# 1. 必填字段齐全（agent / task_id / phase / inputs_received / outputs / verification_self / handoff）
+# 2. files_changed 与实际 git diff 一致（用 git diff --name-only 对比）
+# 3. drift_score < 0.4（否则 → adaptive control，触发 oracle 重新分解）
+# 4. verification_self 至少 1 项 PASS
+# 5. new_dependencies 为空 或 ⊆ spec.allowed_deps
+# 6. known_caveats 数量 < 5（否则提示拆任务）
+# 7. handoff.to_reviewer.focus_areas 至少 1 项
