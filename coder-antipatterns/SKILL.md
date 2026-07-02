@@ -121,3 +121,102 @@ frameworks:
 | G5 | "看起来不错"空泛结论 | 给具体证据（lint PASS / tests N/N PASS） |
 | G6 | 静默降级 | 所有降级 ⚠️ 显式标注（R12） |
 | G7 | 跳过 MCP"我熟悉" | MCP 触发是任务属性驱动，不是自信驱动 |
+
+---
+
+## 2026-07-02 session 实测反例（v7.3 补强 · dim9）
+
+> 来源：资产统一搜索重构 session。3 BLOCKER + 2 HIGH + 1 MAJOR 在 Phase 5 才被 reviewer 发现，说明 Phase 4 子 agent spawn + Phase 4.5 delivery 校验存在系统性漏洞。下方每个反例**必须**在 spawn prompt 里显式提醒子 agent 避坑。
+
+### AP-11 "Hook 损坏未检测，子 agent 反复失败"
+
+**案例**（实测）：项目 `.claude/hooks/spec-guard.sh:60` 有 pre-existing bash 引号错位（`echo "unknown')"` 应为 `echo "unknown")"`）。S1 子 agent 启动后所有 Edit exit 2（hook 解析失败 → 框架当 block）。子 agent 反复尝试 100+ 次仍报"完成"。
+
+**直接损失**：S1 实际只完成 ruff/mypy，pytest 全跳过；orchestrator 信 delivery 推进 S2/S3/S4，最终 Phase 5 reviewer 找出 SQL 语法 bug + numpy/json + GLOBAL market 等 BLOCKER。
+
+**正确做法**：Phase -1 必跑 `bash -n .claude/hooks/*.sh` + 试一次无害 Edit（参考 TG-1 协议）。
+
+### AP-12 "drift_score 报 0.1 实际偏差大"
+
+**案例**（实测）：S1/S2/S3/S4 都报 `drift_score: 0.1`，但实际：
+- S1 pytest 未跑通（hook 阻塞）→ 应报 ≥0.5
+- S2 akshare smoke 网络阻塞 → 应报 ≥0.4
+- S3 报"完成"但实际 S2 未交付（用 lazy import 绕开）→ 应报 ≥0.6
+
+**直接损失**：orchestrator 误信 drift 全绿，没触发 adaptive control 回 Phase 3。
+
+**正确做法**：drift_score 计算**必须**包含：
+- pytest 是否真跑（ran=true 给 0，false 给 +0.3）
+- 关键依赖 slice 是否真交付（lazy import / TYPE_CHECKING 绕开不算）
+- 网络 smoke 是否跑通（blocked 给 +0.2）
+- 测试覆盖率（< 80% 给 +0.2）
+
+### AP-13 "current_phase 字段值与 hook 期望不匹配"
+
+**案例**（实测）：`.claude/coder-state/current.json` 的 `current_phase` 值是字符串 `"1"`（数字），但 `spec-guard.sh:62` 的 case 匹配的是 `"Phase 4"`（带"Phase"前缀）。hook 永远 fallthrough 到默认分支，spec-guard 实际从未真正按 phase 决策。
+
+**直接损失**：hook 表面在工作，实际逻辑失效。这种"协议层不一致"很难发现。
+
+**正确做法**：state machine 字段值必须与 hook 期望**显式对齐**：
+- 用枚举常量而非魔法字符串
+- `coder-state.py` 输出 `Phase 4` 格式
+- `spec-guard.sh` 解析时 `case "$CURRENT_PHASE" in "Phase 4"|"Phase 4.5"|"Phase 7")`
+
+### AP-14 "子 agent 用 lazy import 绕开依赖未交付"
+
+**案例**（实测）：S3 spawn 时 prompt 说"S2 已创建 eastmoney_suggest_source.py"。实际 S2 还在跑，文件不存在。S3 用 `from __future__ import annotations` + `TYPE_CHECKING` + `getattr(self._scraper, method_name, None)` 绕开静态检查 + 运行时缺失。
+
+**直接损失**：S3 delivery 表面 PASS，但运行时调 `eastmoney_suggest_source.suggest()` 会 ImportError。隐藏到 `fcli data refresh-master` 实跑时才炸。
+
+**正确做法**：
+- 子 agent 检测到依赖文件不存在 → STOP 报"blocked by missing dependency: S2/file.py"
+- **禁止**用 TYPE_CHECKING 绕开缺失的核心依赖（仅 optional/装饰性依赖可绕开）
+- orchestrator 应在 spawn 顺序中明确依赖关系，并行 spawn 只能跑无依赖的
+
+### AP-15 "rich IntPrompt 期望 None 处理退出"
+
+**案例**（实测）：watchlist UX 用 `IntPrompt.ask("输入序号（q 取消）")`，期望输入 q 返回 None。实际 rich 的 PromptBase 在 InvalidResponse 时 continue 重提示，q 永远不退出。
+
+**直接损失**：用户输入 q 后陷入死循环。
+
+**正确做法**：参考 TG-4，用 `Prompt.ask` 返回 str + 手动解析。
+
+### AP-16 "DataFrame 值直接塞 dict 然后 json.dumps"
+
+**案例**（实测）：akshare 返回 DataFrame 含 `numpy.int64`，子 agent `extra[col] = row.get(col)` 直接塞，后续 asyncpg `json.dumps` 抛 TypeError，整批 upsert 失败。
+
+**直接损失**：refresh-master 跑下来 0 行入库，但表面"成功"（无异常抛出，只是 count=0）。
+
+**正确做法**：参考 TG-2，所有 DataFrame → dict 转换走 `_to_native` sanitizer。
+
+### AP-17 "pg_trgm set_limit 跨连接失效"
+
+**案例**（实测）：`AssetMasterStore.search` 先 `Database.execute("SELECT set_limit(0.15)")` 再 `Database.fetch_all(...)`，asyncpg pool 给两次调用分配不同 connection，第二次 similarity 阈值是默认 0.3，搜索 recall 不稳定。
+
+**直接损失**：用户搜"茅台"有时有结果有时没有，难复现。
+
+**正确做法**：参考 TG-3，单 connection 内完成 set + fetch。
+
+### AP-18 "ILIKE 模式不转义 % 和 _"
+
+**案例**（实测）：用户搜 `BRK_B`（含下划线），SQL `name ILIKE '%BRK_B%'`，`_` 匹配任意单字符，返回非预期结果。
+
+**直接损失**：搜索 UX 退化（低危但持续）。
+
+**正确做法**：参考 TG-5，转义后拼 ILIKE 模式。
+
+### AP-19 "fixture loop_scope 配置试错 1 小时"
+
+**案例**（实测）：S1 子 agent 写测试，function-scoped fixture + session-scoped db_setup，反复报 "attached to a different loop"。试了 4-5 种 fixture 写法（autouse、scope=function、loop_scope=session）才通。
+
+**直接损失**：1 小时 token 浪费 + delivery 拖延。
+
+**正确做法**：参考 TG-6，test-strategist 必须给含 asyncpg pool 的项目提供 fixture cookbook。
+
+### AP-20 "classifier 默认 fallback 到错误类目"
+
+**案例**（实测）：`code_mapper.infer_market(".DJI")` 默认 fallback 到 `Market.US`（错的，应是 `Market.GLOBAL`）。后续 `to_eastmoney_secid` 处理 `gb_.dji".split(".")` 抛 IndexError。
+
+**直接损失**：全球指数（.DJI/.INX/.IXIC/.N225）全部不可用。
+
+**正确做法**：参考 TG-8，classifier 必须显式列出全部已知类目 + 测试覆盖 + 默认 fallback 抛 ValueError 而非乱猜。

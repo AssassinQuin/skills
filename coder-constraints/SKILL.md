@@ -205,3 +205,142 @@ frameworks:
 - design.md §2 + §4（SKILL.md §4 摘要）
 - `~/.claude/CLAUDE.md` coding-rules.md（R1-R12 原文）
 - v7.1 #14 来源：Anthropic parallel exploration best practice + coding-rules R5.1（model 显式）
+
+---
+
+## 实战陷阱黑名单（dim3 失败模式编码补强 · v7.3）
+
+> 来源：2026-07-02 资产统一搜索重构 session 实测暴露（3 BLOCKER + 2 HIGH + 1 MAJOR 修复记录）。
+> 用途：在 Phase 4 spawn 子 agent 前**作为 system prompt 注入**，子 agent 命中任一模式必须显式避坑。
+
+### TG-1：Hook self-test（启动时必跑）
+
+**症状**：项目 `.claude/hooks/*.sh` 存在 pre-existing bash 语法错误（引号错位、`fi` 缺失、变量未闭合），导致 hook 全局 exit 2，所有 Edit/Write 被框架当作 block。子 agent 反复失败 100+ 次才能定位。
+
+**强制协议**：
+- Phase -1（断点检测之后、Phase 0 之前）**必跑 hook self-test**：
+  ```bash
+  for f in .claude/hooks/*.sh; do bash -n "$f" || echo "HOOK_BROKEN: $f"; done
+  ```
+- 任一 hook 报 `HOOK_BROKEN`：
+  1. orchestrator 立即 STOP，提示用户授权修复（"继续" 不够明确）
+  2. 修复后重新验证：`bash -n` 全部通过 + 试一次无害 Edit（如 `echo` 进 .coder-state/）
+  3. 用户拒绝修复 → 退到 `CODER_SPEC_GUARD=off` 模式 + 显式告知风险
+
+**禁止**：让子 agent 自己反复试 Edit 来"发现"hook 损坏（浪费 token + 误导 delivery）。
+
+### TG-2：DataFrame → JSON 类型转换
+
+**症状**：akshare / pandas 返回 DataFrame，行里含 `numpy.int64` / `numpy.float64` / `numpy.datetime64`。直接塞进 dict 然后 `json.dumps()` 抛 `TypeError: Object of type int64 is not JSON serializable`，整批 upsert 失败。
+
+**强制协议**：
+- 任何从 DataFrame 取值塞进 model extra/dict 的代码**必须**走 sanitizer：
+  ```python
+  def _to_native(val):
+      """numpy → Python native（递归处理）。"""
+      if hasattr(val, "item"):
+          try:
+              return val.item()
+          except Exception:
+              return str(val)
+      return val
+  ```
+- 子 agent 写 scraper / `_df_to_*` helper 时，TG-2 是 reviewer 必检项
+
+**禁止**：`extra[col] = row.get(col)`（裸值，未 sanitize）。
+
+### TG-3：pg_trgm `set_limit()` 是 per-connection 状态
+
+**症状**：asyncpg pool 下，`Database.execute("SELECT set_limit(0.15)")` 后 `Database.fetch_all(...)` 可能拿到**不同连接**，新连接的 similarity 阈值是默认 0.3，搜索结果遗漏（fund store 同 bug 已存在）。
+
+**强制协议**：
+- 任何依赖 `set_limit()` / `setseed()` 等 per-connection 状态的查询**必须**在同一 connection 内完成：
+  ```python
+  pool = Database.get_pool()
+  async with pool.acquire() as conn:
+      await conn.execute("SELECT set_limit(0.15)")
+      rows = await conn.fetch(_SEARCH_SQL, *params)
+  ```
+- 禁止 `await Database.execute(...)` + `await Database.fetch_all(...)` 跨调用拼状态
+
+### TG-4：rich `IntPrompt.ask` 输入非整数会重新提示
+
+**症状**：想做"输入 q 取消"的交互菜单，用 `IntPrompt.ask(...)`，发现输入 q 后 rich 不返回 None 而是重新提示（PromptBase 在 InvalidResponse 时 continue 而非 return）。用户陷入死循环。
+
+**强制协议**：
+- 需要"非数字退出"的交互**必须**用 `Prompt.ask`（返回 str）+ 手动解析：
+  ```python
+  raw = Prompt.ask("输入序号（q 取消）", default="1")
+  if raw.strip().lower() in ("q", "quit", ""):
+      return None
+  try:
+      idx = int(raw)
+  except ValueError:
+      return None
+  return candidates[idx - 1] if 1 <= idx <= len(candidates) else None
+  ```
+
+**禁止**：`IntPrompt.ask` + 期望 None 处理退出。
+
+### TG-5：ILIKE 模式必须转义 `%` / `_`
+
+**症状**：用户搜索 `BRK_B` → SQL `name ILIKE '%BRK_B%'`，`_` 匹配任意单字符，返回非预期结果。`%` 同理。低危但污染搜索 UX。
+
+**强制协议**：
+- 任何用户输入拼进 ILIKE 模式**必须**转义：
+  ```python
+  escaped = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+  pattern = f"%{escaped}%"
+  ```
+- SQL 加 `ESCAPE '\\'` 子句（Postgres 默认 escape 字符就是 `\`，可省略）
+
+### TG-6：pytest-asyncio + asyncpg pool 的 event loop 陷阱
+
+**症状**：项目用 `pytest-asyncio` + `asyncpg.create_pool`（session-scoped）。新 store 的 function-scoped fixture 报 `RuntimeError: Task ... got Future ... attached to a different loop`。子 agent 反复试 4-5 种 fixture 写法才能通。
+
+**强制协议**：
+- Phase 3 test-strategist **必须**给含 asyncpg pool 的项目提供 fixture cookbook：
+  - `db_setup` 用 `@pytest_asyncio.fixture(scope="session")` 在 session loop 初始化 pool
+  - function-scoped cleanup fixture 必须用 `@pytest_asyncio.fixture(loop_scope="session")`（绑定 session loop）
+  - **避免** `@pytest_asyncio.fixture(scope="function", loop_scope="session")`（语义重叠，行为不稳）
+  - 测试方法**不要**加 `@pytest.mark.asyncio`（项目用 `asyncio_mode=auto` 自动标记）
+- 项目级 fixture 模板应沉淀到 memory MCP（tag: `coding-python-pytest-asyncio`）
+
+**降级方案**：fixture 不可靠时，每个测试方法开头**显式**调 `_clear_tables()`，不依赖 fixture 隔离。
+
+### TG-7：子 agent delivery 必须附 pytest 输出证据
+
+**症状**：子 agent 报告 `pytest: PASS` 但实际未跑（hook 阻塞 / fixture 失败 / 网络阻塞 smoke）。validate-delivery.py 信任自报，导致 orchestrator 推进后续 slice 基于错误假设。
+
+**强制协议**（与 `coder-deliver/SKILL.md` 联动）：
+- delivery-schema 新增字段：
+  ```yaml
+  verification:
+    pytest_ran: bool           # 是否真的跑了（不是 agent 自报 PASS）
+    pytest_output_snippet: str  # 最后 20 行 pytest 输出（含 PASSED / FAILED 统计行）
+    pytest_skipped_reason: str  # 若 pytest_ran=false，必填（如 "hook blocked" / "DB unavailable"）
+  ```
+- `validate-delivery.py` 强校验：
+  - `pytest_ran=true` → `pytest_output_snippet` 必非空
+  - `pytest_ran=false` → 该 slice 标 `delivery=incomplete`，不许进 Phase 5
+
+### TG-8：code_mapper / classifier 的 GLOBAL / 边缘类目
+
+**症状**：`code_mapper.infer_market(".DJI")` 默认 fallback 到 `Market.US`（错的，应是 `Market.GLOBAL`）。后续 `to_eastmoney_secid` 处理 `gb_.dji".split(".")` 抛 IndexError。
+
+**强制协议**：
+- 任何 classifier（infer_market / infer_type / classify_xxx）**必须**：
+  1. 在 docstring 列出**全部**已知类目（含边缘：GLOBAL / COMMODITY / BOND）
+  2. 测试覆盖每个类目至少 1 个真实样例
+  3. 默认 fallback 不能是任意已知类目（要么抛 ValueError，要么标 UNKNOWN）
+
+---
+
+## 自检清单（子 agent 在 delivery 前必跑）
+
+- [ ] 我没有命中 TG-1 到 TG-8 任一模式（如命中，已在代码显式处理）
+- [ ] pytest 是真的跑了（不是被 hook 阻塞 / fixture 失败 / 网络超时跳过）
+- [ ] pytest 输出 snippet 已附在 delivery
+- [ ] 任何 ILIKE / SQL pattern 用户输入部分已转义
+- [ ] 任何 DataFrame 值塞进 dict 前走了 `_to_native` sanitizer
+- [ ] 任何依赖 per-connection 状态的 SQL 在同一 connection 完成

@@ -196,3 +196,118 @@ drift ≥ 0.4 还硬走 Phase 5 → reviewer 发现一堆问题 → 返工更多
 - 子 agent 协议：[`templates/agents/_delivery-template.md`](../templates/agents/_delivery-template.md)
 - 上游：[`phase-4-execution-protocol.md`](phase-4-execution-protocol.md)
 - 下游：[`phase-5-verification.md`](phase-5-verification.md)
+
+---
+
+## 强化：pytest 真跑了校验（v7.3 · dim8 补强）
+
+> 来源：2026-07-02 session S1 子 agent 报 `pytest: PASS` 但实际因 hook 阻塞 + fixture loop scope 问题未跑通；validate-delivery.py 信任自报导致 orchestrator 推进基于错误假设。
+
+### 新增 mandatory delivery 字段
+
+所有 spawn 子 agent 必须在 delivery 末尾输出：
+
+```yaml
+verification:
+  lint: PASS|FAIL
+  type_check: PASS|FAIL
+  tests:
+    ran: bool                    # 是否真的跑了 pytest（不是自报 PASS）
+    passed: int                  # 真实通过数（从 pytest 输出解析）
+    failed: int                  # 真实失败数
+    output_snippet: str          # 最后 20 行 pytest 输出（含 ===== N passed in X.XXs ===== 行）
+    skipped_reason: str | null   # 若 ran=false 必填："hook blocked" / "DB unavailable" / "fixture broken"
+```
+
+### validate-delivery.py 强校验规则（v7.3 升级）
+
+```python
+# 旧版（v1.x）：只校验 lint/type_check/tests 字段存在
+# 新版（v7.3）：tests 必须是 dict 且 ran=true 才算合格
+
+def validate_tests_field(delivery: dict) -> list[str]:
+    issues = []
+    tests = delivery.get("verification", {}).get("tests")
+
+    # 场景 1：tests 是 string（旧格式 "PASS" / "N passed"）
+    if isinstance(tests, str):
+        issues.append("tests 字段必须是 dict（v7.3 升级），含 ran/passed/failed/output_snippet")
+        return issues
+
+    # 场景 2：tests.ran = false
+    if not tests.get("ran"):
+        reason = tests.get("skipped_reason")
+        if not reason:
+            issues.append("tests.ran=false 但 skipped_reason 为空（必须说明为什么没跑）")
+        else:
+            # ran=false 的 slice 不许进 Phase 5，必须返工
+            issues.append(f"tests 未真跑（{reason}），delivery=incomplete，必须返工或显式标 skip_phase5=true")
+
+    # 场景 3：ran=true 但 output_snippet 空
+    if tests.get("ran") and not tests.get("output_snippet", "").strip():
+        issues.append("tests.ran=true 但 output_snippet 空（必须附 pytest 最后 20 行含统计行）")
+
+    # 场景 4：ran=true 但 failed > 0
+    if tests.get("ran") and tests.get("failed", 0) > 0:
+        issues.append(f"tests 有 {tests['failed']} 个失败，delivery=incomplete")
+
+    # 场景 5：passed + failed 不一致
+    if tests.get("ran"):
+        total = tests.get("passed", 0) + tests.get("failed", 0)
+        snippet = tests.get("output_snippet", "")
+        # 解析 snippet 里的 "N passed, M failed"
+        import re
+        m = re.search(r"(\d+) passed(?:.*?(\d+) failed)?", snippet)
+        if m:
+            snippet_passed = int(m.group(1))
+            snippet_failed = int(m.group(2) or 0)
+            if snippet_passed != tests.get("passed") or snippet_failed != tests.get("failed"):
+                issues.append(f"tests 数字与 snippet 不一致（claimed={tests.get('passed')}/{tests.get('failed')} vs snippet={snippet_passed}/{snippet_failed}）")
+
+    return issues
+```
+
+### orchestrator 决策表
+
+| delivery.tests 状态 | 进 Phase 5？ | 处理 |
+|---|---|---|
+| `ran=true, failed=0, output_snippet 非空` | ✅ 是 | 正常推进 |
+| `ran=true, failed>0` | ❌ 否 | 返工：子 agent 必须先修失败用例 |
+| `ran=false, skipped_reason="hook blocked"` | ❌ 否 | orchestrator STOP + 跑 TG-1 hook self-test + 修 hook + 让子 agent 重 spawn |
+| `ran=false, skipped_reason="DB unavailable"` | ⚠️ 视情况 | 若 spec 验收标准要 DB → 返工；否则 orchestrator 显式标 `delivery=db_optional` 推进 |
+| `ran=false, skipped_reason="fixture broken"` | ❌ 否 | 触发 TG-6（pytest-asyncio 陷阱）流程；返工或降级到 inline cleanup |
+| `tests` 字段是旧 string 格式 | ❌ 否 | 返工：要求子 agent 重新输出 v7.3 格式 |
+
+### 子 agent prompt 模板（orchestrator spawn 时附在末尾）
+
+```
+**DELIVERY REQUIREMENT (v7.3 strict)**：
+
+你必须在 delivery 末尾输出完整 verification 字段：
+
+verification:
+  lint: PASS|FAIL
+  type_check: PASS|FAIL
+  tests:
+    ran: <true 如果真跑了 pytest；false 如果没跑>
+    passed: <从 pytest 输出解析的真实通过数>
+    failed: <从 pytest 输出解析的真实失败数>
+    output_snippet: |
+      <贴最后 20 行 pytest 输出，必须含 "===== N passed in X.XXs =====" 行>
+    skipped_reason: <null 若 ran=true；否则必填，说明为什么没真跑>
+
+⚠️ 禁止：
+- 自报 "pytest: PASS" 但实际因 hook 阻塞 / fixture 失败 / 网络 跳过
+- output_snippet 为空（ran=true 时必填）
+- skipped_reason 为空（ran=false 时必填）
+
+任一字段缺失或不一致 → delivery=incomplete → 返工。
+```
+
+### 与 TG-1 联动
+
+若 orchestrator 在 Phase -1 没跑 TG-1 hook self-test，子 agent 报 `tests.ran=false, skipped_reason="hook blocked"` 时，orchestrator 必须：
+1. STOP 所有后续 slice spawn
+2. 跑 `bash -n .claude/hooks/*.sh` 自检
+3. 发现 hook 损坏 → 提示用户授权修复（参考 TG-1 协议）
+4. 修好后重 spawn 失败的 slice
