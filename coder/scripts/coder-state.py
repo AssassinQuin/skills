@@ -187,13 +187,24 @@ def cmd_show(args):
     return 0
 
 
+def _normalize_phase(phase: str) -> str:
+    """v7.3：标准化 phase 字符串。
+
+    接受 '4' / '4.5' / 'Phase 4' / 'Phase 4.5'，统一输出 'Phase 4' 格式。
+    防 AP-13（current_phase 字段值与 hook 期望 "Phase 4" 不匹配）。
+    """
+    if phase.startswith("Phase "):
+        return phase
+    return f"Phase {phase}"
+
+
 def cmd_update_phase(args):
     state = load_state()
     if not state:
         print("ERROR: 无活跃 spec，先 init", file=sys.stderr)
         return 1
 
-    phase = args.phase
+    phase = _normalize_phase(args.phase)
     status = args.status
 
     if status == "skipped" and phase not in state["skipped_phases"]:

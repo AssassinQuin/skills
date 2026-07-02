@@ -57,7 +57,7 @@ if [[ ! -f "$STATE_FILE" ]]; then
 fi
 
 # 有 state.json：检查 current_phase 是否允许 Edit
-CURRENT_PHASE="$(jq -r '.current_phase // "unknown"' "$STATE_FILE" 2>/dev/null || echo "unknown')"
+CURRENT_PHASE="$(jq -r '.current_phase // "unknown"' "$STATE_FILE" 2>/dev/null || echo "unknown")"
 case "$CURRENT_PHASE" in
   "Phase 4"|"Phase 4.5"|"Phase 7"|"unknown")
     # 允许

@@ -43,6 +43,27 @@ VERIFICATION_KEYS = {"lint", "type_check", "tests", "build"}
 HANDOFF_KEYS = {"to_reviewer", "to_orchestrator"}
 
 
+def _tests_field_pass(tests_field) -> bool:
+    """v7.3：判断 tests 字段是否算 PASS。
+
+    - string "PASS" / "N passed, 0 failed"：旧格式仍接受
+    - dict {ran: true, failed: 0, output_snippet: 非空}：v7.3 严格格式
+    """
+    if isinstance(tests_field, str):
+        return tests_field.upper() == "PASS" or (
+            "passed" in tests_field.lower() and "0 failed" in tests_field.lower()
+        )
+    if isinstance(tests_field, dict):
+        if tests_field.get("ran") is not True:
+            return False
+        if tests_field.get("failed", 0) > 0:
+            return False
+        if not (tests_field.get("output_snippet") or "").strip():
+            return False
+        return True
+    return False
+
+
 def extract_delivery_yaml(content: str) -> str | None:
     """从 agent 输出末尾提取 ```yaml ... ``` 块（含 'delivery:' 顶字段）。"""
     pattern = re.compile(r"```ya?ml\n(.*?)\n```", re.DOTALL)
@@ -120,10 +141,37 @@ def validate(delivery_yaml: str, actual_files: set[str] | None,
             f"drift_score={drift} ≥ 0.4，触发 adaptive control（需 oracle 重新分解）"
         )
 
-    # 规则 4: verification_self 至少 1 PASS
+    # 规则 4: verification_self 至少 1 PASS（v7.3 含 tests 严格校验）
     verification = d["verification_self"]
     pass_count = sum(1 for k in VERIFICATION_KEYS
-                     if str(verification.get(k, "")).upper() == "PASS")
+                     if str(verification.get(k, "")).upper() == "PASS"
+                     or (k == "tests" and _tests_field_pass(verification.get(k, ""))))
+
+    # v7.3: tests 字段如果是 dict，强校验 pytest 真跑了
+    tests = verification.get("tests")
+    if isinstance(tests, dict):
+        if tests.get("ran") is False:
+            reason = tests.get("skipped_reason") or "(空)"
+            violations.append(
+                f"tests.ran=false（skipped_reason={reason}）→ delivery=incomplete，必须返工或显式标 skip_phase5=true"
+            )
+        elif tests.get("ran") is True:
+            snippet = (tests.get("output_snippet") or "").strip()
+            if not snippet:
+                violations.append("tests.ran=true 但 output_snippet 空（必须附 pytest 最后 20 行含统计行）")
+            passed = tests.get("passed", 0)
+            failed = tests.get("failed", 0)
+            if isinstance(passed, int) and isinstance(failed, int):
+                m = re.search(r"(\d+) passed(?:.*?(\d+) failed)?", snippet or "")
+                if m:
+                    sp, sf = int(m.group(1)), int(m.group(2) or 0)
+                    if sp != passed or sf != failed:
+                        violations.append(
+                            f"tests 数字与 snippet 不一致（claimed {passed}/{failed} vs snippet {sp}/{sf}）"
+                        )
+            if failed > 0:
+                violations.append(f"tests 有 {failed} 个失败用例，delivery=incomplete")
+
     if pass_count < 1:
         violations.append(
             f"verification_self 至少 1 项 PASS（当前 {pass_count}/{len(VERIFICATION_KEYS)}）"
