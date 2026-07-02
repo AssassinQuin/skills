@@ -63,7 +63,7 @@ metadata:
 
 | Phase | 名字 | 执行者 | 输入 | 输出 | 下一 Phase | **前置 gate**（MUST） |
 |---|---|---|---|---|---|---|
-| **-1** | 断点检测 | SessionStart hook | current.json | 续跑/重开决策 | 0 或 续 | state.json 存在 → AskUserQuestion |
+| **-1** | 断点检测 | SessionStart hook | current.json | 续跑/重开决策 | 0 或 续 | state.json 存在 → AskUserQuestion **+ TG-1 hook self-test**（v7.3 新） |
 | **0** | 需求确认 | orchestrator + AskUserQuestion 多轮 | 用户请求 | **spec.md** + 验收 + Phase 选择 + 用户签字 | 0.5 / 0.6 / 1 | spec.md 已生成 + signature-guard 签字 |
 | **0.5** | 复用 + 替代分析 | 🌟 **3 路并发**: explorer(haiku) + researcher(sonnet) + oracle(opus) | spec.md | **reuse-report.md** | 1 | 用户已选 reuse decision |
 | **0.6** | bug 诊断（v6.3 新）| orchestrator + 6 步 diagnose 循环 | bug 类任务 | **bug-report.md** + minimal repro + hypotheses | 1 | loop 已建 + 3-5 ranked hypotheses |
@@ -71,11 +71,49 @@ metadata:
 | **2** | 语言路由 | orchestrator（内联）| metadata | spawn `{lang}-coder-project` × 3-5（sonnet） | 3 或 4 | Phase 1 已记录 |
 | **2.5** | throwaway prototype（v6.3 新）| prototype-coder (sonnet) | design.md | prototype 验证报告 | 3 或 4 | 6 rules 强制 + 用户决策 |
 | **3** | 设计方案 + test-plan | 🌟 **2-4 oracle(opus) + 1 test-strategist(sonnet) 并发**（仅复杂任务，硬上限 5）| metadata + 热图 + reuse | **design.md** + **test-plan.md**（vertical cycle） | 4 | 用户选 design + signature-guard 签字 |
-| **4** | 执行（vertical slice 并发）| `{lang}-coder-project` × 3-5（sonnet，按 vertical slice 分组，硬上限 5）| 方案 + memory 注入 | **diff + delivery-schema per agent**（含 slice 元数据） | 4.5 | **MUST spawn**（§2.2）+ task-progress-guard 登记 |
-| **4.5** | 子 agent 交付检查 | orchestrator + `validate-delivery.py` | delivery × N | 校验报告 | 5 | 所有 delivery 合格 + drift < 0.4 |
+| **4** | 执行（vertical slice 并发）| `{lang}-coder-project` × 3-5（sonnet，按 vertical slice 分组，硬上限 5）| 方案 + memory 注入 + **TG-1..TG-8 陷阱清单**（v7.3 新，§2.4） | **diff + delivery-schema v7.3 per agent**（含 pytest 真跑了证据） | 4.5 | **MUST spawn**（§2.2）+ task-progress-guard 登记 |
+| **4.5** | 子 agent 交付检查 | orchestrator + `validate-delivery.py` v7.3 | delivery × N | 校验报告 | 5 | 所有 delivery **tests.ran=true** + drift < 0.4 |
 | **5** | 验证 | 🌟 **3 reviewer 并发**: correctness(sonnet) + project(sonnet) + security(sonnet) + test-runner | diff + checklist + test-plan | **review-report.md** + **test-result.md** | 6 | ≥1 reviewer + signature-guard 签字 |
 | **6** | 持久化 + 交付清单 + handoff | orchestrator + AskUserQuestion 验收 | 全部产出 | memory + **delivery-checklist.md**（含 handoff 段） | 7 | 用户在 checklist 签字 |
 | **7** | 归档（含 post-mortem）| orchestrator | 全部产出 | **archive.md**（含 handoff + post-mortem）+ state 清除 | — | persistence-guard 检查 + `coder-state.sh archive` |
+
+### 2.0 Phase -1 hook self-test（v7.3 新增，TG-1 协议）
+
+启动 coder 流程前**必跑**（防止 hook 损坏导致子 agent 全失败）：
+
+```bash
+# 1. 所有 hook 语法检查
+for f in .claude/hooks/*.sh; do bash -n "$f" || echo "HOOK_BROKEN: $f"; done
+
+# 2. 试一次无害 Edit 验证 hook 不全 block
+echo "self-test $(date)" >> .claude/coder-state/.hook-selftest.log
+```
+
+任一 `HOOK_BROKEN` → orchestrator STOP + 提示用户授权修复（"继续" 不够明确，参考 AP-11）。修好后重试。
+
+完整协议：[`coder-constraints/SKILL.md` TG-1](../coder-constraints/SKILL.md#tg-1-hook-self-test启动时必跑)
+
+### 2.4 Phase 4 spawn prompt 必附陷阱清单（v7.3 新增）
+
+每次 spawn `{lang}-coder-project` 时，prompt 末尾**必须**附以下清单（让子 agent 显式避坑）：
+
+```
+**TRAP BLACKLIST（必读，命中即显式处理）**：
+
+- TG-1: 项目 hook 损坏会全 block Edit → 启动时 bash -n 自检（已由 orchestrator 完成）
+- TG-2: DataFrame → dict 必须 val.item() 转 native（否则 json.dumps TypeError）
+- TG-3: pg_trgm set_limit / setseed 是 per-connection，必须 pool.acquire() 同连接
+- TG-4: rich IntPrompt 输入非整数会重提示，用 Prompt.ask 自己解析
+- TG-5: ILIKE 模式必须转义 % 和 _（replace 后拼）
+- TG-6: pytest-asyncio + asyncpg pool 用 loop_scope="session"（详见 test-strategist）
+- TG-7: delivery 必须附 pytest 真跑了证据（ran/passed/failed/output_snippet）
+- TG-8: classifier 默认 fallback 抛 ValueError，不乱猜
+
+详细案例 + 修复模板：~/.claude/skills/coder-constraints/SKILL.md「实战陷阱黑名单」段
+反例对照：~/.claude/skills/coder-antipatterns/SKILL.md AP-11..AP-20
+```
+
+子 agent 在 delivery 前必跑自检清单（见 coder-constraints 末尾）。
 
 **Phase 详执行**：14 个 first-class skill（v7.2 拆分），见 [`skills-lock.json`](skills-lock.json) 和 `/Users/ganjie/skills/coder-{name}/`：
 - Phase 0 → `coder-spec` / Phase 0.5 → `coder-reuse` / Phase 0.6 → `coder-debug`
