@@ -56,13 +56,17 @@
    - 需网页（cn / glb / zhihu；deep 加 prime）
    - 预期搜不到（登录墙/被墙）→ 标记「待 inbox 投喂」
 4. `search-memory.json` 查表：命中的查询剔除，只搜未命中的
-5. 打印子主题×lane 矩阵，直接开跑
+5. 分配去重：归一化合并同义查询，每条查询唯一归属一个 lane；各搜索员的 prompt 只包含分给它的查询清单（边界划清，清单外的发现记入 Gaps 留给 Phase 3）
+6. 初始化 `<topic>/queries.json` 任务内查询登记表（缓存复用的查询一并登记）
+7. 打印子主题×lane 矩阵，直接开跑
 
 ### Phase 2 并行搜集
 - 无限额 lane 并行：cn 搜索员 ∥ glb 搜索员；zhihu 搜索员独立成 agent 串行控速（≤4 次/任务）
 - 限额 lane 收归主会话：prime 仅 deep 模式直调 ≤3 次
 - 每个搜索员 prompt 自包含：真实日期字面量（先跑 `date +%Y-%m-%d`）+ 年份钉死规则 + 分到的子主题清单 + 本 lane 工具用法 + 搜索上限（quick 3 / deep 6）+ 统一返回格式
 - 读取员（haiku）：对高价值信源抓正文 → Write `raw/S*.md`，只回报元数据（编号/标题/字节数）
+- 任务内去重感知：搜索员每次搜索前读 `<topic>/queries.json`，发现查询已被其他员登记 → 跳过该查询（在 Gaps 说明）；每次实际执行的搜索立刻 append 登记一行（query/lane/agent/wave）
+- wave 间：主会话把已登记查询清单 + 依赖子主题摘要注入下一 wave 各员 prompt
 - 搜索员返回全文 → 主会话 `ctx_index` 索引，上下文只留摘要
 
 ### Phase 3 缺口补搜（仅 deep，max 1 轮）
@@ -90,6 +94,7 @@ reports/research/
     ├── report.md                 # 最终报告
     ├── findings.json             # 结构化产物（下游 skill 消费）
     ├── sources.json              # 引用登记表（citation persistence）
+    ├── queries.json              # 任务内查询登记表（agent 间去重感知）
     ├── raw/                      # 原始信源正文，每源一文件 S01-<slug>.md
     ├── inbox/                    # 人工投喂通道（含 README 说明格式）
     └── parts/                    # deep 模式报告分节草稿
@@ -177,6 +182,7 @@ deep-research/
 - contrarian pass 必跑（无反驳也写「未发现」）
 - 报告未落盘 = 失败运行；JSON 校验失败 = 失败运行
 - reused/fresh 查询数必须显式标注（防「以为查了其实全是缓存」）
+- 任务内查询登记表查重：搜索员必须先查登记再搜索，同查询不重复执行
 - 停止：quick 单 wave 硬停；deep ≤2 wave + 1 gap 轮；连续低效用提前停
 - 某 lane 全挂 → 报告标注 lane 缺席 + 其余发现置信度降级说明 + 提示 inbox 投喂
 
