@@ -1,0 +1,16 @@
+{
+  "topic": "open-websearch 双实例部署调研",
+  "date": "2026-09-03",
+  "mode": "quick",
+  "sub_questions": [
+    {"id": "q1", "question": "websearch-cn 覆盖哪些引擎", "tier": "core", "status": "answered"},
+    {"id": "q2", "question": "USE_PROXY 的语义与限制", "tier": "background", "status": "partial"}
+  ],
+  "findings": [
+    {"claim": "websearch-cn 配置了 baidu/sogou/csdn/juejin/linuxdo 五引擎", "sub_question": "q1", "confidence": "high",
+     "evidence": [{"url": "https://example.com/a", "title": "配置记录", "lane": "human", "quote": "ALLOWED_SEARCH_ENGINES=baidu,sogou,csdn,juejin,linuxdo", "published": "2026-09-01"}]}
+  ],
+  "strongest_objection": "未发现",
+  "gaps": ["q2 的按引擎 bypass 机制未找到官方文档"],
+  "meta": {"requested_mode": "quick", "effective_mode": "quick", "lane_health": {"cn": "ok"}, "reused_queries": 0, "fresh_queries": 3, "contrarian_run": true}
+}
