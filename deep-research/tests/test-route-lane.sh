@@ -40,6 +40,10 @@ echo "$out" | jq -e '.action=="search"' >/dev/null && ok "refresh 强制重搜" 
 SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane badlane >/dev/null 2>"$TMP/err"; rc=$?
 [ "$rc" -eq 2 ] && [ -s "$TMP/err" ] && ok "非法 lane 报错 exit2" || bad "Case6 rc=$rc"
 
+# Case 7: --lane 缺参数值 → exit 2 + 中文 stderr
+SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane >/dev/null 2>"$TMP/err2"; rc=$?
+[ "$rc" -eq 2 ] && grep -q "缺少参数" "$TMP/err2" && ok "--lane缺值报错exit2+中文" || bad "Case7 rc=$rc"
+
 echo "----"; echo "pass=$pass fail=$fail"
 rm -rf "$TMP"
 [ "$fail" -eq 0 ]

@@ -9,15 +9,14 @@ DIR_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 MEM_FILE="${SEARCH_MEMORY_FILE:-$DIR_ROOT/datastore/search-memory.json}"
 
 query=""; lane=""; refresh=0
+usage_err() { echo "route-lane.sh: $1" >&2; echo "用法: route-lane.sh \"<query>\" --lane <cn|glb|zhihu|prime> [--refresh]" >&2; exit 2; }
 while [ $# -gt 0 ]; do
   case "$1" in
-    --lane)     lane="$2"; shift 2 ;;
+    --lane)     [ $# -ge 2 ] || usage_err "--lane 缺少参数"; lane="$2"; shift 2 ;;
     --refresh)  refresh=1; shift ;;
     *)          query="$1"; shift ;;
   esac
 done
-
-usage_err() { echo "route-lane.sh: $1" >&2; echo "用法: route-lane.sh \"<query>\" --lane <cn|glb|zhihu|prime> [--refresh]" >&2; exit 2; }
 [ -n "$query" ] || usage_err "缺少查询词"
 case "$lane" in cn|glb|zhihu|prime) ;; *) usage_err "非法 lane: $lane" ;; esac
 
