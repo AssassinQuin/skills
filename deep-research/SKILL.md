@@ -85,6 +85,7 @@ spawn 搜索员（Agent 工具，general-purpose，**显式 model**，并行发�
 - 每次搜索前先 cat {TASK}/queries.jsonl；若该查询已被任何 agent 登记 → 跳过，并在 Gaps 里说明「查询已由他人覆盖」
 - 每次实际执行的搜索，完成后立刻追加登记一行（保持文件是逐行 JSON）：
   printf '%s\n' '{"query":"<该次查询>","lane":"{LANE}","agent":"{LANE}-1","wave":{WAVE}}' >> {TASK}/queries.jsonl
+- 每次搜索完成后，把该查询的结果数组（[{"title","url","snippet","published"}]）写入 {TASK}/cache/<编号>-{LANE}.json（编号用查询清单里该查询的序号，如 q3）；若 Write 被拒绝，不要绕过——在 Gaps 里标注该编号，编排者会补写
 
 严格按以下格式返回，不要输出其他内容：
 ## Findings
@@ -138,19 +139,21 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 （结论 → 反驳内容 或 未发现）
 ## 验证不一致
 （无则写 无）
+## Sources
+（contrarian 搜索新引入的每行：S1: title — url — lane — published_date；无新源写 无）
 ```
 
 ## Phase 5 整理成文 + 记忆固化（主会话独占写盘）
 
 1. `{TASK}/report.md`：按 `{baseDir}/templates/report.md` 骨架填充；按子主题**重组**发现（综合而非粘贴），数字/日期/[S1] 引用齐全；含最强反驳、未解问题、Meta
 2. `{TASK}/findings.json`：schema 见 `scripts/validate-findings.sh` 内注释（topic/date/mode/sub_questions/findings/strongest_objection/gaps/meta）
-3. `{TASK}/sources.json`：`[{"id":"S1","title","url","lane","published"}]`
+3. `{TASK}/sources.json`：`[{"id":"S1","title","url","lane","published"}]`；核实员 ## Sources 的新源一并编入
 4. 校验（失败必须修复重校，不许跳过）：
    ```bash
    bash {baseDir}/scripts/validate-findings.sh {TASK}/findings.json
    ```
 5. 写回记忆：
-   - 每条 fresh 查询：把该查询结果数组写入 `{TASK}/cache/q{n}-{lane}.json`，然后
+   - 每条 fresh 查询：搜索员已把结果数组写入 `{TASK}/cache/<编号>-<lane>.json`（缺失或被拒时主会话补写，仍被拒则该查询不写回缓存并在 Meta 降级记录标注），然后
      ```bash
      bash {baseDir}/scripts/save-memory.sh "<query>" --lane <lane> --ttl <short|long|permanent> --task {TASK相对路径} --results {TASK}/cache/q{n}-{lane}.json
      ```
@@ -163,6 +166,8 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 ## 降级链
 
 - spawn 不可用 → solo：主会话串行扮演各员，保持返回格式不变
+- 指定 model 不可用（如嵌套 spawn 报 400/modelCode 不存在）→ 该 agent 回退 sonnet（核实员也不例外），并在报告 Meta 降级记录标注「<角色> model 回退」
+- Write 工具被守卫拦截（如文件名被误判）→ 依次改用备选文件名 report.md → research-report.md → 调研报告.md，把最终文件名记入 meta.json 的 report_file 字段（INDEX 与会话回复引用实际文件名）；禁止绕过权限拒绝，无备选可用时在 Meta 降级记录标注并继续
 - MCP 工具失败 → 用 route-lane.sh 输出的 fallback 配置 → 仍失败 → CLI 兜底：`python3 $(dirname {baseDir})/global-search/scripts/global-search.py '{"query":"...","count":5}'` 或 `python3 $(dirname {baseDir})/zhihu-search/scripts/zhihu-search.py '{"query":"...","count":3}'`
 - prime 失败 → glb lane（ows）兜底
 - github MCP 失败 → glb lane 网页搜索兜底（查询加 site:github.com）
