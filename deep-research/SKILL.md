@@ -114,6 +114,7 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 - 全文 `ctx_index`（source: `<topic-slug>`；无 ctx 工具跳过），主会话上下文只留摘要
 - wave 间：把已登记查询清单 + 依赖子主题的发现摘要，注入下一 wave 各员 prompt
 - deep 模式主 wave 硬上限 2 个：依赖更深的节点不单开 wave，合并进第 2 批执行（R6 预算纪律）
+- 结果回收纪律：所有子 agent 一律前台等待（run_in_background: false）；若平台强制转后台，Phase 5 前必须逐一确认其输出已到手（读其返回文本或 cache/queries.jsonl 痕迹），迟到的结果要么并入 findings、要么在「未解问题」显式记录——严禁静默丢弃
 
 ## Phase 3 缺口补搜（仅 deep，max 1 轮）
 
@@ -152,6 +153,7 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
    ```bash
    bash {baseDir}/scripts/validate-findings.sh {TASK}/findings.json
    ```
+   - 计数以工件为准：reused_queries/fresh_queries 必须从 queries.jsonl 实际行数与 save-memory.sh 成功输出条数核对得出，禁止采用 agent 自报数字；不一致时以工件为准并在 Meta 降级记录标注
 5. 写回记忆：
    - 每条 fresh 查询：搜索员已把结果数组写入 `{TASK}/cache/<编号>-<lane>.json`（缺失或被拒时主会话补写，仍被拒则该查询不写回缓存并在 Meta 降级记录标注），然后
      ```bash

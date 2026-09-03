@@ -8,17 +8,16 @@ DIR_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 MEM_FILE="${SEARCH_MEMORY_FILE:-$DIR_ROOT/datastore/search-memory.json}"
 
 query=""; lane=""; ttl=""; task=""; results=""
+usage_err() { echo "save-memory.sh: $1" >&2; exit 2; }
 while [ $# -gt 0 ]; do
   case "$1" in
-    --lane)    lane="$2"; shift 2 ;;
-    --ttl)     ttl="$2"; shift 2 ;;
-    --task)    task="$2"; shift 2 ;;
-    --results) results="$2"; shift 2 ;;
+    --lane)    [ $# -ge 2 ] || usage_err "--lane 缺少参数"; lane="$2"; shift 2 ;;
+    --ttl)     [ $# -ge 2 ] || usage_err "--ttl 缺少参数"; ttl="$2"; shift 2 ;;
+    --task)    [ $# -ge 2 ] || usage_err "--task 缺少参数"; task="$2"; shift 2 ;;
+    --results) [ $# -ge 2 ] || usage_err "--results 缺少参数"; results="$2"; shift 2 ;;
     *)         query="$1"; shift ;;
   esac
 done
-
-usage_err() { echo "save-memory.sh: $1" >&2; exit 2; }
 [ -n "$query" ]   || usage_err "缺少查询词"
 case "$lane" in cn|glb|zhihu|prime|github) ;; *) usage_err "非法 lane: $lane" ;; esac
 case "$ttl"  in short|long|permanent) ;; *) usage_err "非法 ttl: $ttl" ;; esac
