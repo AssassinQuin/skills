@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# save-memory.sh 单元测试（4 用例）
+# save-memory.sh 单元测试（5 用例）
 set -u
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT="$DIR/scripts/save-memory.sh"
@@ -29,6 +29,10 @@ SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane cn --ttl short --task "t/" --resu
 # Case 4: 缺参数 → exit 2
 SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane cn >/dev/null 2>&1
 [ $? -eq 2 ] && ok "缺参数报错exit2" || bad "Case4"
+
+# Case 5: github lane 枚举接受
+SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "claude skills stars" --lane github --ttl short --task "t/" --results "$R" >/dev/null 2>&1
+[ $? -eq 0 ] && jq -e 'has("claude skills stars|github")' "$MEM" >/dev/null && ok "github lane 可保存" || bad "Case5"
 
 echo "----"; echo "pass=$pass fail=$fail"
 rm -rf "$TMP"

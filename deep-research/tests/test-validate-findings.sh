@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# validate-findings.sh 单元测试（6 用例：1 合法 + 5 违规）
+# validate-findings.sh 单元测试（7 用例：2 合法 + 5 违规）
 set -u
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT="$DIR/scripts/validate-findings.sh"
@@ -37,6 +37,11 @@ out=$("$SCRIPT" "$TMP/t5.json" 2>/dev/null); rc=$?
 jq '.meta |= del(.contrarian_run)' "$FIX" > "$TMP/t6.json"
 out=$("$SCRIPT" "$TMP/t6.json" 2>/dev/null); rc=$?
 [ "$rc" -eq 1 ] && echo "$out" | grep -q "contrarian_run" && ok "meta缺字段被拒" || bad "Case6 rc=$rc"
+
+# Case 7: evidence.lane=github 合法
+jq '.findings[0].evidence[0].lane="github"' "$FIX" > "$TMP/t7.json"
+out=$("$SCRIPT" "$TMP/t7.json" 2>/dev/null); rc=$?
+[ "$rc" -eq 0 ] && echo "$out" | grep -q "^PASS:" && ok "github lane通过校验" || bad "Case7 rc=$rc out=$out"
 
 echo "----"; echo "pass=$pass fail=$fail"
 rm -rf "$TMP"

@@ -20,7 +20,7 @@ done
 
 usage_err() { echo "save-memory.sh: $1" >&2; exit 2; }
 [ -n "$query" ]   || usage_err "缺少查询词"
-case "$lane" in cn|glb|zhihu|prime) ;; *) usage_err "非法 lane: $lane" ;; esac
+case "$lane" in cn|glb|zhihu|prime|github) ;; *) usage_err "非法 lane: $lane" ;; esac
 case "$ttl"  in short|long|permanent) ;; *) usage_err "非法 ttl: $ttl" ;; esac
 [ -n "$task" ]    || usage_err "缺少 --task"
 [ -n "$results" ] && [ -f "$results" ] || usage_err "缺少/不存在 --results 文件: $results"

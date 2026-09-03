@@ -22,7 +22,7 @@ metadata: {"openclaw":{"emoji":"🔬","requires":{"bins":["bash","jq"]}}}
 4. 报告必须标注 Requested/Effective Mode、lane 健康、reused/fresh 查询数
 5. 查询去重：任何搜索执行前先查任务登记表与路由缓存，已登记/已缓存的跳过
 6. 子 agent 必须显式指定 model（R5.1）：搜索员 sonnet / 读取员 haiku / 核实员 opus
-7. 限额：prime ≤3 次且仅 deep、主会话直调；zhihu MCP ≤4 次/任务
+7. 限额：prime ≤3 次且仅 deep、主会话直调；zhihu MCP ≤4 次/任务；github MCP ≤8 次/任务；deep ≤2 主 wave + 1 gap 轮
 
 ## Phase 0 感知判定
 
@@ -43,11 +43,11 @@ metadata: {"openclaw":{"emoji":"🔬","requires":{"bins":["bash","jq"]}}}
    cp {baseDir}/templates/inbox-README.md {TASK}/inbox/README.md
    touch {TASK}/queries.jsonl
    ```
-   写 `{TASK}/meta.json`：`{"topic","date","requested_mode","sub_questions":[{id,question,tier,source_route}],"{note}"}`
+   写 `{TASK}/meta.json`：`{"topic","date","requested_mode","sub_questions":[{id,question,tier,source_route}]}`
 2. 拆子主题：quick 3-5 个 / deep 4-8 个（cap 12）；每个标 `tier: core|background`；deep 可带依赖（DAG，wave 按拓扑序）
 3. 每个子主题标源路由：
    - 本地可答（记忆/旧报告/raw 已有）→ 不进搜索清单
-   - 需网页 → 分配 lane（cn=中文事实 / glb=外文 / zhihu=观点争议 / prime=deep 高价值）
+   - 需网页 → 分配 lane（cn=中文事实 / glb=外文 / zhihu=观点争议 / prime=deep 高价值 / github=仓库指标与代码检索）
    - 预期搜不到（登录墙/被墙）→ 标「待 inbox 投喂」
 4. 生成查询清单（每子主题 1-2 条查询），逐条路由：
    ```bash
@@ -67,6 +67,7 @@ spawn 搜索员（Agent 工具，general-purpose，**显式 model**，并行发�
 | cn 搜索员 | sonnet | mcp__websearch-cn__search | quick 3 / deep 6 |
 | glb 搜索员 | sonnet | mcp__websearch-global__search | quick 3 / deep 6 |
 | zhihu 搜索员 | sonnet | mcp__zhihu__zhihu_search、mcp__zhihu-global__global_search | ≤4 次，串行调用 |
+| github 搜索员 | sonnet | mcp__github__*（search_repositories / search_issues / search_code / get_file_contents / list_commits） | ≤8 次调用 |
 
 搜索员 prompt 模板（`{LANE}`/`{DATE}`/`{TASK}`/`{QUERY_LIST}`/`{TOOL_DOC}`/`{WAVE}` 运行时填充）：
 
@@ -111,6 +112,7 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 每个 agent 返回后：
 - 全文 `ctx_index`（source: `<topic-slug>`；无 ctx 工具跳过），主会话上下文只留摘要
 - wave 间：把已登记查询清单 + 依赖子主题的发现摘要，注入下一 wave 各员 prompt
+- deep 模式主 wave 硬上限 2 个：依赖更深的节点不单开 wave，合并进第 2 批执行（R6 预算纪律）
 
 ## Phase 3 缺口补搜（仅 deep，max 1 轮）
 
@@ -124,7 +126,7 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 你是对抗核实员。任务目录 {TASK}，今天 {DATE}。
 1. 独立来源计数：下列每个载荷论断，数一数独立来源数（域名不同才算独立；同一域名多篇=1）。<2 个的标 low：
 {载荷论断清单 + 各自现有来源域名}
-2. contrarian 搜索：用 mcp__websearch-cn__search（中文）或 mcp__websearch-global__search（外文）搜每个核心结论的反面证据（构造「<结论关键词> 错了/批评/翻车/反面/风险」类查询）。输出每个结论的「最强反驳」；找不到写「未发现」。每次搜索后登记：
+2. contrarian 搜索：用 mcp__websearch-cn__search（中文）或 mcp__websearch-global__search（外文）搜每个核心结论的反面证据（构造「<结论关键词> 错了/批评/翻车/反面/风险」类查询），搜索上限 ≤6 次、优先攻击证据最少的结论。输出每个结论的「最强反驳」；找不到写「未发现」。每次搜索后登记：
   printf '%s\n' '{"query":"...","lane":"cn|glb","agent":"verifier","wave":9}' >> {TASK}/queries.jsonl
 3. factored 验证：不看草稿，仅凭下列 URL 用 mcp__web-reader__webReader 直接回答验证题，再与草稿说法比对，列出不一致处：
 {验证题清单（如「S3 中提到的营收数字是多少？」）+ 草稿对应说法}
@@ -161,8 +163,9 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 ## 降级链
 
 - spawn 不可用 → solo：主会话串行扮演各员，保持返回格式不变
-- MCP 工具失败 → 用 route-lane.sh 输出的 fallback 配置 → 仍失败 → CLI 兜底：`python3 <repo>/global-search/scripts/global-search.py '{"query":"...","count":5}'` 或 `python3 <repo>/zhihu-search/scripts/zhihu-search.py '{"query":"...","count":3}'`
-- prime 失败 → ows-glb 兜底
+- MCP 工具失败 → 用 route-lane.sh 输出的 fallback 配置 → 仍失败 → CLI 兜底：`python3 $(dirname {baseDir})/global-search/scripts/global-search.py '{"query":"...","count":5}'` 或 `python3 $(dirname {baseDir})/zhihu-search/scripts/zhihu-search.py '{"query":"...","count":3}'`
+- prime 失败 → glb lane（ows）兜底
+- github MCP 失败 → glb lane 网页搜索兜底（查询加 site:github.com）
 - zhihu 超限 → search-memory 缓存 / 旧报告引用
 - 某 lane 全挂 → 报告标注 lane 缺席 + 其余发现置信度降级说明 + 提示「可放入 {TASK}/inbox/ 后重跑」
 

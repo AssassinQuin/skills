@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# route-lane.sh 单元测试（6 用例）
+# route-lane.sh 单元测试（8 用例）
 set -u
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT="$DIR/scripts/route-lane.sh"
@@ -43,6 +43,12 @@ SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane badlane >/dev/null 2>"$TMP/err"; 
 # Case 7: --lane 缺参数值 → exit 2 + 中文 stderr
 SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane >/dev/null 2>"$TMP/err2"; rc=$?
 [ "$rc" -eq 2 ] && grep -q "缺少参数" "$TMP/err2" && ok "--lane缺值报错exit2+中文" || bad "Case7 rc=$rc"
+
+# Case 8: github lane → search + github 工具
+echo '{}' > "$MEM"
+out=$(SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "claude skills ecosystem" --lane github 2>/dev/null)
+echo "$out" | jq -e '.action=="search" and .lane=="github" and .tool=="mcp__github__search_repositories"' >/dev/null \
+  && ok "github lane 路由正确" || bad "Case8 输出: $out"
 
 echo "----"; echo "pass=$pass fail=$fail"
 rm -rf "$TMP"

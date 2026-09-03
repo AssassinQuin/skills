@@ -29,7 +29,7 @@ errs=$(jq -r '
       ((.confidence // "") as $c | (if (($c == "high" or $c == "medium" or $c == "low") | not) then "findings[].confidence 非法: \($c)" else empty end)),
       ( .evidence[]? |
         (if ((.url // "") == "") then "evidence[] 缺 url" else empty end),
-        ((.lane // "") as $l | (if (($l == "cn" or $l == "glb" or $l == "zhihu" or $l == "prime" or $l == "human") | not) then "evidence.lane 非法: \($l)" else empty end))
+        ((.lane // "") as $l | (if (($l == "cn" or $l == "glb" or $l == "zhihu" or $l == "prime" or $l == "github" or $l == "human") | not) then "evidence.lane 非法: \($l)" else empty end))
       )
     ),
     ( ([.sub_questions[]?.id]) as $ids |
