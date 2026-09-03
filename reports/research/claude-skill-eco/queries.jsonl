@@ -1,0 +1,28 @@
+{"query":"search_repositories: claude skills agent skills in:name,description,readme stars:>100","lane":"github","agent":"github-1","wave":1}
+{"query":"list_commits: anthropics/skills perPage=5","lane":"github","agent":"github-1","wave":1}
+{"query":"list_commits: obra/superpowers perPage=5","lane":"github","agent":"github-1","wave":1}
+{"query":"search_repositories: self-evolving agent skill in:name,description,readme","lane":"github","agent":"github-1","wave":1}
+{"query":"search_issues: repo:anthropics/skills is:issue","lane":"github","agent":"github-1","wave":1}
+{"query":"Anthropic agent skills best practices writing skills 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"Claude Skills ecosystem adoption popular repositories 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"Claude Skills 实战 使用体验 2026","lane":"cn","agent":"cn-1","wave":1}
+{"query":"self-evolving AI agent skill library arxiv 2025 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"Claude Skills","lane":"zhihu","agent":"zhihu-1","wave":1}
+{"query":"Claude Skills 使い方 活用事例","lane":"glb","agent":"glb-1","wave":1}
+{"query":"list_commits: mattpocock/skills perPage=5","lane":"github","agent":"github-1","wave":1}
+{"query":"list_commits: affaan-m/ECC perPage=5","lane":"github","agent":"github-1","wave":1}
+{"query":"list_commits: ultraworkers/claw-code perPage=5","lane":"github","agent":"github-1","wave":1}
+{"query":"AI Agent 自我进化","lane":"zhihu","agent":"zhihu-1","wave":1}
+{"query":"automatically improve agent skill prompt from evaluation feedback DSPy GEPA 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"Claude Skills 教程 生态 插件","lane":"cn","agent":"cn-1","wave":1}
+{"query":"AI Agent 技能库 自我进化 2026","lane":"cn","agent":"cn-1","wave":1}
+{"query":"Claude Agent Skills ecosystem 2026 adoption best practices self-improvement","lane":"prime","agent":"orchestrator-prime","wave":1,"reused":false,"note":"empty result"}
+{"query":"self-evolving LLM agents skill acquisition optimization from evaluation feedback 2025 2026 arxiv","lane":"prime","agent":"orchestrator-prime","wave":1,"reused":false}
+{"query":"Claude Skills 合集 仓库 中文","lane":"cn","agent":"cn-1","wave":2}
+{"query":"SkillWeaver ACLA Voyager agent skill acquisition arxiv","lane":"glb","agent":"glb-1","wave":2}
+{"query":"Claude Skills 批评 AGENTS.md 换皮 token 消耗 成本 翻车","lane":"cn","agent":"verifier","wave":9}
+{"query":"superpowers obra github stars fake inflated criticism overhyped","lane":"glb","agent":"verifier","wave":9}
+{"query":"SkillOpt self-evolving agent skills 2605.23904 reproduction critique not reproducible","lane":"glb","agent":"verifier","wave":9}
+{"query":"self-evolving agent skills failure skill bloat runaway risk criticism overrated","lane":"glb","agent":"verifier","wave":9}
+{"query":"Claude Skills 中文 合集 仓库 github 精选 自定义 skill 教程","lane":"cn","agent":"verifier","wave":9}
+{"query":"Claude Skills Anthropic 经济生存策略 降 token 消耗 20-30% 质疑","lane":"cn","agent":"verifier","wave":9}

@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Self-Improving Agent 两篇综述文章 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/2064718097500655950",
+    "author": "vibe life",
+    "published": "2026-08-12",
+    "snippet": "两篇自进化综述对照：Fang, Peng, Zhang et al. (2025)《A Comprehensive Survey of Self-Evolving AI Agents》以统一反馈环（System Inputs / Agent System / Environment / Optimiser）为骨架，覆盖单 agent / 多 agent / 领域专用三类优化，定位为衔接 foundation model 与 lifelong agentic system 的新范式。Gao et al. (2026)《Self-Improvements in Modern Agentic Systems: A Survey》以 (θ,Σ) 双路径为骨架：参数改进（改 θ）与脚手架改进（改 Σ）。还译介 Lilian Weng《Harness Engineering for Self-Improvement》。核心问题：agent 系统部署后依赖人工静态配置，架构/提示/工具/通信协议一旦设定即冻结，如何让 agent 在与环境持续交互中自主优化自身组件。"
+  },
+  {
+    "title": "让AI自我进化,斯坦福新课免费教 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/2068747288424534148",
+    "author": "量子位",
+    "published": "2026-08-06",
+    "snippet": "斯坦福 CS329A《自我进化AI智能体》(Self-Improving AI Agents) 免费公开，授课者为 Dr. Aakanksha Chowdhery 和 Azalia Mirhoseini。核心观点：思维链在更大模型中表现更好；\"生成答案-验证结果-筛选经验-继续训练\"循环实现自我检查和进化；生成大量内容不稀奇，可靠反馈才是闭环能否跑起来的关键；智能体执行力越强验证越重要；通过堆尝试次数小模型也有机会触达前沿大模型能力天花板。缩放定律背景：GPT-2 15亿参数→GPT-3 1750亿→PaLM 5400亿。"
+  },
+  {
+    "title": "OpenAI曝光「自进化」AI!6周准确率翻三倍,Bug全自己修 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/2046595845412458642",
+    "author": "新智元",
+    "published": "2026-06-06",
+    "snippet": "2026 上半年「Agent 自我改进」成最密集技术主线。Tax AI（Thrive Holdings，OpenAI 派工程师半年深度参与但 IP 全归 Thrive）生产闭环 6 周准确率翻三倍、Bug 自己修。MOSS 研究（arxiv 2605.2279）让 Agent 直接改写自己源代码，在 OpenClaw 平台无人干预进化周期内把四个任务平均评分从 0.25 拉到 0.61。模型层面 GPT-5.3-Codex 参与自身构建。关键区分：不改模型权重，改模型周围一切——提取逻辑、映射规则、eval 标准、工作流配置、Agent 自己的代码（引擎不动改车身底盘）。自我改进三要素：设计好 eval 体系、留好生产 trace、让足够强的 coding agent 跑「发现→定位→修复→验证」闭环。Thrive 正把闭环复制到记账、审计、IT 运维。"
+  }
+]

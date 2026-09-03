@@ -1,0 +1,20 @@
+{
+  "topic": "GitHub Claude/AI-agent skill 仓库生态与 skill 可进化性",
+  "date": "2026-09-03",
+  "requested_mode": "deep",
+  "sub_questions": [
+    {"id": "sq1", "question": "主流 Claude/agent skill 仓库（anthropics/skills、obra/superpowers 等）的 star/fork/issue 真实指标是多少？", "tier": "core", "source_route": "github"},
+    {"id": "sq2", "question": "这些仓库的更新频率与活跃度如何？哪些活跃、哪些停滞？", "tier": "core", "source_route": "github"},
+    {"id": "sq3", "question": "Anthropic 官方与社区总结的 skill 编写方法论（触发描述/渐进披露/token 预算/评测）有哪些要点？", "tier": "core", "source_route": "glb"},
+    {"id": "sq4", "question": "agent 技能学习/技能库相关论文（Voyager、skill library、self-evolving agents 等）提出了哪些机制？", "tier": "core", "source_route": "glb"},
+    {"id": "sq5", "question": "中文社区（公众号/掘金/CSDN）对 Claude Skills 的采用度与实操反馈如何？", "tier": "core", "source_route": "cn"},
+    {"id": "sq6", "question": "知乎上对 Claude Skills 与 agent 自我进化的观点与争议是什么？", "tier": "background", "source_route": "zhihu"},
+    {"id": "sq7", "question": "有哪些让 skill/agent 自我进化的实际机制或项目（基于使用统计/评测反馈自动改进）？", "tier": "core", "source_route": "glb+github"},
+    {"id": "sq8", "question": "日语社区（Qiita/Zenn）对 Claude Skills 的采用度如何？", "tier": "background", "source_route": "glb"},
+    {"id": "sq9", "question": "本仓库 skills（story 系列/投研/检索）+ skill-stats 使用数据现状如何？进化建议往 流程/命令/token 三方向怎么给？", "tier": "core", "source_route": "local"}
+  ],
+  "absorbed_inbox": [],
+  "report_file": "research-report.md",
+  "effective_mode_note": "deep; 主 wave 2/2 + gap 轮 1/1（gap 与 wave2 合并派发）",
+  "write_degradation": "report.md 首选名被 Write 守卫拦截，按 SKILL 降级链改用 research-report.md"
+}

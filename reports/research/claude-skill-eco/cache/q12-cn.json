@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Claude Code 完整使用教程（2026最新版）",
+    "url": "https://blog.csdn.net/u012885276/article/details/160063941?ops_request_misc=elastic_search_misc&request_id=f46d638e4f7548d5a4a60cf7c1ea9603&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~ElasticCommercialInsert~search_v2-1-160063941-null-null.142^v102^pc_search_result_base6&utm_term=Claude%20Skills%20%E6%95%99%E7%A8%8B%20%E7%94%9F%E6%80%81%20%E6%8F%92%E4%BB%B6",
+    "snippet": "本教程系统介绍Anthropic推出的AI编程工具Claude Code（v2.1.167）的完整能力体系，涵盖安装配置、核心交互、斜杠命令、高效提示词工程、CLAUDE.md记忆系统、Auto Memory、会话管理、快捷键、扩展思考模式（Effort/Ultraplan/Ultrareview）、Git与MCP集成、Skills/Hooks自动化、插件生态、Voice Mode、Channels、Headless模式、Checkpointing、权限安全机制（含Auto Mode/YOLO/域名封锁）、多代理协作（Agent Teams）、成本优化及Routines云端自动化等关键技术模块。",
+    "published": "2026（标注\"2026最新版\"，CSDN）"
+  },
+  {
+    "title": "用 Claude3.5 从零写扫雷游戏-基本功能篇",
+    "url": "https://juejin.cn/post/7450394415125266470",
+    "snippet": "扫雷是个太经典的游戏了，以前在 Windows 电脑上玩过，现在换了 Mac，好久没玩了。刚好最近在重度体验 Cursor 和 Claude3.5，也用它们写了不少代码。于是想着用 Claude3.5 从零写个扫雷游戏，看看效果如何。... | 分类: 人工智能 | 标签: 前端, Next.js, Claude | 👍 11 | 👀 2874",
+    "published": "约2024-12（掘金 post id 7450394415125266470）"
+  }
+]

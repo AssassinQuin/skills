@@ -1,0 +1,30 @@
+{
+  "topic": "赛力斯 2026 上半年经营状况与主要风险",
+  "date": "2026-09-03",
+  "requested_mode": "quick",
+  "local_background": [
+    {
+      "path": "datastore/stocks/601127-赛力斯/reports/2026-07-13-earnings-risk.md",
+      "covers": "2025 年报 + 2026Q1 财务基线、2026H1 销量背景（至 6 月）、风险清单",
+      "note": "发布于 2026-07-13，早于半年报；作为背景证据源 L1，需刷新半年报数据"
+    }
+  ],
+  "sub_questions": [
+    {"id": "sq1", "question": "赛力斯 2026 年半年报核心财务数据（营收、归母净利、扣非、毛利率、经营现金流）及同比变化", "tier": "core", "source_route": "cn+glb"},
+    {"id": "sq2", "question": "2026 上半年问界销量结构与趋势（M9/M8/M7/M6 各车型交付、月度走势、7-8 月最新数据）", "tier": "core", "source_route": "cn+glb"},
+    {"id": "sq3", "question": "2026 上半年主要风险动态：毛利率与价格战、华为合作变化、新车爬坡、现金流", "tier": "core", "source_route": "cn+zhihu"},
+    {"id": "sq4", "question": "市场与卖方对赛力斯 2026H1 的评价（评级/目标价调整、A/H 股价表现）", "tier": "background", "source_route": "glb+zhihu"},
+    {"id": "sq5", "question": "2025 年报与 2026Q1 基线数据（本地旧报告已覆盖）", "tier": "background", "source_route": "local"},
+    {"id": "sq6", "question": "赛力斯卖方评级分布与分歧（各家评级/目标价/下调动作、多空分歧逻辑）", "tier": "core", "source_route": "human(inbox S17)+cn交叉验证"},
+    {"id": "sq7", "question": "赛力斯 A/H 估值对比（A/H 价格、市值、折溢价、PB、可比公司区间）", "tier": "core", "source_route": "human(inbox S18)+cn交叉验证"}
+  ],
+  "absorbed_inbox": [
+    {"file": "broker-ratings-2026-09.md", "raw": "raw/S17-inbox.md", "absorbed": "2026-09-03"},
+    {"file": "seres-ah-valuation.md", "raw": "raw/S18-inbox.md", "absorbed": "2026-09-03"}
+  ],
+  "supplement": {
+    "date": "2026-09-03",
+    "reason": "补齐上次 quick 运行 sq4 的两个缺口（卖方评级分歧、A/H 估值），证据主体来自 inbox 人工投喂（lane: human），2 条 cn 查询交叉验证",
+    "dir_choice": "沿用既有任务目录（用户把 inbox 文件投喂在 seres-2026h1/inbox；缺口即本报告未解问题#3；查询去重依赖同一登记表）"
+  }
+}

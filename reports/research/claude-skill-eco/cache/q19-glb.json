@@ -1,0 +1,4 @@
+[
+  {"title": "[2504.07079] SkillWeaver: Web Agents can Self-Improve by Discovering and Honing Skills (abs)", "url": "https://arxiv.org/abs/2504.07079", "snippet": "Autonomous web agents still lack crucial self-improvement capabilities, struggling with procedural knowledge abstraction, refining skills, and skill composition. SkillWeaver is a skill-centric framework enabling agents to self-improve by autonomously synthesizing reusable skills as APIs.", "published": "2025-04 (arXiv 2504.07079)"},
+  {"title": "SkillWeaver: Web Agents can Self-Improve by Discovering and Honing Skills (pdf)", "url": "https://arxiv.org/pdf/2504.07079", "snippet": "Inspired by the self-improvement mechanism of humans, SKILLWEAVER is a skill-centric framework that enables web agents to autonomously self-improve through exploration and API synthesis.", "published": "2025-04 (arXiv 2504.07079)"}
+]

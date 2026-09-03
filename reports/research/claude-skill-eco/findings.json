@@ -1,0 +1,56 @@
+{
+  "topic": "GitHub Claude/AI-agent skill 仓库生态与 skill 可进化性",
+  "date": "2026-09-03",
+  "mode": "deep",
+  "sub_questions": [
+    {"id": "sq1", "question": "主流 Claude/agent skill 仓库的 star/fork/issue 真实指标", "tier": "core", "status": "answered"},
+    {"id": "sq2", "question": "仓库更新频率与活跃度，谁活跃谁停滞", "tier": "core", "status": "answered"},
+    {"id": "sq3", "question": "skill 编写方法论要点（触发描述/渐进披露/token 预算/评测）", "tier": "core", "status": "answered"},
+    {"id": "sq4", "question": "agent 技能学习/技能库论文机制", "tier": "core", "status": "answered"},
+    {"id": "sq5", "question": "中文社区采用度与实操反馈", "tier": "core", "status": "answered"},
+    {"id": "sq6", "question": "知乎观点与争议", "tier": "background", "status": "answered"},
+    {"id": "sq7", "question": "基于使用统计/评测反馈的 skill 自进化机制与项目", "tier": "core", "status": "answered"},
+    {"id": "sq8", "question": "日语社区采用度", "tier": "background", "status": "partial"},
+    {"id": "sq9", "question": "本仓库 skills + skill-stats 现状与进化建议方向", "tier": "core", "status": "answered"}
+  ],
+  "findings": [
+    {"claim": "GitHub claude skills 生态规模 7301 个仓库（stars>100）；头部 star 量级 17万-28万：obra/superpowers 280,991、affaan-m/ECC 246,583、mattpocock/skills 245,733、ultraworkers/claw-code 195,165、anthropics/skills 173,344（2026-09-03 GitHub API 直查，核实员二次复核 ±10 漂移）；公众号 star 表（2026-08-21）旁证吻合；Firecrawl 的 superpowers 40.9k 判定为失效数据不可引用；star 存在公开注水 10-25% 争议", "sub_question": "sq1", "confidence": "high", "evidence": [{"url": "https://github.com/search?q=claude+skills+agent+skills+stars:%3E100", "lane": "github"}, {"url": "https://github.com/obra/superpowers", "lane": "github"}, {"url": "https://www.instagram.com/p/DZz9ORxGVMB/", "lane": "glb"}]},
+    {"claim": "anthropics/skills 共 390 个 issue，最新 10 个全 open（日增 2-4），三大痛点：Windows 兼容（trigger-eval harness 并行 worker 触发率 1/N）、内容陈旧（mcp-builder 默认模型停在 claude-3-7）、触发词/描述精度（doc-coauthoring 单轮 15/15 零产出）", "sub_question": "sq1", "confidence": "high", "evidence": [{"url": "https://github.com/anthropics/skills/issues", "lane": "github"}]},
+    {"claim": "活跃度分化：anthropics/skills 高频活跃（2026-08-17~09-01 五次 commit、单月约 45 条外部 PR）；obra/superpowers 约 3 周一个 minor（v6.2.0 07-23 → v6.3.0 08-12，commit 带 Co-Authored-By: Claude Opus 4.8）；affaan-m/ECC 每日多 commit；claw-code 最近 08-16；长尾大量停滞，第三方评测称只有少数 skill 持续交付真实价值", "sub_question": "sq2", "confidence": "medium", "evidence": [{"url": "https://github.com/anthropics/skills/commits/main", "lane": "github"}, {"url": "https://github.com/obra/superpowers/commits/main", "lane": "github"}, {"url": "https://www.linkedin.com/pulse/claude-skills-guide-best-use-right-now-2026-edition-jon-bonso-5r2wc", "lane": "glb"}]},
+    {"claim": "官方方法论已收敛：渐进披露三层（metadata 约100 token/个 → SKILL.md <5K → bundled files 按需；脚本不进 context 只有执行结果进）；description 必须写 what+when（100+ skills 中选择依据）；逐段自问 Does this paragraph justify its token cost?（50 vs 150 token 范例）；自由度三级按任务脆弱性匹配；Start with evaluation 评测先行；确定性代码优于 token 生成；gerund 命名、禁 claude/anthropic 保留字、描述 ≤1024 字符（官方自述，机构口径单源）", "sub_question": "sq3", "confidence": "medium", "evidence": [{"url": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills", "lane": "glb"}, {"url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices", "lane": "glb"}]},
+    {"claim": "Agent Skills 已于 2025-12-18 发布为开放标准（cross-platform portability）", "sub_question": "sq3", "confidence": "high", "evidence": [{"url": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills", "lane": "glb"}]},
+    {"claim": "论文谱系：SkillWeaver（arXiv 2504.07079，2025-04，web agent 探索+API 合成自进化）→ EvoSkills（2604.01687，2026-04，共进化验证，指出现有 tool 自进化方法不适用 skill）→ SkillFoundry（2604.03964，2026-04，异构资源挖掘 skill library）→ RL skill library（2512.17102，2025-12，批评 LLM 自评缺验证）→ SkillOpt（2605.23904，Microsoft 2026-05-22）；均 arXiv 单源无独立二手佐证；Voyager 一手源未命中", "sub_question": "sq4", "confidence": "medium", "evidence": [{"url": "https://arxiv.org/abs/2504.07079", "lane": "glb"}, {"url": "https://arxiv.org/html/2604.01687v1", "lane": "glb"}, {"url": "https://arxiv.org/abs/2604.03964", "lane": "glb"}, {"url": "https://arxiv.org/abs/2512.17102", "lane": "glb"}]},
+    {"claim": "中文社区已进入写自定义 skill 实操层（公众号 12 技巧文 2026-09-02、CSDN 全流程教程+国产模型混搭、支付宝员工保姆级 scripts+references 结构）；OpenClaw 退潮后注意力集体转向 Claude Code/Skills/Harness；但未发现 GitHub 原生中文合集仓库（唯一例外 CSDN 付费下载包，非原生）；中文引擎对新主题召回弱、sogou 反爬", "sub_question": "sq5", "confidence": "high", "evidence": [{"url": "https://blog.csdn.net/2601_95807009/article/details/162405519", "lane": "cn"}, {"url": "https://blog.csdn.net/u012885276/article/details/160063941", "lane": "cn"}, {"url": "https://zhuanlan.zhihu.com/p/1996724780209047225", "lane": "zhihu"}]},
+    {"claim": "知乎观点：最普遍批评 Skills are just AGENTS.md in disguise（获 HN 第三方 eval 佐证）；探索型工作流鸡肋、规范型业务开发有价值；渐进披露三层具体数字（100 token/个、<5K SKILL.md、可挂 20+）；单源未经证实的经济生存策略说（单位 token 消耗降 20-30%）；Skills 解决何时加载、MCP 解决有没有", "sub_question": "sq6", "confidence": "low", "evidence": [{"url": "https://www.zhihu.com/question/2003161952747275284/answer/2005195354681938581", "lane": "zhihu"}, {"url": "https://www.zhihu.com/question/1998162232379458760/answer/2000257130637329569", "lane": "zhihu"}, {"url": "https://news.ycombinator.com/item?id=46809708", "lane": "glb"}]},
+    {"claim": "自进化机制已成谱系：SkillOpt（Microsoft，2 独立域证实）= 冻结模型+优化器模型、rollout 打分批次→反思→有界 add/delete/replace 编辑（编辑预算=文本学习率）→held-out validation gate 不涨分不收、被拒编辑 buffered 为负反馈；52/52 cells 胜 GEPA/TextGrad 系论文自报、3 个月无独立全量复现；工程件 GEPA 已进 DSPy 官方 API（2 域 2 机构）；Nous hermes-agent-self-evolution（单源媒体）用 DSPy+遗传算法自动进化 skills/prompts/工具代码；仓库侧 OpenViking（35,253 stars）统一 Memory/RAG/Skills 自进化上下文库", "sub_question": "sq7", "confidence": "medium", "evidence": [{"url": "https://arxiv.org/abs/2605.23904", "lane": "prime"}, {"url": "https://microsoft.github.io/SkillOpt/", "lane": "glb"}, {"url": "https://dspy.ai/api/optimizers/GEPA/overview/", "lane": "glb"}, {"url": "https://the-agent-report.com/2026/06/hermes-agent-self-evolution-dspy-gepa-june2026/", "lane": "glb"}]},
+    {"claim": "自进化的边界证据：SkillOpt 论文自认 loosely controlled self-revision 无一可靠超越起点；斯坦福 CS329A 论点『可靠反馈才是闭环能否跑起来的关键』；官方 issue #1718 显示评测 harness 本身会坏（单轮 15/15 零产出）；taxonomy 三档（artifact 优化/harness 自改进/model learning，lsl.zone 单源）；结论：只有带验证门的自进化被证明可行", "sub_question": "sq7", "confidence": "medium", "evidence": [{"url": "https://aipractitioner.substack.com/p/skillopt-explained-from-prompt-engineering", "lane": "glb"}, {"url": "https://zhuanlan.zhihu.com/p/2068747288424534148", "lane": "zhihu"}, {"url": "https://github.com/anthropics/skills/issues", "lane": "github"}, {"url": "http://lsl.zone/blog/2026/a-taxonomy-of-self-evolving-agents/", "lane": "glb"}]},
+    {"claim": "日语社区处于教程导入期：Qiita 完全ガイド系列（2026-08-11 持续更新）、YouTube 24 事例（1K views）、note 全部試してみた、2026 年版指南；各项孤证、Zenn 未命中，热度明显小于中英社区", "sub_question": "sq8", "confidence": "low", "evidence": [{"url": "https://qiita.com/Tomo27/items/897366b345858c9a8bff", "lane": "glb"}, {"url": "https://www.youtube.com/watch?v=quBAedvp1hc", "lane": "glb"}]},
+    {"claim": "本仓库现状：usage.jsonl 223 条中外部 superpowers:* 占 44%（98 条）；38 个本地 skill 中 24 个零使用；frontmatter version 仅 15/38、何时不调用 16/38；无任何 eval/test 目录；投研类自 2026-07-21 停用；曾有 skill-evolver（8 次调用后删除）=无门控自改的历史教训", "sub_question": "sq9", "confidence": "high", "evidence": [{"url": "file:///Users/ganjie/skills/.stats/usage.jsonl", "lane": "human"}]},
+    {"claim": "进化建议（详见报告专节）：流程=高频 7 skill 建 5-10 例 eval 集+usage.jsonl 加 outcome 字段+24 个零使用件归档治触发噪音+lint-skills.sh 校验 frontmatter 三段；命令=确定性判断下沉脚本（门测试/三问打分/节拍位置/仓位公式）+每 skill 配 validate 脚本+评测固定单进程记环境指纹；token=渐进披露改造（SKILL.md <5K，长文移 references/）+150 token 段落告警进 lint+归档 zombie 省 metadata 预算；自进化=引入但必须门控（SkillOpt 形状：月度批次→eval held-out gate→人工审批→合入，被拒记负反馈，批次 ≤3 skill），禁止无验证自改", "sub_question": "sq9", "confidence": "high", "evidence": [{"url": "file:///Users/ganjie/skills/reports/research/claude-skill-eco/research-report.md", "lane": "human"}, {"url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices", "lane": "glb"}, {"url": "https://microsoft.github.io/SkillOpt/", "lane": "glb"}]}
+  ],
+  "strongest_objection": "skill 生态的效用与数据都未经中立验证：HN 第三方评测帖声称 AGENTS.md outperforms skills in our agent evals（与知乎换皮批评互证）；头部仓库 star 被公开指控注水 10-25%（Instagram 称 superpowers 真实值 213k，与今日 API 280,991 矛盾未裁定）；SkillOpt 52/52 SOTA 为论文自报、3 个多月无独立全量复现；领域自认 loosely controlled self-revision 无一可靠超越起点——即 skill 自进化只有带验证门的版本被证明可行。未发现针对官方渐进披露三层机制描述本身的反驳。",
+  "gaps": [
+    "Voyager（2023 skill library 概念源头）未取得一手来源命中，谱系起点依赖二手转述",
+    "superpowers star 注水争议（213k 指控 vs API 280,991）本轮无法裁定；watchers 精确数与 issue 按赞 Top 榜未取得（GitHub search API 不返回、8 次调用上限已用满）",
+    "Skills 降低单位 token 消耗 20-30% 为知乎单源，未找到独立证实或证伪",
+    "sogou 反爬使公众号生态定量规模（中文教程总量）无法估计；q12/q13 首轮靠 csdn/juejin 兜底",
+    "ACLA 查无此文（q19 未命中，仅 SkillWeaver 确认）",
+    "Hermes/EvolveR/SkillAxe/Arbor 中文点名框架、Tax AI/MOSS 产业案例、CSDN 付费合集包均未做原文核实（单源/转载风险）",
+    "prime p1（生态综合查询）返回空结果，未重试，由 glb q6/q7 覆盖"
+  ],
+  "meta": {
+    "requested_mode": "deep",
+    "effective_mode": "deep",
+    "reused_queries": 0,
+    "fresh_queries": 28,
+    "contrarian_run": true,
+    "lane_health": "github ok 8/8; glb ok; cn 降级(sogou 反爬, fallback+gap 恢复); zhihu ok 2/4; prime 1/2 空结果; human inbox 空",
+    "waves": "wave1=cn+glb+zhihu+github 四通道并行; wave2=gap 轮 2 查询 + 读取员 5 URL; gap 轮 1/1",
+    "degradations": "report.md 首选名被守卫拦截→按 SKILL 降级链改用 research-report.md; auto-memory 写回不可用(编排者无该工具)→报告+INDEX 替代; 无模型降级(核实员 opus 正常)",
+    "report_file": "research-report.md",
+    "task_dir": "reports/research/claude-skill-eco",
+    "github_calls": 8,
+    "prime_calls": 2,
+    "zhihu_calls": 2
+  }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "title": "someone's \"top 10 claude skill repos\" post blew up last week. so i ... (Instagram)",
+    "url": "https://www.instagram.com/p/DZz9ORxGVMB/",
+    "snippet": "The star counts were fake. Every number was inflated. Off by 10-25% across the board. The real ranking: 01 obra/superpowers 213k stars Stars ...",
+    "published": "2026-06-20"
+  },
+  {
+    "title": "AGENTS.md outperforms skills in our agent evals | Hacker News",
+    "url": "https://news.ycombinator.com/item?id=46809708",
+    "snippet": "They also cannot enforce that via RL because skills use human language, which is ambiguous and not formal. Force it to use skills always via RL policy and you'...",
+    "published": ""
+  },
+  {
+    "title": "SkillOpt Explained: From Prompt Engineering to Skill Training (AI Practitioner, Substack)",
+    "url": "https://aipractitioner.substack.com/p/skillopt-explained-from-prompt-engineering",
+    "snippet": "Note: This is not a full replication of the paper. ... [1] SkillOpt: Executive Strategy for Self-Evolving Agent Skills, Yang et al., arXiv:2605.23904",
+    "published": "2026-06-04"
+  },
+  {
+    "title": "Claude Code Skills、Agent Skills 和 OpenClaw Skills 的统一集合仓库.zip (CSDN 下载)",
+    "url": "https://download.csdn.net/download/xiaoshun007/92884505",
+    "snippet": "Claude Code Skills、Agent Skills 和 OpenClaw Skills 的统一集合仓库是一个面向中国A股市场专业投资实践需求构建的综合性智能插件开发资源库。（中文作者打包的 skills 集合，付费下载形态，非 GitHub 原生）",
+    "published": ""
+  },
+  {
+    "title": "A few random notes from Claude coding quite a bit last few weeks | Hacker News",
+    "url": "https://news.ycombinator.com/item?id=46771564",
+    "snippet": "[0] https://github.com/obra/superpowers ... hype) analysis he shared seems spot on in my (caveat: more limited) ...",
+    "published": "2026-01-20"
+  }
+]

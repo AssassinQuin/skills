@@ -1,0 +1,14 @@
+[
+  {
+    "title": "反思与自我改进：Agent自我批评、经验学习与技能库构建的闭环",
+    "url": "https://blog.csdn.net/2601_95807009/article/details/162405519?ops_request_misc=elastic_search_misc&request_id=9e3fddbc80b94031bbf483c998344db4&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~ElasticCommercialInsert~search_v2-1-162405519-null-null.142^v102^pc_search_result_base6&utm_term=AI%20Agent%20%E6%8A%80%E8%83%BD%E5%BA%93%20%E8%87%AA%E6%88%91%E8%BF%9B%E5%8C%96%202026",
+    "snippet": "本文系统阐述AI Agent自我改进闭环的三大核心机制：自我批评（识别错误并定位可修正点）、经验学习（从执行轨迹中蒸馏可复用认知策略）、技能库构建（将经验固化为标准化、可移植、可进化的Skill）。重点分析四层架构（执行/批评/学习/技能层）、2026年主流框架（Hermes Agent、EvolveR、SkillAxe、Arbor）及部署与安全实践，强调工程化反思、经验评分剪枝、技能版本管理与人工审批关卡等关键技术。",
+    "published": "2026（文中讨论\"2026年主流框架\"，CSDN）"
+  },
+  {
+    "title": "Windsurf：超越 Cursor 的下一代 AI 编辑器",
+    "url": "https://juejin.cn/post/7441138589116858419",
+    "snippet": "AI智能代理：Flows = Agents + Copilots。Windsurf采用了AI Flow范式，支持多步骤、多工具协同，自动维护上下文状态，智能任务规划和执行。... | 分类: 开发工具 | 标签: 前端, Visual Studio Code, WindSurf, Cursor | 👍 68 | 👀 22381",
+    "published": "约2024-11（掘金 post id 7441138589116858419）"
+  }
+]
