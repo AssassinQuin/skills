@@ -884,3 +884,13 @@ git commit -m "feat(deep-research): 端到端验收通过——3问题E2E+缓存
 1. **Spec 覆盖**：六阶段流程（Task 5 SKILL.md）、lane 路由表（Task 1 内嵌）、save/validate 脚本（Task 2/3）、模板（Task 4）、主题目录+queries.jsonl+inbox（Task 5 Phase 1 + Task 6）、两级记忆（Task 1/2 精确层 + Task 5 Phase 5 语义层）、大文件 IO（Task 5 读取员/raw 落盘/parts 合并）、质量门（Task 3 + Task 5 硬约束）、降级链（Task 5）、验收 6 条（Task 6）——全部有对应任务
 2. **占位符扫描**：模板内 `{{...}}` 为运行时填充标记（设计如此）；所有代码块完整可执行；无 TBD/TODO
 3. **类型/命名一致性**：`SEARCH_MEMORY_FILE`、key 格式 `归一化查询|lane`、ttl 枚举 `short|long|permanent`、lane 枚举 `cn|glb|zhihu|prime|human`、queries.jsonl 字段 `{query,lane,agent,wave[,reused]}` 在 Task 1/2/5/6 间一致
+
+## 修订记录（执行期）
+
+### 2026-09-03 修订 A：github lane（用户要求）
+
+新增第 5 条搜索通道：`github` lane，专职子 agent（sonnet）只使用 `mcp__github__*` 工具（search_repositories / search_issues / search_code / get_file_contents / list_commits），≤8 次调用/任务，用于仓库指标（star/issue/更新频率）、代码检索、issue 挖掘。同步改动：route-lane.sh / save-memory.sh lane 枚举 + 路由表 github 条目；validate-findings.sh evidence lane 枚举；SKILL.md agent 表 + Phase 1 路由 + 降级链（github MCP 失败 → glb lane site:github.com 网页兜底）；三测试各补 1 用例（route 8 / save 5 / validate 7）。spec §6/§7/§8 已同步。
+
+### 2026-09-03 修订 B：审查修复（SKILL.md 源头缺漏）
+
+Task 5 审查发现的计划文本缺陷，在 commit 1552035 一并修复：deep 主 wave 硬上限 2 个（原仅 gap 轮有上限，Important）；「ows-glb」→「glb lane（ows）」；meta.json 模板去掉畸形 `"{note}"` 键；核实员 contrarian 搜索上限 ≤6；`<repo>` → `$(dirname {baseDir})`。E2E 验收（Task 6）以修订后的代码为准。

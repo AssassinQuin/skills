@@ -57,7 +57,7 @@
    - 预期搜不到（登录墙/被墙）→ 标记「待 inbox 投喂」
 4. `search-memory.json` 查表：命中的查询剔除，只搜未命中的
 5. 分配去重：归一化合并同义查询，每条查询唯一归属一个 lane；各搜索员的 prompt 只包含分给它的查询清单（边界划清，清单外的发现记入 Gaps 留给 Phase 3）
-6. 初始化 `<topic>/queries.json` 任务内查询登记表（缓存复用的查询一并登记）
+6. 初始化 `<topic>/queries.jsonl` 任务内查询登记表（JSONL 逐行格式，`>>` 追加保证并行原子；缓存复用的查询一并登记）
 7. 打印子主题×lane 矩阵，直接开跑
 
 ### Phase 2 并行搜集
@@ -65,7 +65,7 @@
 - 限额 lane 收归主会话：prime 仅 deep 模式直调 ≤3 次
 - 每个搜索员 prompt 自包含：真实日期字面量（先跑 `date +%Y-%m-%d`）+ 年份钉死规则 + 分到的子主题清单 + 本 lane 工具用法 + 搜索上限（quick 3 / deep 6）+ 统一返回格式
 - 读取员（haiku）：对高价值信源抓正文 → Write `raw/S*.md`，只回报元数据（编号/标题/字节数）
-- 任务内去重感知：搜索员每次搜索前读 `<topic>/queries.json`，发现查询已被其他员登记 → 跳过该查询（在 Gaps 说明）；每次实际执行的搜索立刻 append 登记一行（query/lane/agent/wave）
+- 任务内去重感知：搜索员每次搜索前读 `<topic>/queries.jsonl`，发现查询已被其他员登记 → 跳过该查询（在 Gaps 说明）；每次实际执行的搜索立刻 append 登记一行（query/lane/agent/wave）
 - wave 间：主会话把已登记查询清单 + 依赖子主题摘要注入下一 wave 各员 prompt
 - 搜索员返回全文 → 主会话 `ctx_index` 索引，上下文只留摘要
 
@@ -94,7 +94,7 @@ reports/research/
     ├── report.md                 # 最终报告
     ├── findings.json             # 结构化产物（下游 skill 消费）
     ├── sources.json              # 引用登记表（citation persistence）
-    ├── queries.json              # 任务内查询登记表（agent 间去重感知）
+    ├── queries.jsonl             # 任务内查询登记表（JSONL，agent 间去重感知）
     ├── raw/                      # 原始信源正文，每源一文件 S01-<slug>.md
     ├── inbox/                    # 人工投喂通道（含 README 说明格式）
     └── parts/                    # deep 模式报告分节草稿
@@ -121,6 +121,7 @@ deep-research/
 | glb | websearch-global（startpage/ddg，含外语查询翻译） | 无 | 外文事实/技术文档 |
 | zhihu | zhihu MCP（count 2-3）→ zhihu-global | ≤4 次/任务 | 观点/体验/中文争议 |
 | prime | web-search-prime | deep only，≤3 次，主会话直调 | 高价值查询 |
+| github | mcp__github__*（search_repositories / search_issues / search_code / get_file_contents / list_commits） | ≤8 次调用/任务 | 仓库指标（star/issue/更新频率）、代码检索、issue 挖掘；专职子 agent（sonnet） |
 | 读取 | web-reader / searxng web_url_read | 无 | 抓正文到 raw/ |
 | 降级 | CLI：global-search.py / zhihu-search.py | — | MCP 不可用时 |
 
@@ -129,6 +130,7 @@ deep-research/
 | Agent | model | 工具 | 写权限 |
 |---|---|---|---|
 | cn / glb / zhihu 搜索员 | sonnet | 仅本 lane 一套 | 无（只返回文本） |
+| github 搜索员 | sonnet | 仅 mcp__github__* | 无（只返回文本） |
 | 读取员 | haiku（机械抓取） | web-reader / searxng-read | 仅 raw/ |
 | 核实员 | opus | ows（无限额 lane） | 无 |
 | prime | 主会话直调 | web-search-prime | — |
@@ -148,7 +150,7 @@ deep-research/
   "topic": "...", "date": "YYYY-MM-DD", "mode": "quick|deep",
   "sub_questions": [{"id": "q1", "question": "...", "tier": "core|background", "status": "answered|partial|unanswered"}],
   "findings": [{"claim": "...", "sub_question": "q1", "confidence": "high|medium|low",
-                "evidence": [{"url": "...", "title": "...", "lane": "cn|glb|zhihu|prime|human", "quote": "...", "published": "..."}]}],
+                "evidence": [{"url": "...", "title": "...", "lane": "cn|glb|zhihu|prime|github|human", "quote": "...", "published": "..."}]}],
   "strongest_objection": "...",
   "gaps": ["..."],
   "meta": {"requested_mode": "...", "effective_mode": "...", "lane_health": {...},
