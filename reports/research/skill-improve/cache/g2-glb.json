@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Agent Skill Registry Attack: 1.7M Downloads of Malicious Skills (Zenity ...",
+    "url": "https://anomity.ai/blog/zenity-malicious-agent-skills-credential-theft/",
+    "snippet": "A credential-theft campaign built on agent skills, presented at Black Hat in August 2026. 1.7 million aggregate downloads across one malicious skill family, distributed mainly through the skills.sh registry. Delayed supply-chain attack: clone popular legitimate skills into typosquatted lookalikes, keep them clean while installs accumulate, then inject.",
+    "published": "2026-08 (Black Hat presentation)"
+  },
+  {
+    "title": "I analysed the top 10 skills on Vercel's new AI agent registry",
+    "url": "https://blog.devgenius.io/i-analysed-the-top-10-skills-on-vercels-new-ai-agent-registry-480c69e9d481",
+    "snippet": "On January 20th, 2026, Vercel announced skills.sh, an open registry for AI agent skills (npm for AI coding assistants). Four days later, over 110,000 skill installs recorded across 17 different AI coding agents.",
+    "published": "2026-01"
+  },
+  {
+    "title": "The State of AI Agent Skills 2026 - Skillselion",
+    "url": "https://skillselion.com/state-of-ai-agent-skills-2026",
+    "snippet": "Source: Skillselion catalog (skills.sh registry & GitHub). Data as of August 21, 2026: 81,070 tools tracked, 152M combined installs, 59,826 agent skills, 8,448 MCP servers, 10,411 marketplaces.",
+    "published": "2026-08-21"
+  },
+  {
+    "title": "skills.sh | Ry Walker Research",
+    "url": "https://rywalker.com/research/skills-sh",
+    "snippet": "skills.sh is Vercel's open agent-skills registry — one-command install (npx skills add) across 20+ coding agents, ~669,670 skills listed and a top skill at 2.0M installs within five months of launch. Zero-curation, telemetry-ranked, center of the ecosystem's security debate.",
+    "published": ""
+  },
+  {
+    "title": "2026年最火爆的AI Agent Skills榜单：解锁AI的\"超能力\"宝库",
+    "url": "https://www.toutiao.com/article/7619600379650802185/",
+    "snippet": "find-skills (vercel-labs/skills): 644,300+ installs, 11.1K GitHub stars — ecosystem entry skill that searches skills.sh's 85,000+ skill library via npx skills find.",
+    "published": ""
+  }
+]

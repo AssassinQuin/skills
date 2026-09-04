@@ -1,0 +1,26 @@
+{
+  "fetched_at": "2026-07-07",
+  "code": "512890",
+  "name": "红利低波ETF华泰柏瑞",
+  "manager": "华泰柏瑞基金",
+  "tracked_index": "中证红利低波动指数 (H30269)",
+  "size_rmb_bn": 200,
+  "fee_pct": 0.5,
+  "role_in_portfolio": "core_dividend",
+  "target_weight_pct": 10,
+  "valuation_as_of": "2026-07-03",
+  "index_valuation": {
+    "pe_ttm": 8.30,
+    "pe_percentile_all_history_pct": 24.84,
+    "data_source": "ETF.run"
+  },
+  "top_holdings_as_of": "2026-03-31",
+  "top_holdings": [
+    {"rank": 1, "code": "601229", "name": "上海银行", "weight_pct": 2.83},
+    {"rank": 2, "code": "601009", "name": "南京银行", "weight_pct": 2.74},
+    {"rank": 3, "code": "000001", "name": "平安银行", "weight_pct": 2.56},
+    {"rank": 4, "code": "601825", "name": "沪农商行", "weight_pct": 2.53}
+  ],
+  "holdings_concentration": "银行/城商行/农商行 ≥ 30%",
+  "data_source_holdings": "eastmoney FundArchivesDatas (T0 季报披露)"
+}

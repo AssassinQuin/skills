@@ -1,0 +1,43 @@
+{
+  "fetched_at": "2026-07-07",
+  "plan": {
+    "name": "中华人民共和国国民经济和社会发展第十五个五年规划纲要",
+    "period": "2026-2030",
+    "issued_by": "国务院 / 新华社",
+    "issue_date": "2026-03-13",
+    "source_url": "https://www.gov.cn/yaowen/liebiao/202603/content_7062633.htm",
+    "structure": {
+      "parts": 15,
+      "chapters": 56
+    },
+    "key_targets": {
+      "gdp_per_capita_2035": "比 2020 年翻一番（达到中等发达国家水平）",
+      "rnd_investment_growth_yoy_pct": 7,
+      "urban_unemployment_pct_max": 5.5,
+      "life_expectancy_years": 80,
+      "education_years_avg": 11.7,
+      "co2_emission_per_gdp_reduction_pct": 17,
+      "pm25_ugm3_max": 27,
+      "good_water_quality_pct": 85,
+      "forest_coverage_pct": 25.8,
+      "grain_capacity_trillion_jin": 1.45,
+      "energy_capacity_billion_tce": 58,
+      "carbon_peak": "如期实现（2030 前）",
+      "pla_centennial_goal_year": 2027
+    },
+    "investment_lines": [
+      {"id": 1, "name": "新型能源体系/双碳", "conservative_fit_stars": 3, "etf_candidates": ["515380", "562350"]},
+      {"id": 2, "name": "红利/高股息（防御性）", "conservative_fit_stars": 3, "etf_candidates": ["512890", "515300", "510880", "159545"]},
+      {"id": 3, "name": "金融/央国企（安全屏障）", "conservative_fit_stars": 3, "etf_candidates": ["510050", "510310", "512800"]},
+      {"id": 4, "name": "基础设施/现代水网/交通", "conservative_fit_stars": 2, "etf_candidates": ["159001", "515320"]},
+      {"id": 5, "name": "银发经济/老龄化", "conservative_fit_stars": 2, "etf_candidates": ["512170", "159881"]},
+      {"id": 6, "name": "数字中国/AI+", "conservative_fit_stars": 1, "etf_candidates": ["515000", "159819"]},
+      {"id": 7, "name": "关键核心技术自立", "conservative_fit_stars": 1, "etf_candidates": ["512480", "159825"]}
+    ]
+  },
+  "companion_thematic_plans": [
+    {"name": "新型能源体系建设十五五规划", "code": "发改能源〔2026〕884号", "date": "2026-06-25"},
+    {"name": "循环经济发展十五五规划", "code": null, "date": "2026-07-03"},
+    {"name": "城市更新十五五规划", "code": null, "date": "2026"}
+  ]
+}

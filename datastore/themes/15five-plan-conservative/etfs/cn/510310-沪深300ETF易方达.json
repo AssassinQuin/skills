@@ -1,0 +1,20 @@
+{
+  "fetched_at": "2026-07-07",
+  "code": "510310",
+  "name": "沪深300ETF易方达",
+  "manager": "易方达基金",
+  "tracked_index": "沪深300指数 (000300)",
+  "fee_pct": 0.15,
+  "role_in_portfolio": "core_benchmark",
+  "target_weight_pct": 5,
+  "valuation_as_of": "2026-07-03",
+  "index_valuation": {
+    "pe_market_cap_weighted": 14.32,
+    "pe_median": 21.11,
+    "pe_percentile_3y_pct": 89.94,
+    "pe_percentile_10y_pct_range": "45-85 (口径差异)",
+    "pb": 1.45,
+    "data_source": "理杏仁+亿牛网+雪球（多源）"
+  },
+  "rationale": "费率最低的沪深300 ETF之一；用作 beta 暴露，不指望 alpha"
+}

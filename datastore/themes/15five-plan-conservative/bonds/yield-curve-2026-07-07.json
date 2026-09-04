@@ -1,0 +1,31 @@
+{
+  "fetched_at": "2026-07-07",
+  "as_of_date": "2026-07-03",
+  "country": "CN",
+  "yield_curve_pct": {
+    "1y": 1.10,
+    "3y": 1.29,
+    "5y": 1.45,
+    "7y": 1.59,
+    "10y": 1.75,
+    "30y": 2.27
+  },
+  "10y_realtime_pct": {
+    "value": 1.73,
+    "source": "新浪财经 CN10YT 实时",
+    "captured_at": "2026-07-06 02:06 UTC"
+  },
+  "data_sources": [
+    {"name": "中债登财政部收益率曲线", "url": "https://yield.chinabond.com.cn/cbweb-czb-web/czb/moreInfo", "tier": "T0", "captured_date": "2026-07-03"},
+    {"name": "中国货币网", "url": "https://www.chinamoney.com.cn/chinese/sddsintigy/", "tier": "T0", "captured_date": "2026-06-26"},
+    {"name": "Trading Economics", "url": "https://zh.tradingeconomics.com/china/government-bond-yield", "tier": "T1", "captured_date": "2026-07-03"},
+    {"name": "新浪财经 CN10YT", "url": "https://stock.finance.sina.com.cn/forex/globalbd/cn10yt.html", "tier": "T1", "captured_date": "2026-07-06"}
+  ],
+  "cross_source_consistency": "10Y 收益率 4 源一致，偏差 < 2 bp",
+  "equity_risk_premium": {
+    "csi_dividend_yield_pct": 4.66,
+    "minus_10y_treasury_pct": 1.73,
+    "spread_pct": 2.93,
+    "interpretation": "历史罕见高位，红利类资产相对配置价值显著"
+  }
+}

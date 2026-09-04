@@ -1,0 +1,11 @@
+{
+  "fetched_at": "2026-07-07",
+  "code": "511260",
+  "name": "短债ETF",
+  "manager": "海富通基金",
+  "tracked_index": "中证短债指数",
+  "fee_pct": 0.15,
+  "role_in_portfolio": "cash_substitute",
+  "target_weight_pct": 10,
+  "rationale": "T+1 流动性，预期年化 2.0-2.8%；替代部分货基仓位以提升收益；满足 3 年内可能取现<50% 的流动性约束"
+}

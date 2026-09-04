@@ -1,0 +1,7 @@
+[
+  {
+    "title": "ace-agent/ace — Agentic Context Engineering (1294 stars, 168 forks, created 2025-11-16, updated 2026-09-03)",
+    "url": "https://github.com/ace-agent/ace",
+    "snippet": "Canonical ACE repo; description 'Evolve your language agent with Agentic Context Engineering (ACE)'. README badge + citation confirm arXiv 2510.04618 ('Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models'). Verbatim: 'Incremental Delta Updates: Localized edits that preserve prior knowledge while accumulating new insights'; 'Unlike traditional approaches that suffer from brevity bias and context collapse... structured, incremental updates guided by a grow-and-refine principle'; 'This design prevents the context collapse problem where iterative rewriting erodes details over time.' Generator-Reflector-Curator architecture; playbook bullets with helpful/harmful counters; claims +10.6% AppWorld, +8.6% finance, 86.9% lower adaptation latency. Citation authors: Qizheng Zhang, Changran Hu, Shubhangi Upasani, ..., James Zou, Kunle Olukotun — no ByteDance affiliation visible in README (Stanford/Salesforce-style academic author list); 'ByteDance 合作' claim NOT confirmed from repo, needs paper PDF. Unofficial reproduction also exists: szouki/ace (5 stars)."
+  }
+]

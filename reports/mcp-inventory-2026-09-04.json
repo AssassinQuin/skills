@@ -1,0 +1,130 @@
+{
+ "generated": "2026-09-04",
+ "source": "~/.claude.json (user scope)",
+ "servers": {
+  "codebase-memory-mcp": {
+   "type": "stdio",
+   "command": "codebase-memory-mcp"
+  },
+  "context7": {
+   "type": "http",
+   "url": "https://mcp.context7.com/mcp",
+   "headers": {
+    "CONTEXT7_API_KEY": "ctx7sk…297c (sha:de234bb6)"
+   }
+  },
+  "github": {
+   "type": "stdio",
+   "command": "docker",
+   "args": [
+    "run",
+    "-i",
+    "--rm",
+    "--label",
+    "mcp-server=true",
+    "-e",
+    "GITHUB_PERSONAL_ACCESS_TOKEN",
+    "ghcr.io/github/github-mcp-server"
+   ],
+   "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "gho_hD…OhvD (sha:6f09cf2e)"
+   }
+  },
+  "memory": {
+   "type": "stdio",
+   "command": "/Users/ganjie/miniconda3/bin/memory",
+   "args": [
+    "server"
+   ],
+   "env": {
+    "HF_ENDPOINT": "https://hf-mirror.com"
+   }
+  },
+  "searxng": {
+   "type": "stdio",
+   "command": "npx",
+   "args": [
+    "-y",
+    "mcp-searxng"
+   ],
+   "env": {
+    "SEARXNG_URL": "http://localhost:8888"
+   }
+  },
+  "web-reader": {
+   "type": "http",
+   "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
+   "headers": {
+    "Authorization": "Bearer…yTkR (sha:e4a3879c)"
+   }
+  },
+  "web-search-prime": {
+   "type": "http",
+   "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
+   "headers": {
+    "Authorization": "Bearer…yTkR (sha:e4a3879c)"
+   }
+  },
+  "websearch-cn": {
+   "type": "stdio",
+   "command": "npx",
+   "args": [
+    "-y",
+    "open-websearch@latest"
+   ],
+   "env": {
+    "MODE": "stdio",
+    "DEFAULT_SEARCH_ENGINE": "baidu",
+    "ALLOWED_SEARCH_ENGINES": "baidu,sogou,csdn,juejin,linuxdo"
+   }
+  },
+  "websearch-global": {
+   "type": "stdio",
+   "command": "npx",
+   "args": [
+    "-y",
+    "open-websearch@latest"
+   ],
+   "env": {
+    "MODE": "stdio",
+    "DEFAULT_SEARCH_ENGINE": "startpage",
+    "ALLOWED_SEARCH_ENGINES": "startpage,duckduckgo,brave,bing,hackernews",
+    "USE_PROXY": "true",
+    "PROXY_URL": "http://127.0.0.1:7890"
+   }
+  },
+  "zai-mcp-server": {
+   "type": "stdio",
+   "command": "npx",
+   "args": [
+    "-y",
+    "@z_ai/mcp-server"
+   ],
+   "env": {
+    "Z_AI_MODE": "ZHIPU"
+   }
+  },
+  "zhihu-global": {
+   "type": "sse",
+   "url": "https://developer.zhihu.com/api/mcp/global_search/v1/sse",
+   "headers": {
+    "Authorization": "Bearer…a2f7 (sha:1cd82cea)"
+   }
+  },
+  "zread": {
+   "type": "http",
+   "url": "https://open.bigmodel.cn/api/mcp/zread/mcp",
+   "headers": {
+    "Authorization": "Bearer…yTkR (sha:e4a3879c)"
+   }
+  }
+ },
+ "plugin_servers": {
+  "claude-hud@claude-hud": "enabled plugin（MCP server 随插件加载）",
+  "code-review@claude-plugins-official": "enabled plugin（MCP server 随插件加载）",
+  "context-mode@context-mode": "enabled plugin（MCP server 随插件加载）",
+  "gopls-lsp@claude-plugins-official": "enabled plugin（MCP server 随插件加载）",
+  "pyright-lsp@claude-plugins-official": "enabled plugin（MCP server 随插件加载）",
+  "superpowers@claude-plugins-official": "enabled plugin（MCP server 随插件加载）"
+ }
+}

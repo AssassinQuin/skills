@@ -1,0 +1,7 @@
+[
+  {
+    "title": "skill-creator (Anthropic official skill, lives in anthropics/skills at skills/skill-creator/)",
+    "url": "https://github.com/anthropics/skills",
+    "snippet": "Issue #1706 in anthropics/skills references path 'skills/skill-creator/scripts/run_eval.py' and 'run_loop.py' — confirms skill-creator is an official Anthropic skill with a trigger-eval harness measuring Recall/Precision. Community usage of the rubric: cabaynes/charles-claude-skills 'Evaluated against Anthropic writing-skills + skill-creator rubric. 100% trigger accuracy.'; yaniv-golan/skill-creator-plus (4 stars) 'Based on Anthropic's skill-creator — bug fixes... creating, testing, and improving other Claude skills'; vltansky/agents-md-evals 'Built on Anthropic's skill-creator eval framework' (A/B testing of instruction files). 'v2' version label NOT found in any repo description or issue title within budget; the exact three-dimension framing (触发准确率/输出质量/效率) unverified — trigger accuracy and output eval are real, 'efficiency' dimension not seen. Needs follow-up: search_code 'repo:anthropics/skills path:skill-creator efficiency' or read skills/skill-creator/SKILL.md."
+  }
+]

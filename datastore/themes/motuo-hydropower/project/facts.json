@@ -1,0 +1,151 @@
+{
+  "project_name": "雅鲁藏布江下游水电工程（墨脱水电站）",
+  "project_name_en": "Yarlung Zangbo Downstream Hydropower Project (Motuo)",
+  "facts": [
+    {
+      "field": "核准日期",
+      "value": "2024-12-25",
+      "source_primary": "新华网 http://www.news.cn/politics/20241225/b61f14cad5c046a0a209bf36fa99d69b/c.html",
+      "source_secondary": "国务院公告",
+      "tier": "T0",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "正式开工日期",
+      "value": "2025-07-19",
+      "details": "李强总理出席，林芝市米林县",
+      "source_primary": "人民日报 2025-07-20 https://paper.people.com.cn/rmrb/pc/content/202507/20/content_30088870.html",
+      "source_secondary": "政府网 https://www.gov.cn/yaowen/liebiao/202507/content_7032776.htm",
+      "tier": "T0",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "装机容量",
+      "value": "60-70 GW",
+      "value_range": [60, 70],
+      "unit": "GW",
+      "comparison": "约 3 个三峡（22.5 GW）",
+      "source_primary": "T0 政府稿",
+      "source_secondary": "多家媒体一致",
+      "tier": "T0",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "总投资",
+      "value": "约 1.2 万亿元",
+      "value_numeric_rmb_yi": 12000,
+      "comparison": "三峡的 5.8 倍；青藏铁路的 12 倍",
+      "source_primary": "21财经 2025-02-07",
+      "source_secondary": "东方财富 2025-07-21",
+      "tier": "T1",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "年发电量",
+      "value": "约 3000 亿千瓦时",
+      "value_numeric_twh": 300,
+      "comparison": "占全国年用电量约 3.5%",
+      "source_primary": "T0 政府稿",
+      "tier": "T0",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "建设模式",
+      "value": "截弯取直 + 隧洞引水，5 座梯级电站",
+      "details": "利用 50 公里内 2000-2700 米落差",
+      "source_primary": "新华社",
+      "tier": "T0",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "业主单位",
+      "value": "中国雅江集团有限公司",
+      "details": "2025-04 挂牌，国资委名录第 99 家，电力央企第 22 位",
+      "source_primary": "证券时报 https://www.stcn.com/article/detail/2658737.html",
+      "tier": "T1",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "雅江集团注册资本",
+      "value": "500 亿元",
+      "details": "由财政部、三峡集团、国家电网三方出资",
+      "source_primary": "证券时报",
+      "source_secondary": "东方财富",
+      "tier": "T1",
+      "verified": true,
+      "fetched_at": "2026-07-06"
+    },
+    {
+      "field": "雅江集团具体股权比例",
+      "value": "未官方公布",
+      "rumored": "三峡 35-40%（传闻），华能/国电/电建/能建参股",
+      "tier": "T3",
+      "verified": false,
+      "fetched_at": "2026-07-06",
+      "warning": "雪球/知乎传闻，无 T0 源"
+    },
+    {
+      "field": "投资资金来源构成（业界分析）",
+      "value": "组合融资",
+      "details": {
+        "中央财政": "约 600 亿",
+        "超长期特别国债": "约 8000 亿",
+        "国开行专项贷款": "超 2000 亿",
+        "国有大行流动性支持": "约 1500 亿",
+        "雅江集团注册资本": "500 亿"
+      },
+      "source_primary": "知乎专栏 https://zhuanlan.zhihu.com/p/1954566626180563438",
+      "tier": "T3",
+      "verified": false,
+      "fetched_at": "2026-07-06"
+    }
+  ],
+  "key_calculations": {
+    "unit_capex": {
+      "expr": "12000 亿 / 60 GW",
+      "result": "2000 元/千瓦",
+      "comparison": "三峡 ~6000 元/千瓦，白鹤滩 ~7000 元/千瓦",
+      "explanation": "墨脱为径流式+引水式，无需建巨型坝体蓄水，单位投资较低",
+      "verified_by": "financial_rigor.py calc"
+    },
+    "annual_investment_intensity": {
+      "expr": "12000 亿 / 15 年",
+      "result": "800 亿/年"
+    },
+    "leverage_ratio": {
+      "expr": "12000 亿 / 500 亿注册资本",
+      "result": "24 倍",
+      "implication": "项目靠债务+财政拉动"
+    },
+    "vs_changjiang_electric": {
+      "expr": "60 GW / 71.7 GW",
+      "result": "84%",
+      "implication": "墨脱总装机接近长江电力当前装机规模"
+    }
+  },
+  "important_clarifications": [
+    {
+      "myth": "长江电力会拿到墨脱运营权",
+      "fact": "长江电力（600900）目前与雅江项目无直接股权或运营关系。同属三峡集团体系但平行业务，雅江由雅江集团独立运营。",
+      "source": "东方财富 caifuhao 2025-07-21 https://caifuhao.eastmoney.com/news/20250721141141745635280",
+      "tier": "T1"
+    },
+    {
+      "myth": "雅砻江 = 雅鲁藏布江",
+      "fact": "雅砻江是金沙江最大支流，主要在四川，是川投能源/国投电力（雅砻江公司）的核心资源；雅鲁藏布江在西藏，是墨脱水电站所在地。两条江完全不同。",
+      "tier": "T1"
+    },
+    {
+      "myth": "562530 是水电ETF",
+      "fact": "562530 实为'中证1000价值ETF华夏'，与水电无关。网络上至少 7 个流传代码是错的，详见主报告 §0.4",
+      "tier": "T1"
+    }
+  ]
+}

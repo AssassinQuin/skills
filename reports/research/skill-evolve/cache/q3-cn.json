@@ -1,0 +1,32 @@
+[
+  {
+    "title": "LLM生成器与评估器、AI进入物理世界:企业Agent落地下一步重...",
+    "url": "http://mp.weixin.qq.com/s?src=11&timestamp=1788427356&ver=6944&signature=VSelE5N2aotp3NKtkOq5svUgBCbHef9tEw2Hr8dE9U3SScvXxOuUGgGCMEPn3er6JahxyNNxmLQN2mMUTrThzhV6BCz9Jbq-Ky8YuwuL3pAPbfm-oObY6y0WZgW6xL*M&new=1",
+    "snippet": "评估器的角色不是完全取代人类判断,而是作为第一道过滤和初步评估,让人类专家把时间集中在最有争议的案例上。从LLM-as-Judge到Agent-as-Judge到Meta-Judging的递归评估...自我改进。关键洞察:评估器质量决定生成器上限。如果评估器本身有偏见,强化学习会放大这个偏见。推理阶段:评估器作为验证层在企业部署中,评估器的角色从训练延伸到推理。",
+    "published": "2026-09-01"
+  },
+  {
+    "title": "LLM可以自我改进 - 知乎",
+    "url": "https://www.sogou.com/link?url=hedJjaC291OfPyaFZYFLI4KQWvqt63NBO0UcpOxpsZCZicLEMXTD-Q..",
+    "snippet": "self-consistency（自评估多个推理路径）；尽管现有LLM有着巨大能力，但...并确定了llm最成功的自我改进的关键设计选择。研究了另外两种自我改进的...（知乎 zhuanlan.zhihu.com）",
+    "published": "2023-12-08"
+  },
+  {
+    "title": "【LLM/大模型】 Google：自我评估改进了大语言模型中的选择性生成",
+    "url": "https://www.sogou.com/link?url=hedJjaC291OfPyaFZYFLI4KQWvqt63NB3xy1JuFNYoe17CMCJc834Q..",
+    "snippet": "利用LLM的自我评估（self-evaluation）能力来改进质量校准。尽管序列级似然性校准较差，但最近的工作表明，LLM token级概率在选择多项选择题答案...（知乎 zhuanlan.zhihu.com）",
+    "published": "2023-12-20"
+  },
+  {
+    "title": "全民诡异：开局掌握零元购·动态漫画第95集（无关结果）",
+    "url": "https://www.sogou.com/link?url=hedJjaC291M3iG3dvSrVoOo3gNKxLZeF3gQ-udVrKOxsvfPfmLNNT-EPFZbkSc7DIeZ8aQ291kY.",
+    "snippet": "动漫在线观看页面，搜索引擎噪声，与查询无关。",
+    "published": ""
+  },
+  {
+    "title": "Agent技术解读:Planning(规划)模块_知乎",
+    "url": "https://www.sogou.com/link?url=hedJjaC291OfPyaFZYFLI4KQWvqt63NBPXemWJ_BfX-tVKPKD6ukGw..",
+    "snippet": "扩展 ReAct 方法,通过引入评估器来评估轨迹。LLM 检测到错误时生成自我反思...（知乎 zhuanlan.zhihu.com）",
+    "published": "2024-09-25"
+  }
+]

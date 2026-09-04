@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Claude Code 2026：国产模型接入与cc-switch动态切换实战指南",
+    "url": "https://blog.csdn.net/aocaiti5781/article/details/101458981",
+    "snippet": "本文详解Claude Code 2026（CC2026）作为本地智能代理前端的核心定位，重点阐述其通过标准OpenAI兼容API协议无缝对接DeepSeek-V4-Pro、Kimi K2.7和智谱GLM-4-Flash三大国产大模型的实践路径；深入解析内建机制cc-switch的JSON配置热重载、多模型动态切换、上下文隔离等关键技术能力；并涵盖VS Code深度集成、自定义Skill调用、会话钉选等AI原生工作流构建方法。",
+    "published": null
+  },
+  {
+    "title": "Claude Code Skills 推荐：2026年最值得安装的10个AI技能",
+    "url": "https://juejin.cn/post/7637367613895393295",
+    "snippet": "Claude Code Skills 推荐：2026年最值得安装的10个AI技能。什么是 Claude Code Skills？Skills 是 Claude... Vercel 官方出品的 React 最佳实践。适用场景：React 项目开发、前端性能优化；核心功能：45+ 条规则。点赞 84，阅读 12875。",
+    "published": "2026"
+  }
+]

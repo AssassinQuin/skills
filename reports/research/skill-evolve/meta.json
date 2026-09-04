@@ -1,0 +1,20 @@
+{
+  "topic": "skill-evolve 提案验证（五机制核实/缺口/参数依据/风险/裁决）",
+  "date": "2026-09-03",
+  "requested_mode": "deep",
+  "effective_mode": "deep",
+  "report_file": "report.md",
+  "absorbed_inbox": ["skill-evolve-proposal-input.md"],
+  "sub_questions": [
+    {"id": "Q1", "question": "SkillOpt 机制与 52/52 SOTA 自报性质、独立复现状态", "tier": "core", "source_route": "github+glb"},
+    {"id": "Q2", "question": "ACE delta 增量更新防 context collapse 是否属实", "tier": "core", "source_route": "glb+github"},
+    {"id": "Q3", "question": "skill-creator v2 三维度量化（触发准确率/输出质量/效率）是否属实", "tier": "core", "source_route": "github"},
+    {"id": "Q4", "question": "hermes 反例（自动写 SKILL.md → 38.7k issues + 审计灾难）是否属实", "tier": "core", "source_route": "github"},
+    {"id": "Q5", "question": "ClawHub 机制及其在门控谱系中的角色", "tier": "core", "source_route": "glb+github"},
+    {"id": "Q6", "question": "同类最新进展与失败模式（提案未覆盖项）", "tier": "core", "source_route": "glb+cn"},
+    {"id": "Q7", "question": "关键参数依据：编辑预算≤3 skill/≤5 编辑、eval 5-10 例、僵尸 60 天线、token 不增", "tier": "core", "source_route": "glb+prime+local"},
+    {"id": "Q8", "question": "风险与边界：自改 SKILL.md 安全性、评估函数污染、gate 脚本 agent 不可改", "tier": "core", "source_route": "glb+zhihu+prime"},
+    {"id": "Q9", "question": "本仓库实据（usage/superpowers 占比/僵尸/评测集/outcome 字段）", "tier": "background", "source_route": "local"},
+    {"id": "Q10", "question": "skill-creator v2 与相关进化 skill（SkillOpt/ACE/hermes/ClawHub/alirezarezvani）专项对比：优势/劣势/痛点矩阵", "tier": "core", "source_route": "github+glb"}
+  ]
+}

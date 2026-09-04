@@ -1,0 +1,56 @@
+{
+  "code": "159992",
+  "name": "创新药ETF银华",
+  "full_name": "银华中证创新药产业交易型开放式指数证券投资基金",
+  "fund_company": "银华基金",
+  "tracking_index": {
+    "code": "931152",
+    "name": "CS 创新药"
+  },
+  "scale": {
+    "value": 151.77,
+    "unit": "亿元",
+    "as_of": "2026",
+    "tier": "T1",
+    "source_primary": "天天基金",
+    "source_secondary": "银华基金官网"
+  },
+  "fees": {
+    "management_fee": "0.50%",
+    "custodian_fee": "0.05%",
+    "total_expense_ratio": "0.55%"
+  },
+  "top_holdings_2026Q1": [
+    {"name": "药明康德", "code": "603259"},
+    {"name": "恒瑞医药", "code": "600276"},
+    {"name": "科伦药业", "code": "002422"},
+    {"name": "信立泰", "code": "002294"},
+    {"name": "复星医药", "code": "600196"},
+    {"name": "华东医药", "code": "000963"},
+    {"name": "康泰生物", "code": "300601"},
+    {"name": "泰格医药", "code": "300347"},
+    {"name": "长春高新", "code": "000661"},
+    {"name": "艾力斯", "code": "688578"}
+  ],
+  "silver_economy_exposure_analysis": {
+    "tier": "高",
+    "explanation": "纯创新药主题。老龄化驱动慢性病+肿瘤药物需求，是银发经济的纯度最高的子赛道"
+  },
+  "risk_metrics": {
+    "max_drawdown": "-63.12%",
+    "annualized_return_since_inception": "-2.33%/yr",
+    "tier": "T1",
+    "user_constraint_check": "❌ 严重突破 15% 硬约束"
+  },
+  "performance_history": {
+    "2021": "-10.61%",
+    "2022": "-25.74%",
+    "2023": "-11.91%",
+    "2024": "-16.51%",
+    "2025": "+19.34%",
+    "interpretation": "2021-2024 连续四年负收益，2025 出现拐点"
+  },
+  "tier_in_report": "B 情景 B 备选",
+  "scenario_recommendation": "情景 B 可替代 512170 中部分仓位",
+  "key_catalyst_2026": "2026-Q1 BD（业务拓展）金额同比 +41%，创新药出海加速"
+}

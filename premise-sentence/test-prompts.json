@@ -1,0 +1,16 @@
+{
+  "skill": "premise-sentence",
+  "version": "0.1.0",
+  "source_book": "《小说的骨架：好提纲成就好故事》 — 凯蒂·维兰德",
+  "darwin_compatible": true,
+  "test_cases": [
+    {"id": "should-trigger-01", "type": "should_trigger", "prompt": "我这个故事到底讲什么，帮我一句话概括一下", "expected_behavior": "激活 premise-sentence，压缩成一句前提句", "notes": "正面：要一句话概括"},
+    {"id": "should-trigger-02", "type": "should_trigger", "prompt": "我有一堆想法，但不确定这个点子能不能撑起一整本书", "expected_behavior": "激活 premise-sentence，用前提句检验想法可行性", "notes": "正面：验证点子"},
+    {"id": "should-trigger-03", "type": "should_trigger", "prompt": "帮我定义一下这个故事，我写了好几章才发现方向错了", "expected_behavior": "激活 premise-sentence，回到源头重新定位", "notes": "正面：方向迷失"},
+    {"id": "should-not-trigger-01", "type": "should_not_trigger", "prompt": "帮我头脑风暴几个可能的故事方向", "expected_behavior": "不应激活本 skill，应激活 what-if-brainstorm（发散）", "notes": "跨 skill 混淆：这是发散工序"},
+    {"id": "should-not-trigger-02", "type": "should_not_trigger", "prompt": "帮我写一段开头场景的描写", "expected_behavior": "不应激活前提句，那是正文写作", "notes": "诱饵：正文写作非提纲"},
+    {"id": "edge-01", "type": "edge_case", "prompt": "我的小说有五六条线并行，一句话概括不了怎么办？", "expected_behavior": "应识别为边界：多线小说可用前提句概括主线/第一卷，而非全书", "notes": "边界：多线/群像小说是否适合单一前提"}
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 跨 skill 混淆）+ 1 edge_case。"
+}

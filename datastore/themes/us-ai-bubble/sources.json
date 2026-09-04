@@ -1,0 +1,31 @@
+{
+  "theme": "us-ai-bubble",
+  "subject": "美国AI泡沫评估: 是否仍是机会?",
+  "research_date": "2026-07-08",
+  "fetched_at": "2026-07-08T15:30:00+08:00",
+  "key_verified_facts": {
+    "shiller_cape_2026_07": {"value": "39.5-41.7", "rank": "154年第2高", "dotcom_peak": 44.2, "median": 16, "sufficiency": "A"},
+    "mag7_top10_sp500_concentration": {"value": "~37%", "dotcom_2000": "27%", "note": "高于2000", "sufficiency": "A"},
+    "top5_concentration": {"value": "~22%", "note": "60年最高", "sufficiency": "A"},
+    "semis_pct_of_sp500": {"value": "19.7%", "note": "超2000峰值", "sufficiency": "A"},
+    "top10_forward_pe": {"value": "~35x", "dotcom_2000": "52x", "note": "有盈利支撑", "sufficiency": "B"},
+    "hyperscaler_ai_capex_2026": {"value": "$725B", "yoy": "+60%", "mag7_total": "~$700B", "sufficiency": "A"},
+    "june_2026_mag7_drawdown": {"value": "-$2.3T", "sufficiency": "A"},
+    "nvda_quarterly_revenue_bar": {"value": "$78.62B", "sufficiency": "A"},
+    "msft_forward_pe": {"value": "31x", "fy2026_revenue_growth": "+9%", "sufficiency": "A"}
+  },
+  "bubble_verdict": {
+    "strong_bubble_signals": ["CAPE 39.5-41.7", "Top10集中度37%超2000", "半导体占比19.7%", "Top5 22% 60年最高"],
+    "counter_signals": ["Top10前瞻PE 35x vs 2000的52x (有真实盈利)"],
+    "conclusion": "有真实基本面的高位泡沫 (late-stage bull), 非纯泡沫; capex消化回调15-30%概率 > 崩盘-80%"
+  },
+  "primary_sources": [
+    "Yahoo Finance: Mag7 capex $725B",
+    "CNBC 2026-06-30: Mag7 -$2.3T",
+    "Fortune: Mag7 cracking, MSFT 31x fwd PE",
+    "GuruFocus/Multpl: Shiller CAPE 39.5-41.7",
+    "Kobeissi Letter: Top10 37% vs 2000 27%",
+    "LGT Wealth: 4大厂单季capex $72B"
+  ],
+  "audit": {"tool": "~/.claude/tools/ai-berkshire/report_audit.py", "verdict": "准出 (PASS, 抽检4项 0不通过, 2026-07-08)"}
+}

@@ -1,0 +1,58 @@
+{
+  "code": "159611",
+  "name": "电力ETF广发",
+  "full_name": "广发中证全指电力公用事业交易型开放式指数证券投资基金",
+  "fund_company": "广发基金",
+  "tracking_index": {
+    "code": "000985",
+    "name": "中证全指电力公用事业"
+  },
+  "scale": {
+    "value": 66.88,
+    "unit": "亿元",
+    "as_of": "2026-03-31",
+    "rank_in_category": "同类电力 ETF 最大",
+    "tier": "T1",
+    "source_primary": "天天基金 http://fundf10.eastmoney.com/159611.html",
+    "source_secondary": "广发基金官网 2026-Q1 季报",
+    "verified": true
+  },
+  "fees": {
+    "management_fee": "0.50%",
+    "custodian_fee": "0.10%",
+    "total_expense_ratio": "0.60%"
+  },
+  "top_holdings_2026Q1": [
+    {"name": "长江电力", "code": "600900", "weight": "9.01%"},
+    {"name": "中国核电", "code": "601985", "weight": "high"},
+    {"name": "三峡能源", "code": "600905", "weight": "high"},
+    {"name": "国电电力", "code": "600795", "weight": "high"},
+    {"name": "华能国际", "code": "600011", "weight": "mid"},
+    {"name": "国投电力", "code": "600886", "weight": "mid"},
+    {"name": "川投能源", "code": "600674", "weight": "mid"},
+    {"name": "中国广核", "code": "003816", "weight": "mid"},
+    {"name": "浙能电力", "code": "600023", "weight": "low"}
+  ],
+  "motuo_exposure_analysis": {
+    "tier": "中-高",
+    "explanation": "含长江电力 9.01%（远期资产注入预期）+ 国投电力/川投能源等水电运营商业，但核心敞口是核电+火电，不是墨脱直接受益",
+    "warning": "长江电力与雅江项目当前无直接股权关系，'远期注入'为推测"
+  },
+  "risk_metrics": {
+    "max_drawdown_since_2021": "-28.55%",
+    "tier": "T1",
+    "source_primary": "京报网引 Wind 2026-05-06",
+    "source_secondary": "ETF 生态周报 2026-03",
+    "user_constraint_check": "❌ 突破用户 15% 硬约束"
+  },
+  "valuation_2026Q1": {
+    "pe_ttm": "中位偏低（44.71% 分位）",
+    "warning_signals": [
+      "三峡能源 PE 分位 99.45%（极度高估）",
+      "国电电力 PB 分位 8.95%（低估）"
+    ],
+    "source": "东方财富 PDF ETF 生态周报 2026-03-12"
+  },
+  "tier_in_report": "B",
+  "scenario_recommendation": "情景 B 配置 10%（总仓位）"
+}

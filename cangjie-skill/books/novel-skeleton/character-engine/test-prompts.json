@@ -1,0 +1,16 @@
+{
+  "skill": "character-engine",
+  "version": "0.1.0",
+  "source_book": "《小说的骨架：好提纲成就好故事》 — 凯蒂·维兰德",
+  "darwin_compatible": true,
+  "test_cases": [
+    {"id": "should-trigger-01", "type": "should_trigger", "prompt": "我的人物太平了，读者不关心他，怎么让他有张力", "expected_behavior": "激活 character-engine，用动机-愿望-目标链设计驱动力", "notes": "正面：人物没张力"},
+    {"id": "should-trigger-02", "type": "should_trigger", "prompt": "主角做这些事的动机是什么，帮我理清他的愿望和目标", "expected_behavior": "激活 character-engine，梳理动机→愿望→目标", "notes": "正面：理清动机"},
+    {"id": "should-trigger-03", "type": "should_trigger", "prompt": "我的人物为什么做了这件事？读者会信吗？", "expected_behavior": "激活 character-engine，追溯行动背后的动机", "notes": "正面：行动可追溯"},
+    {"id": "should-not-trigger-01", "type": "should_not_trigger", "prompt": "帮我采访一下这个角色，问他一百个问题", "expected_behavior": "不应激活本 skill，应激活 character-interview（填细节）", "notes": "跨 skill 混淆：采访是填属性"},
+    {"id": "should-not-trigger-02", "type": "should_not_trigger", "prompt": "帮我改一下这段 SQL 查询", "expected_behavior": "不应激活任何写作 skill", "notes": "诱饵：与写作无关"},
+    {"id": "edge-01", "type": "edge_case", "prompt": "我的主角是网文里那种金手指升级流，好像没有内在成长弧线，怎么办？", "expected_behavior": "应识别为边界：网文以能力/资源成长代替道德弧线，愿望可改为变强/复仇/争第一", "notes": "边界：网文无道德弧线"}
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 跨 skill 混淆）+ 1 edge_case。"
+}

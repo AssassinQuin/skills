@@ -1,0 +1,32 @@
+[
+ {
+  "title": "SkillOpt: Executive Strategy for Self-Evolving Agent Skills - arXiv",
+  "url": "https://arxiv.org/pdf/2605.23904",
+  "snippet": "May 1, 2026 ... By separating the target model that executes tasks from the optimizer that edits skills, and by using bounded edit budgets, minibatch reflection ...",
+  "published": "2026-05-01"
+ },
+ {
+  "title": "RankCut: A Ranking-Based LLM Approach to Extractive Summarization (ACM)",
+  "url": "https://dl.acm.org/doi/10.1145/3742413.3789115",
+  "snippet": "This example edit is reflective behavior across participants: editors ... Confidence-graded priorities and normalized scores help editors triage and budget review ...",
+  "published": ""
+ },
+ {
+  "title": "MAI-Thinking-1: Building a Hill-Climbing Machine - Microsoft AI",
+  "url": "https://microsoft.ai/pdf/mai-thinking-1.pdf",
+  "snippet": "Our pre-training is focused on a simple scaling approach which emphasizes empirically-driven iterative improvements to our architecture and data, while our ...",
+  "published": ""
+ },
+ {
+  "title": "LLM Eval Budget Allocation Guide 2026 - FutureAGI",
+  "url": "https://futureagi.com/blog/llm-eval-budget-allocation-prioritization-2026/",
+  "snippet": "LLM Eval Budget Allocation and Prioritization in 2026. Eval budget is four knobs: rubric coverage, dataset size, judge tier, refresh cadence. Priority order that maximizes signal per dollar, with a 90-day plan.",
+  "published": "2026"
+ },
+ {
+  "title": "Building Evaluation Datasets for LLM Apps — How to Create Golden Testsets - MasterPrompting",
+  "url": "https://masterprompting.net/blog/building-evaluation-datasets-llm-golden-testsets",
+  "snippet": "A practical guide to creating golden test sets for LLM evaluation: how many examples, annotation strategies, LLM-assisted labeling, edge case coverage, and dataset maintenance.",
+  "published": ""
+ }
+]

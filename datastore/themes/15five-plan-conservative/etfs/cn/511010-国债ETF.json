@@ -1,0 +1,11 @@
+{
+  "fetched_at": "2026-07-07",
+  "code": "511010",
+  "name": "国债ETF",
+  "manager": "国泰基金",
+  "tracked_index": "上证国债指数",
+  "fee_pct": 0.3,
+  "role_in_portfolio": "duration_diversification",
+  "target_weight_pct": 12,
+  "rationale": "中长久期利率债主力；当前 10Y 国债 1.73-1.75% 处历史低位，长久期对利率下行敏感（资本利得），上行则有回撤风险"
+}

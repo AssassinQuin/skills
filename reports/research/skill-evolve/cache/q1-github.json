@@ -1,0 +1,7 @@
+[
+  {
+    "title": "microsoft/SkillOpt — README.md (read 2026-09-03, file SHA 03696d60)",
+    "url": "https://github.com/microsoft/SkillOpt",
+    "snippet": "Repo exists. Title: 'SkillOpt: Executive Strategy for Self-Evolving Agent Skills'. arXiv 2605.23904, MIT, PyPI skillopt. README self-claims: 'best or tied-best on all 52 evaluated (model, benchmark, harness) cells' — 52 = (model, benchmark, harness) cells over 6 benchmarks x 7 models x 3 harnesses, NOT 52 benchmarks. GPT-5.5 lifts +23.5 (direct chat) / +24.8 (Codex) / +19.1 (Claude Code). Validation gate verbatim: 'a candidate edit is accepted only when it strictly improves a held-out validation score'; v0.2.0 (2026-07-02) ships SkillOpt-Sleep 'consolidate validated skills behind a held-out validation gate'. News: Microsoft Research blog feature 2026-07-24; v0.1.0 on PyPI 2026-06-02. Star count of microsoft/SkillOpt NOT retrieved (budget). Third-party evidence contradicting 'no independent reproduction': joshhu/skillopt-qa (57 stars, created 2026-05-27) 'Minimal faithful re-implementation of Microsoft SkillOpt... HotpotQA'; magnus919/hermes-SkillOpt (25 stars) 'derives from Microsoft Research's SkillOpt: 52/52 settings improved... with validation gates'; README news credits gbrain/gbrain-evals/darwin-skill integrations with a 2026-06-03 gbrain-evals benchmark doc."
+  }
+]

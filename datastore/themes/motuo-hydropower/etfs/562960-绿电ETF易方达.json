@@ -1,0 +1,48 @@
+{
+  "code": "562960",
+  "name": "绿色电力ETF易方达",
+  "full_name": "易方达中证绿色电力交易型开放式指数证券投资基金",
+  "fund_company": "易方达基金",
+  "tracking_index": {
+    "code": "931897",
+    "name": "中证绿色电力"
+  },
+  "scale": {
+    "value_range": [7.99, 14.1],
+    "unit": "亿元",
+    "as_of": "2026-Q1",
+    "tier": "T1",
+    "source_primary": "东方财富",
+    "source_secondary": "易方达官网",
+    "note": "规模中等偏小，流动性可接受"
+  },
+  "fees": {
+    "total_expense_ratio": "0.60%（管理 0.50% + 托管 0.10%）"
+  },
+  "top_holdings_2026Q1": [
+    "中国核电",
+    "长江电力",
+    "三峡能源",
+    "国电电力",
+    "国投电力",
+    "华能国际",
+    "川投能源"
+  ],
+  "motuo_exposure_analysis": {
+    "tier": "中",
+    "explanation": "最纯的绿电指数，水电权重高，但核电+风电+光伏也占较大比重"
+  },
+  "risk_metrics": {
+    "max_drawdown": "-17.84%",
+    "tier": "T0",
+    "source": "易方达官网 562960 页面 https://www.efunds.com.cn/",
+    "user_constraint_check": "❌ 突破用户 15% 硬约束，但比电力 ETF 略好"
+  },
+  "valuation_2026Q1": {
+    "pe_ttm_range": "17-20 倍",
+    "tier": "T0",
+    "source": "csindex.com.cn factsheet"
+  },
+  "tier_in_report": "B",
+  "scenario_recommendation": "情景 B 配置 5%（总仓位）"
+}

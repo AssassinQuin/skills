@@ -1,0 +1,70 @@
+{
+  "code": "512170",
+  "name": "医疗ETF华宝",
+  "full_name": "华宝中证医疗交易型开放式指数证券投资基金",
+  "fund_company": "华宝基金",
+  "fund_manager": "张放",
+  "tracking_index": {
+    "code": "399989",
+    "name": "中证医疗"
+  },
+  "scale": {
+    "value": 279.96,
+    "unit": "亿元",
+    "as_of": "2026-03-31",
+    "rank_in_category": "A 股医疗 ETF 规模最大",
+    "tier": "T1",
+    "source_primary": "天天基金 http://fundf10.eastmoney.com/512170.html",
+    "source_secondary": "华宝基金官网",
+    "verified": true,
+    "note": "2026-06 末份额 836.81 亿份，规模降至 ~256 亿"
+  },
+  "fees": {
+    "management_fee": "0.50%",
+    "custodian_fee": "0.10%",
+    "total_expense_ratio": "0.60%"
+  },
+  "top_holdings_2026Q1": [
+    {"name": "药明康德", "code": "603259", "weight": "11.15%"},
+    {"name": "迈瑞医疗", "code": "300760", "weight": "8.53%"},
+    {"name": "联影医疗", "code": "688271"},
+    {"name": "爱尔眼科", "code": "300015"},
+    {"name": "康泰生物", "code": "300601"},
+    {"name": "泰格医药", "code": "300347"},
+    {"name": "英科医疗", "code": "300677"},
+    {"name": "华兰生物", "code": "002007"},
+    {"name": "凯莱英", "code": "002821"},
+    {"name": "鱼跃医疗", "code": "002223"}
+  ],
+  "silver_economy_exposure_analysis": {
+    "tier": "高",
+    "explanation": "A 股医疗 ETF 规模王，重仓 CXO + 医疗器械 + 民营医疗龙头。直接受益于老龄化医疗需求增长"
+  },
+  "risk_metrics": {
+    "max_drawdown_since_inception": "-90.49%",
+    "max_drawdown_2021_2024": "-68.9%",
+    "peak_to_trough_period": "2021.07 → 2024.02.05",
+    "net_value_at_trough": 0.315,
+    "tier": "T1",
+    "source": "每经网 2026-06 + financial_rigor.py 验算",
+    "user_constraint_check": "❌ 严重突破 15% 硬约束",
+    "annualized_return_since_inception": "-14.92%/yr"
+  },
+  "valuation_2026Q3": {
+    "pe_ttm": 28.58,
+    "pe_percentile_3y": "12.84%",
+    "pb_percentile": "4.04%",
+    "tier": "T1",
+    "source": "蛋卷基金 danjuanfunds.com 2026-07-03",
+    "interpretation": "估值处于历史极低位，但需配合业绩拐点确认"
+  },
+  "roe_warning": {
+    "roe_2021": "22%",
+    "roe_2025": "10.55%",
+    "warning": "估值便宜不能等于见底，需观察 2026-Q3/Q4 净利润能否转正",
+    "tier": "T2",
+    "source": "每经网 2026-06"
+  },
+  "tier_in_report": "B 情景 B/C 配置",
+  "scenario_recommendation": "情景 B 配置 10%（总仓位），情景 C 配置 8%"
+}

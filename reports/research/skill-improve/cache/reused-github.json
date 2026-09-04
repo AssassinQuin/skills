@@ -1,0 +1,32 @@
+[
+  {
+    "title": "anthropics/skills commit 5304866 (2026-09-01): Update claude-api skill: Claude Fable 5.1 / Mythos 5.1, Managed Agents updates, cost-optimize (#1704)",
+    "url": "https://github.com/anthropics/skills/commit/53048666b05b4799081517d00e09e0a2dd688678",
+    "snippet": "author=rlancemartin date=2026-09-01T18:30:38Z — docs Fable 5.1/Mythos 5.1 default models, Files API & Skills API out of beta (client.files.*/client.skills.* no beta header), SDK Managed Agents memory stores, prompt-caching TTL selection, Sonnet 5 permanent $2/$10 pricing, ASCII-only prose normalization",
+    "published": "2026-09-01"
+  },
+  {
+    "title": "anthropics/skills commit 3b3fad9 (2026-08-21): Update claude-api skill: Python SDK 0.x -> 1.x upgrade guide (#1623)",
+    "url": "https://github.com/anthropics/skills/commit/3b3fad96af16a10759d930941b4520ba0c40edae",
+    "snippet": "author=cj-ant (Anthropic) date=2026-08-21T17:10:53Z — new 'upgrade' subcommand, httpx2 HTTP layer, Python 3.10 floor, sdk-upgrade.md",
+    "published": "2026-08-21"
+  },
+  {
+    "title": "anthropics/skills commit 0a64e39 (2026-08-18): Rename claude-academy-guide skill to academy-guide (#1605)",
+    "url": "https://github.com/anthropics/skills/commit/0a64e398ec6bb34a494f0c347e8ccae53a862f8e",
+    "snippet": "author=kswan-wk date=2026-08-18T16:02:05Z — skill names cannot contain reserved words 'claude'/'anthropic'; description shortened 1176->992 chars to fit 1024-char upload limit (packaging as uploaded custom skill)",
+    "published": "2026-08-18"
+  },
+  {
+    "title": "anthropics/skills commit f379e5a (2026-08-17): Add discernment-nudge skill (#1553)",
+    "url": "https://github.com/anthropics/skills/commit/f379e5ad66e2febc1616cf8d6284666fecbe514e",
+    "snippet": "author=kswan-wk date=2026-08-17T17:23:10Z — opt-in skill appending 2-3 follow-up questions after substantive answers; max once per conversation",
+    "published": "2026-08-17"
+  },
+  {
+    "title": "anthropics/skills commit 89dcaa3 (2026-08-17): Add claude-academy-guide skill (#1554)",
+    "url": "https://github.com/anthropics/skills/commit/89dcaa3a283f79ed84fd8fe53e2208b9442a6427",
+    "snippet": "author=kswan-wk date=2026-08-17T13:03:59Z — recommends Claude Academy courses reading live catalog.json at runtime instead of snapshot",
+    "published": "2026-08-17"
+  }
+]

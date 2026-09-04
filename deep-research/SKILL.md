@@ -66,7 +66,7 @@ spawn 搜索员（Agent 工具，general-purpose，**显式 model**，并行发�
 |---|---|---|---|
 | cn 搜索员 | sonnet | mcp__websearch-cn__search | quick 3 / deep 6 |
 | glb 搜索员 | sonnet | mcp__websearch-global__search | quick 3 / deep 6 |
-| zhihu 搜索员 | sonnet | mcp__zhihu__zhihu_search、mcp__zhihu-global__global_search | ≤4 次，串行调用 |
+| zhihu 搜索员 | sonnet | mcp__zhihu-global__global_search | ≤4 次，串行调用 |
 | github 搜索员 | sonnet | mcp__github__*（search_repositories / search_issues / search_code / get_file_contents / list_commits） | ≤8 次调用 |
 
 搜索员 prompt 模板（`{LANE}`/`{DATE}`/`{TASK}`/`{QUERY_LIST}`/`{TOOL_DOC}`/`{WAVE}` 运行时填充）：

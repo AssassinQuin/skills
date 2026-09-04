@@ -1,0 +1,16 @@
+{
+  "skill": "outline-mindset",
+  "version": "0.1.0",
+  "source_book": "《小说的骨架：好提纲成就好故事》 — 凯蒂·维兰德",
+  "darwin_compatible": true,
+  "test_cases": [
+    {"id": "should-trigger-01", "type": "should_trigger", "prompt": "我想写本小说，但纠结要不要先写提纲，怕提纲会束缚我的创造力", "expected_behavior": "激活 outline-mindset，破除错误认知，论证提纲是指南非铁律", "notes": "正面：对提纲有抵触"},
+    {"id": "should-trigger-02", "type": "should_trigger", "prompt": "什么是提纲？是不是就是高中那种罗马数字大纲？", "expected_behavior": "激活 outline-mindset，澄清提纲无固定格式", "notes": "正面：新手不知提纲是什么"},
+    {"id": "should-trigger-03", "type": "should_trigger", "prompt": "我上次没写大纲直接写，结果烂尾返工了，怎么避免？", "expected_behavior": "激活 outline-mindset，用成本账论证先规划胜过返工", "notes": "正面：返工后求助"},
+    {"id": "should-not-trigger-01", "type": "should_not_trigger", "prompt": "帮我写一句前提句概括我的故事", "expected_behavior": "不应激活本 skill，应激活 premise-sentence", "notes": "跨 skill 混淆：这是前提句工序"},
+    {"id": "should-not-trigger-02", "type": "should_not_trigger", "prompt": "帮我查一下这个 API 的参数", "expected_behavior": "不应激活任何写作 skill", "notes": "诱饵：与写作无关"},
+    {"id": "edge-01", "type": "edge_case", "prompt": "我是斯蒂芬·金那种即兴创作型，从来不想提前规划，你还要劝我写提纲吗？", "expected_behavior": "应识别为边界，尊重即兴型作家，不强推提纲（可提示提纲也可即兴但代价不同）", "notes": "边界：是否对即兴型作家也推提纲"}
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 跨 skill 混淆）+ 1 edge_case。"
+}

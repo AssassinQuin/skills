@@ -1,0 +1,128 @@
+[
+  {
+    "query": "awesome claude skills",
+    "title": "ComposioHQ/awesome-claude-skills",
+    "url": "https://github.com/ComposioHQ/awesome-claude-skills",
+    "snippet": "{\"owner\":\"ComposioHQ\",\"name\":\"awesome-claude-skills\",\"stars\":74425,\"forks\":8554,\"open_issues\":1396,\"updated_at\":\"2026-09-04T04:20:40Z\",\"pushed_at\":\"2026-08-10T21:45:44Z\",\"created_at\":\"2025-10-17T07:15:01Z\",\"description\":\"A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows\"}",
+    "published": "2025-10-17"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "hesreallyhim/awesome-claude-code",
+    "url": "https://github.com/hesreallyhim/awesome-claude-code",
+    "snippet": "{\"owner\":\"hesreallyhim\",\"name\":\"awesome-claude-code\",\"stars\":53467,\"forks\":4664,\"open_issues\":985,\"updated_at\":\"2026-09-04T03:49:38Z\",\"pushed_at\":\"2026-09-04T03:11:59Z\",\"created_at\":\"2025-04-19T20:55:59Z\",\"description\":\"Hand-picked collection of resources for Claude Code: skills, agents, status lines, tooling, plugins\"}",
+    "published": "2025-04-19"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "VoltAgent/awesome-agent-skills",
+    "url": "https://github.com/VoltAgent/awesome-agent-skills",
+    "snippet": "{\"owner\":\"VoltAgent\",\"name\":\"awesome-agent-skills\",\"stars\":33715,\"forks\":3565,\"open_issues\":51,\"updated_at\":\"2026-09-04T04:09:36Z\",\"pushed_at\":\"2026-09-02T11:55:39Z\",\"created_at\":\"2025-10-28T08:55:32Z\",\"description\":\"Curated collection of 1000+ agent skills from official dev teams and community, compatible with Claude Code, Codex, Gemini CLI, Cursor, and more\"}",
+    "published": "2025-10-28"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "travisvn/awesome-claude-skills",
+    "url": "https://github.com/travisvn/awesome-claude-skills",
+    "snippet": "{\"owner\":\"travisvn\",\"name\":\"awesome-claude-skills\",\"stars\":14955,\"forks\":1938,\"open_issues\":791,\"updated_at\":\"2026-09-04T02:58:48Z\",\"pushed_at\":\"2026-04-28T19:30:24Z\",\"created_at\":\"2025-10-16T20:42:39Z\",\"description\":\"A curated list of awesome Claude Skills, resources, and tools — particularly Claude Code\"}",
+    "published": "2025-10-16"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "BehiSecc/awesome-claude-skills",
+    "url": "https://github.com/BehiSecc/awesome-claude-skills",
+    "snippet": "{\"owner\":\"BehiSecc\",\"name\":\"awesome-claude-skills\",\"stars\":10094,\"forks\":1499,\"open_issues\":140,\"updated_at\":\"2026-09-04T02:50:53Z\",\"pushed_at\":null,\"created_at\":\"2025-10-17T15:05:35Z\",\"description\":\"A curated list of Claude Skills. (pushed_at unavailable in minimal output)\"}",
+    "published": "2025-10-17"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "heilcheng/awesome-agent-skills",
+    "url": "https://github.com/heilcheng/awesome-agent-skills",
+    "snippet": "{\"owner\":\"heilcheng\",\"name\":\"awesome-agent-skills\",\"stars\":6173,\"forks\":666,\"open_issues\":291,\"updated_at\":\"2026-09-04T01:41:02Z\",\"pushed_at\":null,\"created_at\":\"2025-12-29T21:13:40Z\",\"description\":\"Tutorials, Guides and Agent Skills Directories (pushed_at unavailable in minimal output)\"}",
+    "published": "2025-12-29"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "wesammustafa/Claude-Code-Everything-You-Need-to-Know",
+    "url": "https://github.com/wesammustafa/Claude-Code-Everything-You-Need-to-Know",
+    "snippet": "{\"owner\":\"wesammustafa\",\"name\":\"Claude-Code-Everything-You-Need-to-Know\",\"stars\":2939,\"forks\":338,\"open_issues\":7,\"updated_at\":\"2026-09-04T03:52:33Z\",\"pushed_at\":null,\"created_at\":\"2025-08-17T14:45:39Z\",\"description\":\"Practical Claude Code guide: setup, prompt engineering, slash commands, skills, hooks, subagents, agent teams, MCP servers (pushed_at unavailable in minimal output)\"}",
+    "published": "2025-08-17"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "bergside/awesome-design-skills",
+    "url": "https://github.com/bergside/awesome-design-skills",
+    "snippet": "{\"owner\":\"bergside\",\"name\":\"awesome-design-skills\",\"stars\":2656,\"forks\":253,\"open_issues\":12,\"updated_at\":\"2026-09-04T02:17:08Z\",\"pushed_at\":null,\"created_at\":\"2026-03-09T08:55:36Z\",\"description\":\"List of 67 DESIGN.md and SKILL.md design skill files for agentic tools (pushed_at unavailable in minimal output)\"}",
+    "published": "2026-03-09"
+  },
+  {
+    "query": "awesome claude skills",
+    "title": "ruvnet/RuView (topic-match false positive)",
+    "url": "https://github.com/ruvnet/RuView",
+    "snippet": "{\"owner\":\"ruvnet\",\"name\":\"RuView\",\"stars\":92460,\"forks\":12266,\"open_issues\":621,\"updated_at\":\"2026-09-04T04:14:46Z\",\"pushed_at\":\"2026-09-04T00:37:55Z\",\"created_at\":\"2025-06-07T04:32:30Z\",\"description\":\"WiFi spatial intelligence project — matched query via topics 'awesome/claude/skills' but is NOT a Claude skills collection; excluded from relevance\"}",
+    "published": "2025-06-07"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "davepoon/buildwithclaude",
+    "url": "https://github.com/davepoon/buildwithclaude",
+    "snippet": "{\"owner\":\"davepoon\",\"name\":\"buildwithclaude\",\"stars\":3409,\"forks\":495,\"open_issues\":14,\"updated_at\":\"2026-09-03T21:03:12Z\",\"pushed_at\":\"2026-09-03T10:37:19Z\",\"created_at\":\"2025-07-25T02:26:45Z\",\"description\":\"Hub to find Claude Skills, Agents, Commands, Hooks, Plugins, and Marketplace collections for Claude Code / Desktop / Agent SDK / OpenClaw\"}",
+    "published": "2025-07-25"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "netresearch/claude-code-marketplace",
+    "url": "https://github.com/netresearch/claude-code-marketplace",
+    "snippet": "{\"owner\":\"netresearch\",\"name\":\"claude-code-marketplace\",\"stars\":55,\"forks\":13,\"open_issues\":2,\"updated_at\":\"2026-09-03T14:48:06Z\",\"pushed_at\":\"2026-08-19T19:00:11Z\",\"created_at\":\"2025-10-18T07:59:00Z\",\"description\":\"Curated Agent Skills collection, open standard agentskills.io, portable across Claude Code, Cursor, Copilot, Codex, Gemini CLI, 30+ agents\"}",
+    "published": "2025-10-18"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "artemnovichkov/skills",
+    "url": "https://github.com/artemnovichkov/skills",
+    "snippet": "{\"owner\":\"artemnovichkov\",\"name\":\"skills\",\"stars\":36,\"forks\":3,\"open_issues\":1,\"updated_at\":\"2026-09-03T06:27:07Z\",\"pushed_at\":\"2026-07-15T12:59:20Z\",\"created_at\":\"2025-11-02T14:04:38Z\",\"description\":\"Collection of Claude Code plugins for enhanced development workflows (skills.sh)\"}",
+    "published": "2025-11-02"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "ubranch/my-marketplace",
+    "url": "https://github.com/ubranch/my-marketplace",
+    "snippet": "{\"owner\":\"ubranch\",\"name\":\"my-marketplace\",\"stars\":13,\"forks\":2,\"open_issues\":0,\"updated_at\":\"2026-06-22T09:53:21Z\",\"pushed_at\":\"2026-03-22T00:34:56Z\",\"created_at\":\"2026-03-17T21:15:21Z\",\"description\":\"A collection of productivity skills for claude code\"}",
+    "published": "2026-03-17"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "DmitriyYukhanov/claude-plugins",
+    "url": "https://github.com/DmitriyYukhanov/claude-plugins",
+    "snippet": "{\"owner\":\"DmitriyYukhanov\",\"name\":\"claude-plugins\",\"stars\":7,\"forks\":0,\"open_issues\":4,\"updated_at\":\"2026-09-02T17:52:32Z\",\"pushed_at\":null,\"created_at\":\"2026-01-27T12:13:00Z\",\"description\":\"Personal collection of Claude Code plugins and skills: dev workflows, cross-model review, issue-to-PR automation (pushed_at unavailable in minimal output)\"}",
+    "published": "2026-01-27"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "synaptiai/synapti-marketplace",
+    "url": "https://github.com/synaptiai/synapti-marketplace",
+    "snippet": "{\"owner\":\"synaptiai\",\"name\":\"synapti-marketplace\",\"stars\":6,\"forks\":2,\"open_issues\":5,\"updated_at\":\"2026-08-03T22:28:43Z\",\"pushed_at\":null,\"created_at\":\"2025-12-19T09:19:51Z\",\"description\":\"Curated collection of Claude Code plugins with specialized agents, skills, commands (pushed_at unavailable in minimal output)\"}",
+    "published": "2025-12-19"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "rohingosling/claude-skills",
+    "url": "https://github.com/rohingosling/claude-skills",
+    "snippet": "{\"owner\":\"rohingosling\",\"name\":\"claude-skills\",\"stars\":5,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-08-13T13:05:38Z\",\"pushed_at\":null,\"created_at\":\"2026-06-14T08:05:44Z\",\"description\":\"Claude Code plugin marketplace. Curated collection of publicly-shared agent skills (pushed_at unavailable in minimal output)\"}",
+    "published": "2026-06-14"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "CoderMageFox/claude-skills-market",
+    "url": "https://github.com/CoderMageFox/claude-skills-market",
+    "snippet": "{\"owner\":\"CoderMageFox\",\"name\":\"claude-skills-market\",\"stars\":5,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-03-11T17:57:42Z\",\"pushed_at\":null,\"created_at\":\"2026-01-08T07:46:15Z\",\"description\":\"Claude Code Skills Marketplace - collection of high-quality skills (pushed_at unavailable in minimal output)\"}",
+    "published": "2026-01-08"
+  },
+  {
+    "query": "claude skills collection marketplace",
+    "title": "adeonir/claude-code-extras (ARCHIVED)",
+    "url": "https://github.comadeonir/claude-code-extras",
+    "snippet": "{\"owner\":\"adeonir\",\"name\":\"claude-code-extras\",\"stars\":8,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-05-10T06:21:53Z\",\"pushed_at\":\"2026-01-31T22:38:42Z\",\"created_at\":\"2025-12-03T01:09:41Z\",\"archived\":true,\"description\":\"Personal collection of Claude Code plugins organized as marketplace — ARCHIVED\"}",
+    "published": "2025-12-03"
+  }
+]

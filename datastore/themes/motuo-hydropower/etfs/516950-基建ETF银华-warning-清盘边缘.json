@@ -1,0 +1,36 @@
+{
+  "code": "516950",
+  "name": "基建ETF银华",
+  "fund_company": "银华基金",
+  "tracking_index": {
+    "code": "399995",
+    "name": "中证基建工程"
+  },
+  "scale": {
+    "value_range": [1.22, 1.62],
+    "unit": "亿元",
+    "as_of": "2026H1",
+    "tier": "T2",
+    "source": "搜狐/东方财富",
+    "warning": "⚠️ 规模接近清盘线（5000 万），份额从 2025 年末 2.43 亿份锐减至 2026 年中 1.20 亿份"
+  },
+  "fees": {
+    "management_fee": "0.50%",
+    "custodian_fee": "0.10%"
+  },
+  "top_holdings_2026Q1": [
+    {"name": "中国建筑", "weight": "9.56%"},
+    {"name": "中国中铁", "weight": "7.24%"},
+    {"name": "中国电建", "weight": "6.44%"},
+    "中联重科"
+  ],
+  "risk_metrics": {
+    "max_drawdown": "-20.03%",
+    "tier": "T2",
+    "source": "天天基金 h5.1234567.com.cn",
+    "user_constraint_check": "❌ 突破 15% 硬约束"
+  },
+  "tier_in_report": "回避",
+  "scenario_recommendation": "❌ 不推荐 - 清盘边缘 + 回撤约束突破",
+  "warning_summary": "两大问题：1) 规模 1.2-1.6 亿接近清盘线 2) 历史最大回撤 -20%。保守型投资者应回避。"
+}

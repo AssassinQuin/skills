@@ -1,0 +1,12 @@
+[
+  {
+    "title": "anthropics/skills issue #1706 — parallel trigger-eval workers collapse measured trigger rate to ~1/num_workers (open, filed 2026-09-02)",
+    "url": "https://github.com/anthropics/skills/issues/1706",
+    "snippet": "Title: 'skill-creator: parallel trigger-eval workers share one commands dir, collapsing measured trigger rate to ~1/num_workers'. Body: workers share one .claude/commands dir, each claude -p sees N identical skills differing only by UUID, scored 'triggered' only if it picks its own; 'measured trigger rate therefore collapses toward 1/num_workers independently of the description being tested'; --num-workers defaults to 10 so run_loop.py optimizes against ~10%-scaled noise. Evidence table: num_workers 10 -> Recall 6%, 3 -> 20%/0%, 1 -> 80% (Precision 90-100%). 'Recall tracks 1/N. The description was never the variable.' Two independent confirmations cited."
+  },
+  {
+    "title": "anthropics/skills — 12 open issues matching 'eval harness' (extracted 2026-09-03)",
+    "url": "https://github.com/anthropics/skills/issues?q=is%3Aissue+eval+harness",
+    "snippet": "#1715 (2026-09-03) 'run_eval.py: independent Windows/uv-only confirmation of #1692 & #1706, plus net-new items'; #1692 (2026-08-30) 'Trigger-eval harness silently broken on Windows: select() on pipes, probe files leak into global ~/.claude/command'; #1552 (2026-08-12) 'description optimizer reports ~0% recall for skills that actually do trigger'; #1412 (2026-07-09) 'description-optimization loop burned 100% of a Max subscription in ~3 minutes — false-negative eval bug + no cost guard'; #1304 (2026-06-10) 'cp1252 read_text() crash + nested claude -p WinError 10038 silently zeroes all results'; #556 (2026-03-07) 'claude -p never triggers skills/commands (0% trigger rate across all queries)'; #1221, #1169 (recall=0% every iteration). Pattern: the official eval harness has repeatedly been shown broken (measuring noise), spanning 2026-03 to 2026-09."
+  }
+]

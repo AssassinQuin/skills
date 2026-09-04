@@ -1,0 +1,37 @@
+{
+  "theme": "cn-dividend-value",
+  "subject": "中国收益明确价值标的筛选 (低估值+高分红+现金流)",
+  "research_date": "2026-07-08",
+  "fetched_at": "2026-07-08T15:30:00+08:00",
+  "reuses": ["datastore/indices/930740 (沪深300红利低波深度研究)"],
+  "key_verified_facts": {
+    "macro_backdrop": {"10y_china_gov_bond": "1.74%", "frame": "类日本1995-2005早期"},
+    "csi_dividend_index_2026h1": {"value": "-6.8%", "sufficiency": "A"},
+    "dividend_lowvol_index_2026h1": {"value": "-9.2%", "lag_vs_csi300": "~17.9pp", "sufficiency": "A"},
+    "dividend_lowvol_etf": {"yield": "~4.5%", "pe": "8.27-8.47", "code": "515300/930740", "sufficiency": "A"},
+    "changjiang_power_600900": {"pe": "~17.8", "yield": "~3.7%", "profit_growth_2026_28": "+7.67%/+7.57%/+2.39%", "sufficiency": "B"},
+    "china_mobile": {"yield_2026e": "~5.45%", "payout_ratio": "80%+", "a_code": "600941", "hk_code": "00941.HK", "sufficiency": "B"},
+    "bank_sector": {"pe": "5-7x", "yield": "5-6%", "sufficiency": "B"},
+    "hk_dividend_2025_vs_a": {"value": "跑赢A股红利49%", "source": "国金证券", "sufficiency": "B"},
+    "warning_930740_top5": {"note": "5大重仓2025营收全降, 4/5 ROE下滑 (能源周期)", "sufficiency": "A"},
+    "june_2026_lowvol_crash": {
+      "event": "2026年6月中证红利低波单月-8.5%, 创指数上市以来最大月度回撤; 6/18当周-6.95%(概率1.43%); 年初至6月中旬-6.65%",
+      "causes_ranked": ["科技AI虹吸+极致风格切换(主因, 月吸金100亿+)", "10Y国债Q1回升至1.83%削弱类债吸引力", "估值消化+拥挤交易抱团松动(PE平安口径73%分位)", "能源价格波动(能源权重17.45%)", "指数结构缺陷+季节性资金流出"],
+      "paradox": "低波悖论: 拥挤的低波股相关性飙升, 风格反转时同涨同跌→低波变高波",
+      "forward_signal": "7月初科创50前3交易日-10.5%, 机构再平衡; 东方证券认为或存超跌修复",
+      "sufficiency": "A"
+    }
+  },
+  "top_picks": {
+    "tier1_core": ["长江电力(600900)", "中国移动(600941/00941.HK)", "红利低波ETF(515300)", "港股央企红利ETF"],
+    "tier2_satellite": ["招商银行(600036)", "四大行", "能源央企(择时)"]
+  },
+  "primary_sources": [
+    "datastore/indices/930740/reports/2026-07-06-deep-dive.md (T0 akshare)",
+    "财联社: 红利低波首选石油/运营商/电力/交运",
+    "国金证券: 港股红利2025跑赢A股49%",
+    "21财经/兴业证券: 红利2026中期策略",
+    "机构研报(长江电力/中国移动)"
+  ],
+  "audit": {"tool": "~/.claude/tools/ai-berkshire/report_audit.py", "verdict": "准出 (PASS, 抽检4项 0不通过, 2026-07-08)"}
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "title": "SkillReducer: Optimizing LLM Agent Skills for Token Efficiency (abs)",
+    "url": "https://arxiv.org/abs/2603.29919",
+    "snippet": "LLM-based coding agents rely on skills, pre-packaged instruction sets that extend agent capabilities, yet every token of skill content injected into the context window incurs both monetary cost and attention dilution. Large-scale empirical study of 55,315 publicly available skills finds systemic inefficiencies: 26.4% lack ...",
+    "published": null
+  },
+  {
+    "title": "SkillReducer: Optimizing LLM Agent Skills for Token Efficiency (HTML)",
+    "url": "https://arxiv.org/html/2603.29919v1",
+    "snippet": "Evaluated on 600 skills alongside the external SkillsBench benchmark. SkillReducer achieves significant token savings, with a 48% mean compression rate for descriptions and a 39% mean reduction for body tokens. The optimization preserves functional quality, maintaining an 86.0% pass rate on task-based evaluations and a 100% pass rate ...",
+    "published": null
+  },
+  {
+    "title": "Why Anthropic Caps SKILL.md at Under 5K Tokens and Ho… | BestHub",
+    "url": "https://www.besthub.dev/articles/why-anthropic-caps-skill-md-at-under-5k-tokens-and-how-to-structure-yours-9310df28cb04",
+    "snippet": "Explains Anthropic's official 5K-token limit for SKILL.md files, breaks down the three-level loading architecture, demonstrates progressive disclosure with concrete token calculations, and provides a step-by-step refactoring guide that reduces token usage while improving skill accuracy.",
+    "published": null
+  }
+]

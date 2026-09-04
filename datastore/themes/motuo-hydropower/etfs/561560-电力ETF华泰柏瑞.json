@@ -1,0 +1,43 @@
+{
+  "code": "561560",
+  "name": "电力ETF华泰柏瑞",
+  "fund_company": "华泰柏瑞基金",
+  "tracking_index": {
+    "code": "000985",
+    "name": "中证全指电力公用事业"
+  },
+  "scale": {
+    "value": 28.66,
+    "unit": "亿元",
+    "as_of": "2026-03-31",
+    "tier": "T1",
+    "source": "东方财富"
+  },
+  "fees": {
+    "total_expense_ratio": "0.60%"
+  },
+  "top_holdings_2026Q1": [
+    {"name": "长江电力", "weight": "9.00%"},
+    {"name": "中国核电", "weight": "7.91%"},
+    {"name": "三峡能源", "weight": "6.47%"},
+    {"name": "国电电力", "weight": "4.57%"},
+    {"name": "永泰能源", "weight": "4.17%"},
+    "中国广核",
+    "国投电力",
+    "华能国际",
+    "川投能源",
+    "浙能电力"
+  ],
+  "motuo_exposure_analysis": {
+    "tier": "中-高",
+    "explanation": "与 159611 跟踪同一指数，重仓股略有差异"
+  },
+  "risk_metrics": {
+    "max_drawdown_since_2021": "-28.55%",
+    "tier": "T1",
+    "source": "京报网引 Wind",
+    "user_constraint_check": "❌ 突破 15% 硬约束"
+  },
+  "tier_in_report": "B",
+  "comparison_with_159611": "159611 规模更大（66.88 亿 vs 28.66 亿），二选一选 159611"
+}

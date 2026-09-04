@@ -1,0 +1,99 @@
+{
+  "snapshot_date": "2026-07-07",
+  "purpose": "债券侧配置决策快照（P0.3 数据刷新后）",
+  "macro_data_authoritative_source": "project/macro-facts.json — 完整收益率曲线/通缩诊断/实体经济/政策利率。本文件聚焦债券配置+市场动态+ETF校验，不重复宏观数据。",
+  "data_freshness_rule": "按 financial-data skill：所有数据标注日期戳与源；live data 主导",
+
+  "cn_10y_historical_path": {
+    "bull_market_confirmed": {
+      "start_2024_pct": 2.5,
+      "current_2026_07_06_pct": 1.730,
+      "intraday_low_2026_06_01_pct": 1.704,
+      "total_drop_bp_from_2024": -77,
+      "source_tier": "T0",
+      "sources": ["新浪CN10YT[2026-07-06 live]", "英为财情[2026-07-06 live]", "财联社[2026-06-02 live]"],
+      "verdict": "过去债券牛市属实；但6月触1.704%后7月反弹至1.73% → 已现获利了结，非单边下行"
+    },
+    "forward_space_consensus": {
+      "target_pct": "1.2-1.4",
+      "basis": "Reuters 2025-01 Japanification 分析师预测 10Y→1.2%；零利率边界约束",
+      "source": "Reuters[2025-01]"
+    }
+  },
+
+  "policy_signals_dual_track": {
+    "verdict": "央行双向操作：呵护(净投放/买断式逆回购) + 敲打(Q1货政报告警示/缩量续作引导利率回升) → 政策底在 1.70% 附近显现",
+    "doves": [
+      "2026 预计降准1-2次(0.5-1pct)+降息2次 [新华网/人民网 2026-01]",
+      "万亿买断式逆回购落地 [新浪 2026-07-03]"
+    ],
+    "hawks": [
+      "Q1货政报告'敲打债市'，关注债券利率水平 [财联社 2026]",
+      "缩量续作MLF/买断式逆回购，引导市场利率向政策中枢回归 [新浪 2026-07-03]",
+      "警惕资金空转，限制利率下行空间 [东方财富研报]"
+    ],
+    "implication_for_long_end": "进一步下行受央行态度约束 → 长久期 10Y+ 风险/收益不对称"
+  },
+
+  "supply_pressure_fiscal_2026": {
+    "deficit_rate_pct": 4.0,
+    "deficit_scale_trillion_yuan": 5.89,
+    "ultra_long_special_treasury_trillion_yuan": 1.3,
+    "new_gov_bond_supply_trillion_yuan": 11.89,
+    "special_local_gov_bond_trillion_yuan_est": 4.8,
+    "source_tier": "T0/T1",
+    "sources": ["财新[2026-03-05 政府工作报告]", "财政部[2026-03 预算报告]", "中邮证券研报[2026]"],
+    "research_verdict": "中邮证券明确'政府债供给压力持续' → 理论压制债价，但当前被配置盘需求吸收（'配置牛'特征），一旦配置盘饱和供给冲击将显现"
+  },
+
+  "international_constraint": {
+    "us_10y_pct": {"value": 4.49, "as_of": "2026-07-02", "source": "FRED/Advisor Perspectives [live]"},
+    "fed_funds_range_pct": "3.50-3.75 (降息周期中)",
+    "paradox": "美联储降息但10Y美债反升+0.59pct（经济强韧+降息次数预期缩水）[JPMorgan/JMG Financial]",
+    "cn_us_10y_spread_bp": -276,
+    "implication": "中美利差深度倒挂-276BP → 人民币贬值压力 → 约束中国长端下行；中国长债缺乏外部下行同盟"
+  },
+
+  "duration_allocation_correction": {
+    "error_acknowledged": "默认10Y代表全部债券，忽视收益率曲线陡峭化（短端-20BP vs 长端-2BP）",
+    "original_report_row": "15five-plan-conservative §4.1：中长久期利率债 25%",
+    "corrected": {
+      "short_term_1_3Y_pct": 15,
+      "medium_term_3_5Y_pct": 10,
+      "long_term_10Y_plus_satellite_pct": "0-5",
+      "rationale": "保守主力=1-5Y；10Y+仅战术卫星"
+    },
+    "memory_link": "feedback_bond_duration"
+  },
+
+  "etf_code_corrections": {
+    "rule": "financial-data skill 强制 lookup-fund.sh 校验",
+    "errors_found_in_resume": [
+      {"resume_code": "511260", "resume_label": "短债ETF", "actual": "国泰上证10年期国债ETF(10Y长债)", "impact": "把短债主力误配成10Y长债，严重误导保守投资者"},
+      {"resume_code": "159668", "resume_label": "国开债", "actual": "无对应国开债ETF；博时国开债ETF实为159650(0-3年短久期)", "impact": "代码错误"}
+    ],
+    "verified_instruments": {
+      "short_term_1_3Y": [
+        "511360 海富通中证短融ETF (跟踪中证短融h11014) [2026-07校验]",
+        "159650 博时中债0-3年国开行ETF (短久期现金管理) [2026-07校验]"
+      ],
+      "medium_term_3_5Y": [
+        "511010 国泰上证5年期国债ETF (H00140,久期4-7Y) [2026-07校验]"
+      ],
+      "long_term_satellite_only": [
+        "511090 鹏扬中债-30年期国债ETF (净值116.38[2026-07-06],6月净流入超6亿) [2026-07校验]"
+      ],
+      "note_on_511260": "511260为10Y国债ETF，若需10Y敞口可作卫星，但禁止当作短债主力"
+    },
+    "fund_codes_tsv_updated": "已追加511260/511010/159650/511090/511360至fund-codes.tsv (2026-07-07)"
+  },
+
+  "dividend_low_vol_overlay": {
+    "primary_etf": "512890 华泰柏瑞红利低波ETF (跟踪中证红利低波 H30269)",
+    "index_yield_pct": {"value": 5.34, "as_of": "2026-07", "source": "蛋卷基金[live]", "note": "macro-facts 旧值4.66%已过时，更新为5.34%"},
+    "vs_10y_treasury_spread_pct": 3.61,
+    "track_record": "2019-2024每年正收益；规模243亿[2025-10 中国证券报]",
+    "risk_honest": "2026 YTD红利低波类整体回撤-5%~-10% [网易2026-06] → 短期价格风险真实，但股息5.34%仍远超国债1.73%",
+    "allocation_pct_proposed": 25
+  }
+}

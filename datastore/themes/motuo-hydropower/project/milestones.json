@@ -1,0 +1,89 @@
+{
+  "project": "雅鲁藏布江下游水电工程（墨脱水电站）",
+  "milestones": [
+    {
+      "date": "2024-12-25",
+      "event": "国务院正式核准",
+      "tier": "T0",
+      "source": "新华网",
+      "verified": true
+    },
+    {
+      "date": "2025-04",
+      "event": "中国雅江集团挂牌",
+      "tier": "T1",
+      "source": "证券时报",
+      "verified": true
+    },
+    {
+      "date": "2025-07-19",
+      "event": "正式开工（李强出席，林芝米林县）",
+      "tier": "T0",
+      "source": "人民日报/政府网",
+      "verified": true
+    },
+    {
+      "date": "2026-Q1",
+      "event": "导流洞掘进 830 米",
+      "tier": "T2",
+      "source": "媒体引用",
+      "verified": false
+    },
+    {
+      "date": "2026-Q2",
+      "event": "先导段双洞贯通",
+      "tier": "T2",
+      "source": "媒体引用",
+      "verified": false
+    }
+  ],
+  "future_milestones_warning": "以下里程碑年份均为券商研报/媒体推测，未找到 T0 源（发改委/雅江集团公告）确认。不同来源存在矛盾。",
+  "future_milestones_rumored": [
+    {
+      "date_range": "2027 / 2030",
+      "event": "首台机组发电",
+      "tier": "T2",
+      "variants": ["2027（部分研报）", "2030（另一版本）"],
+      "official_source": "无 T0 源",
+      "note": "三峡工程 1994 开工 → 2003 首批机组发电 → 2012 全部投产，耗时 18 年；墨脱规模更大，预计周期更长"
+    },
+    {
+      "date_range": "2030 / 2035",
+      "event": "部分机组发电",
+      "tier": "T2",
+      "variants": ["2030（部分研报）", "2035（另一版本）"],
+      "official_source": "无 T0 源"
+    },
+    {
+      "date_range": "2035 / 2045",
+      "event": "全面投产",
+      "tier": "T2",
+      "variants": ["2035（部分研报）", "2045（最保守版本）"],
+      "official_source": "无 T0 源",
+      "note": "总建设周期约 15 年（券商研报口径）"
+    }
+  ],
+  "key_uncertainties": [
+    "首台机组具体发电年份（2027 vs 2030）",
+    "全面投产具体年份（2035 vs 2045）",
+    "雅江集团具体股权比例（缺官方公告）",
+    "西藏专项债 ETF 是否会推出（监管未表态）",
+    "特高压外送通道（藏粤直流）配套进度"
+  ],
+  "historical_references": [
+    {
+      "project": "三峡工程",
+      "construction_start": 1994,
+      "first_unit": 2003,
+      "full_operation": 2012,
+      "total_years": 18
+    },
+    {
+      "project": "白鹤滩水电站",
+      "construction_start": 2017,
+      "first_unit": 2021,
+      "full_operation": 2023,
+      "total_years": 6
+    }
+  ]
+}

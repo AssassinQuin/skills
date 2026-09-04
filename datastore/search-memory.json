@@ -1274,5 +1274,1028 @@
         "published": "2026-01-20"
       }
     ]
+  },
+  "AI agent 技能自我进化 编辑预算 人工审批 红线 2026|cn": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "short",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "肖恩技术周刊97:协同进化",
+        "url": "http://mp.weixin.qq.com/s?src=11&timestamp=1788427249&ver=6944&signature=ohGp2lErFgKq2d0Pg0n*F*Ehvmi6gSYfPqiAVpYqvCvVLhco3wodvgdwATnb4EkjtMuWtB8IirGRlE1DfpuJrvY9i8KCb5Gq1JsO2Z-74oEEYKczFDxKqjpC*mK4JTR7&new=1",
+        "snippet": "AI 当然会通过各种工具调用后给出一堆看起来非常有道理的修改意见,这篇文章就在这一轮又一轮的修改中逐渐趋于完善,最后再用一个去AI味SKILL达到\"完美\".",
+        "published": "2026-08-26"
+      },
+      {
+        "title": "新浪AI热点小时报丨2026年09月03日04时",
+        "url": "https://www.sogou.com/link?url=hedJjaC291Ode25g20YjoBT5WIwiJVZ9AqhgwkgI_7EiNjmpGQzTHigqvviFpBN_fi6X1cJzsFZJUOR8L-xDSdjEIBk7IA2zbBz8eRhY_1w.",
+        "snippet": "马斯克在G20峰会上放话,预计到2027年底AI将能完成所有数字领域的工作,并警告AI行业正面临严峻的电力短缺...xAI的Colossus II数据中心Q2投入158亿美元扩建算力设施,占当季资本开支的86%。",
+        "published": "2026-09-03"
+      },
+      {
+        "title": "700个AI Agent密谋叛乱,网络安全的春天来了？",
+        "url": "https://www.sogou.com/link?url=hedJjaC291ND72rFEx5NeOBe3ZQanx0lhzlU6a-cy9gqJzrBNUQOV2YpP5eeJ1Ws",
+        "snippet": "AI Agent打破了这一假设。它改变的不只是攻击方法，更是攻击的成本、速度...还要经历预算审批、招投标、项目交付和验收回款。",
+        "published": ""
+      },
+      {
+        "title": "世界职业院校技能大赛—人工智能赛道项目逐字稿参考十一-CSDN博客",
+        "url": "https://www.sogou.com/link?url=hedJjaC291MGbmzH-PEGusBfs8EqyRmjQSXxnPG7Sm-uSdKpCMIsLgMyACwDQkWH_a2uNtJVBjmt5pUc3zy0dg..",
+        "snippet": "世界职业院校技能大赛—人工智能赛道项目逐字稿参考十一...数据显示，62%的企业已完成AI Agent试点，但成功实现规模化部署的比例仅为...",
+        "published": "2026-08-30"
+      },
+      {
+        "title": "收藏!FDE新手必看:从零入门大模型,成为企业AI落地关键人物!",
+        "url": "https://www.sogou.com/link?url=hedJjaC291OB0PrGj_c3jLduQ2enQx9yRA_Vzmb_bpewooVd5VL67rBn4VA8J3SxR9xu6x-svQh0Hgm_ewdSCg..",
+        "snippet": "2026年1-2月,AI岗位数量同比增长约12倍,增速远超新经济行业整体增幅...【基础理论→RAG开发→Agent设计→模型微调与私有化部署调→热门技术】5大模块。",
+        "published": "2026-08-30"
+      }
+    ]
+  },
+  "Claude skill eval 评测集 污染 过拟合 reward hacking|cn": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "short",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "Ruflo适用于 Claude Code 与 Codex 的智能体元框架",
+        "url": "https://download.csdn.net/download/zhaodiandiandian/93265386",
+        "snippet": "Ruflo 提供内置的反馈强化学习接口，可将测试失败信号、执行超时事件、内存溢出记录自动转化为 token 级别的 reward signal 并反向传播至模型推理过程。",
+        "published": ""
+      },
+      {
+        "title": "用 Claude3.5 从零写扫雷游戏-基本功能篇",
+        "url": "https://juejin.cn/post/7450394415125266470",
+        "snippet": "用 Claude3.5 从零写扫雷游戏，测试 Cursor 和 Claude 的编码效果。与 eval 污染/reward hacking 无关。",
+        "published": ""
+      }
+    ]
+  },
+  "LLM 自我改进 评估器 被钻空子 风险 案例|cn": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "short",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "LLM生成器与评估器、AI进入物理世界:企业Agent落地下一步重...",
+        "url": "http://mp.weixin.qq.com/s?src=11&timestamp=1788427356&ver=6944&signature=VSelE5N2aotp3NKtkOq5svUgBCbHef9tEw2Hr8dE9U3SScvXxOuUGgGCMEPn3er6JahxyNNxmLQN2mMUTrThzhV6BCz9Jbq-Ky8YuwuL3pAPbfm-oObY6y0WZgW6xL*M&new=1",
+        "snippet": "评估器的角色不是完全取代人类判断,而是作为第一道过滤和初步评估,让人类专家把时间集中在最有争议的案例上。从LLM-as-Judge到Agent-as-Judge到Meta-Judging的递归评估...自我改进。关键洞察:评估器质量决定生成器上限。如果评估器本身有偏见,强化学习会放大这个偏见。推理阶段:评估器作为验证层在企业部署中,评估器的角色从训练延伸到推理。",
+        "published": "2026-09-01"
+      },
+      {
+        "title": "LLM可以自我改进 - 知乎",
+        "url": "https://www.sogou.com/link?url=hedJjaC291OfPyaFZYFLI4KQWvqt63NBO0UcpOxpsZCZicLEMXTD-Q..",
+        "snippet": "self-consistency（自评估多个推理路径）；尽管现有LLM有着巨大能力，但...并确定了llm最成功的自我改进的关键设计选择。研究了另外两种自我改进的...（知乎 zhuanlan.zhihu.com）",
+        "published": "2023-12-08"
+      },
+      {
+        "title": "【LLM/大模型】 Google：自我评估改进了大语言模型中的选择性生成",
+        "url": "https://www.sogou.com/link?url=hedJjaC291OfPyaFZYFLI4KQWvqt63NB3xy1JuFNYoe17CMCJc834Q..",
+        "snippet": "利用LLM的自我评估（self-evaluation）能力来改进质量校准。尽管序列级似然性校准较差，但最近的工作表明，LLM token级概率在选择多项选择题答案...（知乎 zhuanlan.zhihu.com）",
+        "published": "2023-12-20"
+      },
+      {
+        "title": "全民诡异：开局掌握零元购·动态漫画第95集（无关结果）",
+        "url": "https://www.sogou.com/link?url=hedJjaC291M3iG3dvSrVoOo3gNKxLZeF3gQ-udVrKOxsvfPfmLNNT-EPFZbkSc7DIeZ8aQ291kY.",
+        "snippet": "动漫在线观看页面，搜索引擎噪声，与查询无关。",
+        "published": ""
+      },
+      {
+        "title": "Agent技术解读:Planning(规划)模块_知乎",
+        "url": "https://www.sogou.com/link?url=hedJjaC291OfPyaFZYFLI4KQWvqt63NBPXemWJ_BfX-tVKPKD6ukGw..",
+        "snippet": "扩展 ReAct 方法,通过引入评估器来评估轨迹。LLM 检测到错误时生成自我反思...（知乎 zhuanlan.zhihu.com）",
+        "published": "2024-09-25"
+      }
+    ]
+  },
+  "Agentic Context Engineering ACE delta updates context collapse arxiv 2025 2026|glb": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "Evolving Contexts for Self-Improving Language Models - arXiv (abs 2510.04618)",
+        "url": "https://arxiv.org/abs/2510.04618",
+        "snippet": "Oct 6, 2025 ... Abstract page for arXiv paper 2510.04618: Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models. ACE (Agentic Context Engineering) is a framework that treats contexts as evolving playbooks that accumulate, refine, and organize strategies through a modular process of generation, reflection, and curation. ACE prevents collapse with structured, incremental updates that preserve detailed knowledge and scale with long-context models.",
+        "published": "2025-10-06"
+      },
+      {
+        "title": "Evolving Contexts for Self-Improving Language Models - arXiv HTML v3",
+        "url": "https://arxiv.org/html/2510.04618v3",
+        "snippet": "Mar 29, 2026 ... 3 Agentic Context Engineering (ACE). We present ACE (Agentic Context Engineering), a framework for scalable and efficient context adaptation ...",
+        "published": "2026-03-29"
+      },
+      {
+        "title": "Agentic Context Engineering: Evolving Contexts for Self-Improving ... - alphaxiv",
+        "url": "https://www.alphaxiv.org/abs/2510.04618",
+        "snippet": "Mar 29, 2026 ... Abstract · AI Overview · The Problem: Brevity Bias and Context Collapse · The Architecture of ACE: Generator, Reflector, and Curator · The Concept ...",
+        "published": "2026-03-29"
+      },
+      {
+        "title": "[2510.04618] Agentic Context Engineering: Evolving Contexts for Self ... - arXiv (duckduckgo)",
+        "url": "https://arxiv.org/abs/2510.04618",
+        "snippet": "We introduce ACE (Agentic Context Engineering), a framework that treats contexts as evolving playbooks that accumulate, refine, and organize strategies through a modular process of generation, reflection, and curation. ACE prevents collapse with structured, incremental updates that preserve detailed knowledge and scale with long-context models.",
+        "published": "2025-10-06"
+      },
+      {
+        "title": "Agentic Context Engineering: Evolving Contexts for Self-Improving ... - arXiv HTML v1",
+        "url": "https://arxiv.org/html/2510.04618v1",
+        "snippet": "Due to its support for incremental, \"delta\" context updates and non-LLM-based context merging and de-duplication, ACE demonstrates particular advantages in reducing the cost (in terms of the number of rollouts or the amount of dollar cost for token ingestion/generation) and latency of adaptation.",
+        "published": "2025-10-06"
+      }
+    ]
+  },
+  "bounded edits editing budget LLM self-improvement eval set size 5-10 examples|glb": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "SkillOpt: Executive Strategy for Self-Evolving Agent Skills - arXiv",
+        "url": "https://arxiv.org/pdf/2605.23904",
+        "snippet": "May 1, 2026 ... By separating the target model that executes tasks from the optimizer that edits skills, and by using bounded edit budgets, minibatch reflection ...",
+        "published": "2026-05-01"
+      },
+      {
+        "title": "RankCut: A Ranking-Based LLM Approach to Extractive Summarization (ACM)",
+        "url": "https://dl.acm.org/doi/10.1145/3742413.3789115",
+        "snippet": "This example edit is reflective behavior across participants: editors ... Confidence-graded priorities and normalized scores help editors triage and budget review ...",
+        "published": ""
+      },
+      {
+        "title": "MAI-Thinking-1: Building a Hill-Climbing Machine - Microsoft AI",
+        "url": "https://microsoft.ai/pdf/mai-thinking-1.pdf",
+        "snippet": "Our pre-training is focused on a simple scaling approach which emphasizes empirically-driven iterative improvements to our architecture and data, while our ...",
+        "published": ""
+      },
+      {
+        "title": "LLM Eval Budget Allocation Guide 2026 - FutureAGI",
+        "url": "https://futureagi.com/blog/llm-eval-budget-allocation-prioritization-2026/",
+        "snippet": "LLM Eval Budget Allocation and Prioritization in 2026. Eval budget is four knobs: rubric coverage, dataset size, judge tier, refresh cadence. Priority order that maximizes signal per dollar, with a 90-day plan.",
+        "published": "2026"
+      },
+      {
+        "title": "Building Evaluation Datasets for LLM Apps — How to Create Golden Testsets - MasterPrompting",
+        "url": "https://masterprompting.net/blog/building-evaluation-datasets-llm-golden-testsets",
+        "snippet": "A practical guide to creating golden test sets for LLM evaluation: how many examples, annotation strategies, LLM-assisted labeling, edge case coverage, and dataset maintenance.",
+        "published": ""
+      }
+    ]
+  },
+  "ClawHub Claude skills marketplace audit|glb": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "short",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "Built on ClawHub, Spread on Moltbook: The New Agent-to-Agent Attack Chain - Straiker",
+        "url": "https://www.straiker.ai/blog/built-on-clawhub-spread-on-moltbook-the-new-agent-to-agent-attack-chain",
+        "snippet": "Feb 17, 2026 ... Straiker uncovered an active agent-to-agent attack chain where malicious Claude Skills on ClawHub are spread via fake AI personas, ...",
+        "published": "2026-02-17"
+      },
+      {
+        "title": "Snyk Finds Prompt Injection in 36%, 1467 Malicious Payloads in a ... (ToxicSkills)",
+        "url": "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/",
+        "snippet": "Feb 5, 2026 ... ... Claude Code and OpenClaw, using 30+ malicious skills distributed via ClawHub. ... ClawHub marketplace. One key takeaway from our findings ...",
+        "published": "2026-02-05"
+      },
+      {
+        "title": "I audited all 31,000+ skills on OpenClaw's ClawHub registry - Reddit r/cybersecurity",
+        "url": "https://www.reddit.com/r/cybersecurity/comments/1s2f1r5/i_audited_all_31000_skills_on_openclaws_clawhub/",
+        "snippet": "Mar 24, 2026 ... 75 votes, 17 comments. OpenClaw has a skill registry called ClawHub where anyone can publish tools that agents download and run.",
+        "published": "2026-03-24"
+      },
+      {
+        "title": "GitHub - agentnode-dev/skills-security-audit: Security audit for AI agent skills",
+        "url": "https://github.com/agentnode-dev/skills-security-audit",
+        "snippet": "The AI agent skill ecosystem has a security problem. Third-party skills execute with your agent's full privileges, and marketplaces have limited vetting: Snyk ToxicSkills -- 36.82% of MCP servers on ClawHub have at least one vulnerability; SlowMist -- 472+ malicious MCP servers identified with real-world credential theft and data exfiltration; Koi Security ClawHavoc -- 341 malicious servers ...",
+        "published": ""
+      },
+      {
+        "title": "clawhub — Claude Code Skill | Claude Code Marketplace",
+        "url": "https://www.claudemarketplace.net/skills/clawhub",
+        "snippet": "Search, install, update, sync, or publish agent skills with the ClawHub CLI and registry.",
+        "published": ""
+      }
+    ]
+  },
+  "Claude Skills 自我改进 安全 风险|zhihu": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "short",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "一文讲清楚Claude Agent Skills篇,如何自定义Skills - 知乎",
+        "url": "https://zhuanlan.zhihu.com/p/1987456533315999135?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+        "snippet": "Claude Agent Skills 自定义教程：SKILL.md frontmatter（name 最多64字符小写字母数字连字符、description 非空最多1024字符需说明功能与使用时机、allowed-tools 逗号分隔工具列表、model 可指定模型）；目录结构最佳实践（SKILL.md 核心指令 + scripts/ 可执行脚本 + references/ 按需加载文档 + assets/ 模板）；官方最佳实践：简洁是关键、明确描述、渐进式披露、避免深层嵌套引用、目录结构导航。",
+        "published": "2025-12-25"
+      },
+      {
+        "title": "AI 给自己当\"安全教练\":Claude 修自己的 bug,效果碾压人类研究员 - 知乎",
+        "url": "https://zhuanlan.zhihu.com/p/2076942593099879377?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+        "snippet": "Anthropic 自动化对齐研究员（AAR）：Claude 平均闭合 85% 安全差距，人类安全研究员平均仅 20%，Claude 最佳方案比人类最佳提案好 20%；成本约 $4/小时 vs 人类 $150/小时，可 5 路并行。在比优化对象大 4.7 倍的模型上依然有效；生产环境中 Sonnet 5 花 60 小时闭合了 Opus 4.8 早期版本 65% 的安全差距。三大局限：(1) 基准依赖——基准不准时'修复'可能只是在优化残缺指标，反而让真实场景表现更差；(2) 认知盲区——AI 意识不到的问题不会去修，缺乏'不知道自己不知道'的自觉，仍需人类发现和定义；(3) 递归自我改进隐忧——Anthropic 自己承认 AI 若能在对齐上自我改进，理论上也能更广泛地改进训练方法，人类在循环中的位置会被压缩。佐证：截至 2026 年 5 月 Claude 已写 Anthropic 代码库超 80% 的代码。",
+        "published": "2026-08-29"
+      },
+      {
+        "title": "Claude 新王牌 \"Skills\" 深度解析:让你的 AI 秒变行业专家,告别重复劳动 - 知乎",
+        "url": "https://zhuanlan.zhihu.com/p/1966598753134842902?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+        "snippet": "Skills 可捆绑可执行 Python 脚本以保证确定性任务可靠性（如 Slack GIF Skill 验证文件大小限制）；跨产品使用：Claude.ai 网页版（Pro/Max/Team/Enterprise 可上传自定义 Skills）、Skills API、Claude Code 本地 ~/.claude/skills 目录自动发现并可通过 Git 协作共享。应用案例：品牌风格一致性、乐天（Rakuten）财务报告流程从一天缩短到一小时、标准化代码审查。",
+        "published": "2025-10-28"
+      }
+    ]
+  },
+  "search_repositories: SkillOpt microsoft|github": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "microsoft/SkillOpt — README.md (read 2026-09-03, file SHA 03696d60)",
+        "url": "https://github.com/microsoft/SkillOpt",
+        "snippet": "Repo exists. Title: 'SkillOpt: Executive Strategy for Self-Evolving Agent Skills'. arXiv 2605.23904, MIT, PyPI skillopt. README self-claims: 'best or tied-best on all 52 evaluated (model, benchmark, harness) cells' — 52 = (model, benchmark, harness) cells over 6 benchmarks x 7 models x 3 harnesses, NOT 52 benchmarks. GPT-5.5 lifts +23.5 (direct chat) / +24.8 (Codex) / +19.1 (Claude Code). Validation gate verbatim: 'a candidate edit is accepted only when it strictly improves a held-out validation score'; v0.2.0 (2026-07-02) ships SkillOpt-Sleep 'consolidate validated skills behind a held-out validation gate'. News: Microsoft Research blog feature 2026-07-24; v0.1.0 on PyPI 2026-06-02. Star count of microsoft/SkillOpt NOT retrieved (budget). Third-party evidence contradicting 'no independent reproduction': joshhu/skillopt-qa (57 stars, created 2026-05-27) 'Minimal faithful re-implementation of Microsoft SkillOpt... HotpotQA'; magnus919/hermes-SkillOpt (25 stars) 'derives from Microsoft Research's SkillOpt: 52/52 settings improved... with validation gates'; README news credits gbrain/gbrain-evals/darwin-skill integrations with a 2026-06-03 gbrain-evals benchmark doc."
+      }
+    ]
+  },
+  "search_repositories: NousResearch hermes agent self-evolution|github": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "NousResearch/hermes-agent-self-evolution — open issues = 28 (search_issues is:issue is:open, total_count 28, 2026-09-03)",
+        "url": "https://github.com/NousResearch/hermes-agent-self-evolution",
+        "snippet": "Repo EXISTS. Open issue count is 28 — the claimed '38.7k issues' is off by ~3 orders of magnitude (likely garbled/rumor; 38,700 vs actual 28). Fork evidence: WeilaiSun/hermes-agent-self-evolution 'CJK-aware fork of NousResearch/hermes-agent-self-evolution — GEPA skill evolution'. No 'audit disaster' spectacle — issues are detailed, low-comment (0-1 each) bug reports — but content is genuinely damning for the self-evolution pipeline: #172 (2026-08-06) 'SkillModule couples skill_text as an input field — GEPA/MIPROv2 cannot write evolved skill text back to SKILL.md': evolved_skill.md byte-identical to baseline (0 lines diff) while reporting '+30.7%'; #175 (2026-08-16) 'dspy 3.3 compatibility + extract bugs: evolution never writes back real skill changes' — 'reported +X% is pure holdout noise'; #169/#171 'skill_structure validation always fails' (validator checks bare body without YAML frontmatter, so every run reports FAILED even for valid output); #164 (2026-08-01) missing LICENSE file though README claims MIT. Upstream NousResearch/hermes-agent exists (LICENSE MIT per #164 repro)."
+      }
+    ]
+  },
+  "search_repositories: agentic context engineering ACE|github": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "ace-agent/ace — Agentic Context Engineering (1294 stars, 168 forks, created 2025-11-16, updated 2026-09-03)",
+        "url": "https://github.com/ace-agent/ace",
+        "snippet": "Canonical ACE repo; description 'Evolve your language agent with Agentic Context Engineering (ACE)'. README badge + citation confirm arXiv 2510.04618 ('Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models'). Verbatim: 'Incremental Delta Updates: Localized edits that preserve prior knowledge while accumulating new insights'; 'Unlike traditional approaches that suffer from brevity bias and context collapse... structured, incremental updates guided by a grow-and-refine principle'; 'This design prevents the context collapse problem where iterative rewriting erodes details over time.' Generator-Reflector-Curator architecture; playbook bullets with helpful/harmful counters; claims +10.6% AppWorld, +8.6% finance, 86.9% lower adaptation latency. Citation authors: Qizheng Zhang, Changran Hu, Shubhangi Upasani, ..., James Zou, Kunle Olukotun — no ByteDance affiliation visible in README (Stanford/Salesforce-style academic author list); 'ByteDance 合作' claim NOT confirmed from repo, needs paper PDF. Unofficial reproduction also exists: szouki/ace (5 stars)."
+      }
+    ]
+  },
+  "search_repositories: skill-creator claude skill evaluation|github": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "skill-creator (Anthropic official skill, lives in anthropics/skills at skills/skill-creator/)",
+        "url": "https://github.com/anthropics/skills",
+        "snippet": "Issue #1706 in anthropics/skills references path 'skills/skill-creator/scripts/run_eval.py' and 'run_loop.py' — confirms skill-creator is an official Anthropic skill with a trigger-eval harness measuring Recall/Precision. Community usage of the rubric: cabaynes/charles-claude-skills 'Evaluated against Anthropic writing-skills + skill-creator rubric. 100% trigger accuracy.'; yaniv-golan/skill-creator-plus (4 stars) 'Based on Anthropic's skill-creator — bug fixes... creating, testing, and improving other Claude skills'; vltansky/agents-md-evals 'Built on Anthropic's skill-creator eval framework' (A/B testing of instruction files). 'v2' version label NOT found in any repo description or issue title within budget; the exact three-dimension framing (触发准确率/输出质量/效率) unverified — trigger accuracy and output eval are real, 'efficiency' dimension not seen. Needs follow-up: search_code 'repo:anthropics/skills path:skill-creator efficiency' or read skills/skill-creator/SKILL.md."
+      }
+    ]
+  },
+  "search_issues: repo:anthropics/skills is:issue eval harness|github": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "anthropics/skills issue #1706 — parallel trigger-eval workers collapse measured trigger rate to ~1/num_workers (open, filed 2026-09-02)",
+        "url": "https://github.com/anthropics/skills/issues/1706",
+        "snippet": "Title: 'skill-creator: parallel trigger-eval workers share one commands dir, collapsing measured trigger rate to ~1/num_workers'. Body: workers share one .claude/commands dir, each claude -p sees N identical skills differing only by UUID, scored 'triggered' only if it picks its own; 'measured trigger rate therefore collapses toward 1/num_workers independently of the description being tested'; --num-workers defaults to 10 so run_loop.py optimizes against ~10%-scaled noise. Evidence table: num_workers 10 -> Recall 6%, 3 -> 20%/0%, 1 -> 80% (Precision 90-100%). 'Recall tracks 1/N. The description was never the variable.' Two independent confirmations cited."
+      },
+      {
+        "title": "anthropics/skills — 12 open issues matching 'eval harness' (extracted 2026-09-03)",
+        "url": "https://github.com/anthropics/skills/issues?q=is%3Aissue+eval+harness",
+        "snippet": "#1715 (2026-09-03) 'run_eval.py: independent Windows/uv-only confirmation of #1692 & #1706, plus net-new items'; #1692 (2026-08-30) 'Trigger-eval harness silently broken on Windows: select() on pipes, probe files leak into global ~/.claude/command'; #1552 (2026-08-12) 'description optimizer reports ~0% recall for skills that actually do trigger'; #1412 (2026-07-09) 'description-optimization loop burned 100% of a Max subscription in ~3 minutes — false-negative eval bug + no cost guard'; #1304 (2026-06-10) 'cp1252 read_text() crash + nested claude -p WinError 10038 silently zeroes all results'; #556 (2026-03-07) 'claude -p never triggers skills/commands (0% trigger rate across all queries)'; #1221, #1169 (recall=0% every iteration). Pattern: the official eval harness has repeatedly been shown broken (measuring noise), spanning 2026-03 to 2026-09."
+      }
+    ]
+  },
+  "gated self-evolution of agent skills evaluation gate reward hacking safety LLM 2026|prime": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "A Survey of Self-Evolving Agents: What, When, How, and Where (arXiv 2507.21046)",
+        "url": "https://arxiv.org/html/2507.21046v4",
+        "snippet": "Open-ended evolution is susceptible to reward hacking. Agents may find and exploit loopholes in self-defined reward signals or internal evaluations.",
+        "published": "2025-07, v4 2026"
+      },
+      {
+        "title": "OpenReview discussion of Self-Evolving Agents survey",
+        "url": "https://openreview.net/forum?id=CTr3bovS5F",
+        "snippet": "uncontrolled behavioral drift, deployment-time reward hacking, and the safety of self-created skills",
+        "published": "2026"
+      },
+      {
+        "title": "A Taxonomy of Self-evolving Agents (Shilong Liu blog)",
+        "url": "http://lsl.zone/blog/2026/a-taxonomy-of-self-evolving-agents/",
+        "snippet": "Hermes Agent enables automatic reusable skills. RSI Lab tries to discover new algorithms recursively.",
+        "published": "2026"
+      },
+      {
+        "title": "CharlesQ9/Self-Evolving-Agents (survey companion repo)",
+        "url": "https://github.com/CharlesQ9/Self-Evolving-Agents",
+        "snippet": "Reward-based Self-Evolution; Evaluation of Self-evolving Agents; Expert-Guided Self-Reformulation",
+        "published": "2026"
+      },
+      {
+        "title": "OpenSkill: Open-World Self-Evolution for LLM Agents (HF 2606.06741)",
+        "url": "https://huggingface.co/papers/2606.06741",
+        "snippet": "agent must build both its skills and its own verification signals from scratch, without target-task supervision",
+        "published": "2026-06"
+      },
+      {
+        "title": "Evaluating Evolution — and Keeping It Safe (Pratik Dhanave)",
+        "url": "https://pratikdhanave.com/blog/posts/self-evolving-agents-07-evaluation-and-guardrails.html",
+        "snippet": "The central failure mode of any self-improving system is reward hacking: the agent optimizes the letter of the objective while violating its spirit",
+        "published": "2026"
+      },
+      {
+        "title": "Self-Evolving Agents: A Developer's Guide (DEV.to)",
+        "url": "https://dev.to/chen115y/self-evolving-agents-a-developers-guide-40e7",
+        "snippet": "Reward hacking — if your eval signal is imperfect, the agent will optimize for the signal rather than the goal. Use multiple eval dimensions",
+        "published": "2026"
+      },
+      {
+        "title": "CoEvoSkills: Self-Evolving Agent Skills via Co-Evolutionary (arXiv 2604.01687)",
+        "url": "https://www.alphaxiv.org/abs/2604.01687v2",
+        "snippet": "LLM agents autonomously generate and iteratively refine complex, multi-file skill packages",
+        "published": "2026-04"
+      }
+    ]
+  },
+  "editing budget bounded edits per iteration LLM skill optimization small eval set size 5-10 examples evidence|prime": {
+    "fetched_at": "2026-09-03",
+    "ttl_class": "long",
+    "task": "reports/research/skill-evolve",
+    "results": [
+      {
+        "title": "SkillOpt paper (arXiv 2605.23904) — Introduction",
+        "url": "https://arxiv.org/html/2605.23904v1",
+        "snippet": "We formulate agent-skill learning as optimization over an external natural-language state and introduce SkillOpt, a harness-agnostic optimizer",
+        "published": "2026-05"
+      },
+      {
+        "title": "How Microsoft Rewrites skills.md Files To Boost LLM Agents 25% (YouTube)",
+        "url": "https://www.youtube.com/watch?v=n180EMfrGYs",
+        "snippet": "bounded add/delete/replace edits on a single skill markdown file, and accepts an edit only if it strictly improves a held-out validation",
+        "published": "2026"
+      },
+      {
+        "title": "microsoft/skillopt (GitHub)",
+        "url": "https://github.com/microsoft/skillopt",
+        "snippet": "text-space optimizer that trains reusable natural-language skills for frozen LLM agents through trajectory-driven edits, validation-gated updates",
+        "published": "2026"
+      },
+      {
+        "title": "Self-Supervised Skill Optimization (arXiv 2607.28777)",
+        "url": "https://arxiv.org/html/2607.28777v1",
+        "snippet": "GT-free skill optimization: optimizing a reusable skill for a frozen LLM agent from unlabeled task instances alone",
+        "published": "2026-07"
+      },
+      {
+        "title": "Microsoft's open-source SkillOpt (VentureBeat)",
+        "url": "https://venturebeat.com/orchestration/microsofts-open-source-skillopt-automatically-upgrades-ai-agent-skills-without-touching-model-weights",
+        "snippet": "The edit budget acts as a learning rate. By limiting how many edits can be applied at once, the skill avoids overshooting; per-task budget caps and maximum iteration limits recommended",
+        "published": "2026"
+      },
+      {
+        "title": "Skill Set Optimization: Reinforcing Language Model Behavior via Transferable Skills (AllenAI)",
+        "url": "https://allenai.github.io/sso/",
+        "snippet": "constructing and refining sets of transferable skills for LLM actors",
+        "published": "2025"
+      }
+    ]
+  },
+  "awesome claude skills|github": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "query": "awesome claude skills",
+        "title": "ComposioHQ/awesome-claude-skills",
+        "url": "https://github.com/ComposioHQ/awesome-claude-skills",
+        "snippet": "{\"owner\":\"ComposioHQ\",\"name\":\"awesome-claude-skills\",\"stars\":74425,\"forks\":8554,\"open_issues\":1396,\"updated_at\":\"2026-09-04T04:20:40Z\",\"pushed_at\":\"2026-08-10T21:45:44Z\",\"created_at\":\"2025-10-17T07:15:01Z\",\"description\":\"A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows\"}",
+        "published": "2025-10-17"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "hesreallyhim/awesome-claude-code",
+        "url": "https://github.com/hesreallyhim/awesome-claude-code",
+        "snippet": "{\"owner\":\"hesreallyhim\",\"name\":\"awesome-claude-code\",\"stars\":53467,\"forks\":4664,\"open_issues\":985,\"updated_at\":\"2026-09-04T03:49:38Z\",\"pushed_at\":\"2026-09-04T03:11:59Z\",\"created_at\":\"2025-04-19T20:55:59Z\",\"description\":\"Hand-picked collection of resources for Claude Code: skills, agents, status lines, tooling, plugins\"}",
+        "published": "2025-04-19"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "VoltAgent/awesome-agent-skills",
+        "url": "https://github.com/VoltAgent/awesome-agent-skills",
+        "snippet": "{\"owner\":\"VoltAgent\",\"name\":\"awesome-agent-skills\",\"stars\":33715,\"forks\":3565,\"open_issues\":51,\"updated_at\":\"2026-09-04T04:09:36Z\",\"pushed_at\":\"2026-09-02T11:55:39Z\",\"created_at\":\"2025-10-28T08:55:32Z\",\"description\":\"Curated collection of 1000+ agent skills from official dev teams and community, compatible with Claude Code, Codex, Gemini CLI, Cursor, and more\"}",
+        "published": "2025-10-28"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "travisvn/awesome-claude-skills",
+        "url": "https://github.com/travisvn/awesome-claude-skills",
+        "snippet": "{\"owner\":\"travisvn\",\"name\":\"awesome-claude-skills\",\"stars\":14955,\"forks\":1938,\"open_issues\":791,\"updated_at\":\"2026-09-04T02:58:48Z\",\"pushed_at\":\"2026-04-28T19:30:24Z\",\"created_at\":\"2025-10-16T20:42:39Z\",\"description\":\"A curated list of awesome Claude Skills, resources, and tools — particularly Claude Code\"}",
+        "published": "2025-10-16"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "BehiSecc/awesome-claude-skills",
+        "url": "https://github.com/BehiSecc/awesome-claude-skills",
+        "snippet": "{\"owner\":\"BehiSecc\",\"name\":\"awesome-claude-skills\",\"stars\":10094,\"forks\":1499,\"open_issues\":140,\"updated_at\":\"2026-09-04T02:50:53Z\",\"pushed_at\":null,\"created_at\":\"2025-10-17T15:05:35Z\",\"description\":\"A curated list of Claude Skills. (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-10-17"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "heilcheng/awesome-agent-skills",
+        "url": "https://github.com/heilcheng/awesome-agent-skills",
+        "snippet": "{\"owner\":\"heilcheng\",\"name\":\"awesome-agent-skills\",\"stars\":6173,\"forks\":666,\"open_issues\":291,\"updated_at\":\"2026-09-04T01:41:02Z\",\"pushed_at\":null,\"created_at\":\"2025-12-29T21:13:40Z\",\"description\":\"Tutorials, Guides and Agent Skills Directories (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-12-29"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "wesammustafa/Claude-Code-Everything-You-Need-to-Know",
+        "url": "https://github.com/wesammustafa/Claude-Code-Everything-You-Need-to-Know",
+        "snippet": "{\"owner\":\"wesammustafa\",\"name\":\"Claude-Code-Everything-You-Need-to-Know\",\"stars\":2939,\"forks\":338,\"open_issues\":7,\"updated_at\":\"2026-09-04T03:52:33Z\",\"pushed_at\":null,\"created_at\":\"2025-08-17T14:45:39Z\",\"description\":\"Practical Claude Code guide: setup, prompt engineering, slash commands, skills, hooks, subagents, agent teams, MCP servers (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-08-17"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "bergside/awesome-design-skills",
+        "url": "https://github.com/bergside/awesome-design-skills",
+        "snippet": "{\"owner\":\"bergside\",\"name\":\"awesome-design-skills\",\"stars\":2656,\"forks\":253,\"open_issues\":12,\"updated_at\":\"2026-09-04T02:17:08Z\",\"pushed_at\":null,\"created_at\":\"2026-03-09T08:55:36Z\",\"description\":\"List of 67 DESIGN.md and SKILL.md design skill files for agentic tools (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-03-09"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "ruvnet/RuView (topic-match false positive)",
+        "url": "https://github.com/ruvnet/RuView",
+        "snippet": "{\"owner\":\"ruvnet\",\"name\":\"RuView\",\"stars\":92460,\"forks\":12266,\"open_issues\":621,\"updated_at\":\"2026-09-04T04:14:46Z\",\"pushed_at\":\"2026-09-04T00:37:55Z\",\"created_at\":\"2025-06-07T04:32:30Z\",\"description\":\"WiFi spatial intelligence project — matched query via topics 'awesome/claude/skills' but is NOT a Claude skills collection; excluded from relevance\"}",
+        "published": "2025-06-07"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "davepoon/buildwithclaude",
+        "url": "https://github.com/davepoon/buildwithclaude",
+        "snippet": "{\"owner\":\"davepoon\",\"name\":\"buildwithclaude\",\"stars\":3409,\"forks\":495,\"open_issues\":14,\"updated_at\":\"2026-09-03T21:03:12Z\",\"pushed_at\":\"2026-09-03T10:37:19Z\",\"created_at\":\"2025-07-25T02:26:45Z\",\"description\":\"Hub to find Claude Skills, Agents, Commands, Hooks, Plugins, and Marketplace collections for Claude Code / Desktop / Agent SDK / OpenClaw\"}",
+        "published": "2025-07-25"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "netresearch/claude-code-marketplace",
+        "url": "https://github.com/netresearch/claude-code-marketplace",
+        "snippet": "{\"owner\":\"netresearch\",\"name\":\"claude-code-marketplace\",\"stars\":55,\"forks\":13,\"open_issues\":2,\"updated_at\":\"2026-09-03T14:48:06Z\",\"pushed_at\":\"2026-08-19T19:00:11Z\",\"created_at\":\"2025-10-18T07:59:00Z\",\"description\":\"Curated Agent Skills collection, open standard agentskills.io, portable across Claude Code, Cursor, Copilot, Codex, Gemini CLI, 30+ agents\"}",
+        "published": "2025-10-18"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "artemnovichkov/skills",
+        "url": "https://github.com/artemnovichkov/skills",
+        "snippet": "{\"owner\":\"artemnovichkov\",\"name\":\"skills\",\"stars\":36,\"forks\":3,\"open_issues\":1,\"updated_at\":\"2026-09-03T06:27:07Z\",\"pushed_at\":\"2026-07-15T12:59:20Z\",\"created_at\":\"2025-11-02T14:04:38Z\",\"description\":\"Collection of Claude Code plugins for enhanced development workflows (skills.sh)\"}",
+        "published": "2025-11-02"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "ubranch/my-marketplace",
+        "url": "https://github.com/ubranch/my-marketplace",
+        "snippet": "{\"owner\":\"ubranch\",\"name\":\"my-marketplace\",\"stars\":13,\"forks\":2,\"open_issues\":0,\"updated_at\":\"2026-06-22T09:53:21Z\",\"pushed_at\":\"2026-03-22T00:34:56Z\",\"created_at\":\"2026-03-17T21:15:21Z\",\"description\":\"A collection of productivity skills for claude code\"}",
+        "published": "2026-03-17"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "DmitriyYukhanov/claude-plugins",
+        "url": "https://github.com/DmitriyYukhanov/claude-plugins",
+        "snippet": "{\"owner\":\"DmitriyYukhanov\",\"name\":\"claude-plugins\",\"stars\":7,\"forks\":0,\"open_issues\":4,\"updated_at\":\"2026-09-02T17:52:32Z\",\"pushed_at\":null,\"created_at\":\"2026-01-27T12:13:00Z\",\"description\":\"Personal collection of Claude Code plugins and skills: dev workflows, cross-model review, issue-to-PR automation (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-01-27"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "synaptiai/synapti-marketplace",
+        "url": "https://github.com/synaptiai/synapti-marketplace",
+        "snippet": "{\"owner\":\"synaptiai\",\"name\":\"synapti-marketplace\",\"stars\":6,\"forks\":2,\"open_issues\":5,\"updated_at\":\"2026-08-03T22:28:43Z\",\"pushed_at\":null,\"created_at\":\"2025-12-19T09:19:51Z\",\"description\":\"Curated collection of Claude Code plugins with specialized agents, skills, commands (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-12-19"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "rohingosling/claude-skills",
+        "url": "https://github.com/rohingosling/claude-skills",
+        "snippet": "{\"owner\":\"rohingosling\",\"name\":\"claude-skills\",\"stars\":5,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-08-13T13:05:38Z\",\"pushed_at\":null,\"created_at\":\"2026-06-14T08:05:44Z\",\"description\":\"Claude Code plugin marketplace. Curated collection of publicly-shared agent skills (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-06-14"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "CoderMageFox/claude-skills-market",
+        "url": "https://github.com/CoderMageFox/claude-skills-market",
+        "snippet": "{\"owner\":\"CoderMageFox\",\"name\":\"claude-skills-market\",\"stars\":5,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-03-11T17:57:42Z\",\"pushed_at\":null,\"created_at\":\"2026-01-08T07:46:15Z\",\"description\":\"Claude Code Skills Marketplace - collection of high-quality skills (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-01-08"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "adeonir/claude-code-extras (ARCHIVED)",
+        "url": "https://github.comadeonir/claude-code-extras",
+        "snippet": "{\"owner\":\"adeonir\",\"name\":\"claude-code-extras\",\"stars\":8,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-05-10T06:21:53Z\",\"pushed_at\":\"2026-01-31T22:38:42Z\",\"created_at\":\"2025-12-03T01:09:41Z\",\"archived\":true,\"description\":\"Personal collection of Claude Code plugins organized as marketplace — ARCHIVED\"}",
+        "published": "2025-12-03"
+      }
+    ]
+  },
+  "claude skills collection marketplace|github": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "query": "awesome claude skills",
+        "title": "ComposioHQ/awesome-claude-skills",
+        "url": "https://github.com/ComposioHQ/awesome-claude-skills",
+        "snippet": "{\"owner\":\"ComposioHQ\",\"name\":\"awesome-claude-skills\",\"stars\":74425,\"forks\":8554,\"open_issues\":1396,\"updated_at\":\"2026-09-04T04:20:40Z\",\"pushed_at\":\"2026-08-10T21:45:44Z\",\"created_at\":\"2025-10-17T07:15:01Z\",\"description\":\"A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows\"}",
+        "published": "2025-10-17"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "hesreallyhim/awesome-claude-code",
+        "url": "https://github.com/hesreallyhim/awesome-claude-code",
+        "snippet": "{\"owner\":\"hesreallyhim\",\"name\":\"awesome-claude-code\",\"stars\":53467,\"forks\":4664,\"open_issues\":985,\"updated_at\":\"2026-09-04T03:49:38Z\",\"pushed_at\":\"2026-09-04T03:11:59Z\",\"created_at\":\"2025-04-19T20:55:59Z\",\"description\":\"Hand-picked collection of resources for Claude Code: skills, agents, status lines, tooling, plugins\"}",
+        "published": "2025-04-19"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "VoltAgent/awesome-agent-skills",
+        "url": "https://github.com/VoltAgent/awesome-agent-skills",
+        "snippet": "{\"owner\":\"VoltAgent\",\"name\":\"awesome-agent-skills\",\"stars\":33715,\"forks\":3565,\"open_issues\":51,\"updated_at\":\"2026-09-04T04:09:36Z\",\"pushed_at\":\"2026-09-02T11:55:39Z\",\"created_at\":\"2025-10-28T08:55:32Z\",\"description\":\"Curated collection of 1000+ agent skills from official dev teams and community, compatible with Claude Code, Codex, Gemini CLI, Cursor, and more\"}",
+        "published": "2025-10-28"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "travisvn/awesome-claude-skills",
+        "url": "https://github.com/travisvn/awesome-claude-skills",
+        "snippet": "{\"owner\":\"travisvn\",\"name\":\"awesome-claude-skills\",\"stars\":14955,\"forks\":1938,\"open_issues\":791,\"updated_at\":\"2026-09-04T02:58:48Z\",\"pushed_at\":\"2026-04-28T19:30:24Z\",\"created_at\":\"2025-10-16T20:42:39Z\",\"description\":\"A curated list of awesome Claude Skills, resources, and tools — particularly Claude Code\"}",
+        "published": "2025-10-16"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "BehiSecc/awesome-claude-skills",
+        "url": "https://github.com/BehiSecc/awesome-claude-skills",
+        "snippet": "{\"owner\":\"BehiSecc\",\"name\":\"awesome-claude-skills\",\"stars\":10094,\"forks\":1499,\"open_issues\":140,\"updated_at\":\"2026-09-04T02:50:53Z\",\"pushed_at\":null,\"created_at\":\"2025-10-17T15:05:35Z\",\"description\":\"A curated list of Claude Skills. (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-10-17"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "heilcheng/awesome-agent-skills",
+        "url": "https://github.com/heilcheng/awesome-agent-skills",
+        "snippet": "{\"owner\":\"heilcheng\",\"name\":\"awesome-agent-skills\",\"stars\":6173,\"forks\":666,\"open_issues\":291,\"updated_at\":\"2026-09-04T01:41:02Z\",\"pushed_at\":null,\"created_at\":\"2025-12-29T21:13:40Z\",\"description\":\"Tutorials, Guides and Agent Skills Directories (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-12-29"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "wesammustafa/Claude-Code-Everything-You-Need-to-Know",
+        "url": "https://github.com/wesammustafa/Claude-Code-Everything-You-Need-to-Know",
+        "snippet": "{\"owner\":\"wesammustafa\",\"name\":\"Claude-Code-Everything-You-Need-to-Know\",\"stars\":2939,\"forks\":338,\"open_issues\":7,\"updated_at\":\"2026-09-04T03:52:33Z\",\"pushed_at\":null,\"created_at\":\"2025-08-17T14:45:39Z\",\"description\":\"Practical Claude Code guide: setup, prompt engineering, slash commands, skills, hooks, subagents, agent teams, MCP servers (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-08-17"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "bergside/awesome-design-skills",
+        "url": "https://github.com/bergside/awesome-design-skills",
+        "snippet": "{\"owner\":\"bergside\",\"name\":\"awesome-design-skills\",\"stars\":2656,\"forks\":253,\"open_issues\":12,\"updated_at\":\"2026-09-04T02:17:08Z\",\"pushed_at\":null,\"created_at\":\"2026-03-09T08:55:36Z\",\"description\":\"List of 67 DESIGN.md and SKILL.md design skill files for agentic tools (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-03-09"
+      },
+      {
+        "query": "awesome claude skills",
+        "title": "ruvnet/RuView (topic-match false positive)",
+        "url": "https://github.com/ruvnet/RuView",
+        "snippet": "{\"owner\":\"ruvnet\",\"name\":\"RuView\",\"stars\":92460,\"forks\":12266,\"open_issues\":621,\"updated_at\":\"2026-09-04T04:14:46Z\",\"pushed_at\":\"2026-09-04T00:37:55Z\",\"created_at\":\"2025-06-07T04:32:30Z\",\"description\":\"WiFi spatial intelligence project — matched query via topics 'awesome/claude/skills' but is NOT a Claude skills collection; excluded from relevance\"}",
+        "published": "2025-06-07"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "davepoon/buildwithclaude",
+        "url": "https://github.com/davepoon/buildwithclaude",
+        "snippet": "{\"owner\":\"davepoon\",\"name\":\"buildwithclaude\",\"stars\":3409,\"forks\":495,\"open_issues\":14,\"updated_at\":\"2026-09-03T21:03:12Z\",\"pushed_at\":\"2026-09-03T10:37:19Z\",\"created_at\":\"2025-07-25T02:26:45Z\",\"description\":\"Hub to find Claude Skills, Agents, Commands, Hooks, Plugins, and Marketplace collections for Claude Code / Desktop / Agent SDK / OpenClaw\"}",
+        "published": "2025-07-25"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "netresearch/claude-code-marketplace",
+        "url": "https://github.com/netresearch/claude-code-marketplace",
+        "snippet": "{\"owner\":\"netresearch\",\"name\":\"claude-code-marketplace\",\"stars\":55,\"forks\":13,\"open_issues\":2,\"updated_at\":\"2026-09-03T14:48:06Z\",\"pushed_at\":\"2026-08-19T19:00:11Z\",\"created_at\":\"2025-10-18T07:59:00Z\",\"description\":\"Curated Agent Skills collection, open standard agentskills.io, portable across Claude Code, Cursor, Copilot, Codex, Gemini CLI, 30+ agents\"}",
+        "published": "2025-10-18"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "artemnovichkov/skills",
+        "url": "https://github.com/artemnovichkov/skills",
+        "snippet": "{\"owner\":\"artemnovichkov\",\"name\":\"skills\",\"stars\":36,\"forks\":3,\"open_issues\":1,\"updated_at\":\"2026-09-03T06:27:07Z\",\"pushed_at\":\"2026-07-15T12:59:20Z\",\"created_at\":\"2025-11-02T14:04:38Z\",\"description\":\"Collection of Claude Code plugins for enhanced development workflows (skills.sh)\"}",
+        "published": "2025-11-02"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "ubranch/my-marketplace",
+        "url": "https://github.com/ubranch/my-marketplace",
+        "snippet": "{\"owner\":\"ubranch\",\"name\":\"my-marketplace\",\"stars\":13,\"forks\":2,\"open_issues\":0,\"updated_at\":\"2026-06-22T09:53:21Z\",\"pushed_at\":\"2026-03-22T00:34:56Z\",\"created_at\":\"2026-03-17T21:15:21Z\",\"description\":\"A collection of productivity skills for claude code\"}",
+        "published": "2026-03-17"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "DmitriyYukhanov/claude-plugins",
+        "url": "https://github.com/DmitriyYukhanov/claude-plugins",
+        "snippet": "{\"owner\":\"DmitriyYukhanov\",\"name\":\"claude-plugins\",\"stars\":7,\"forks\":0,\"open_issues\":4,\"updated_at\":\"2026-09-02T17:52:32Z\",\"pushed_at\":null,\"created_at\":\"2026-01-27T12:13:00Z\",\"description\":\"Personal collection of Claude Code plugins and skills: dev workflows, cross-model review, issue-to-PR automation (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-01-27"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "synaptiai/synapti-marketplace",
+        "url": "https://github.com/synaptiai/synapti-marketplace",
+        "snippet": "{\"owner\":\"synaptiai\",\"name\":\"synapti-marketplace\",\"stars\":6,\"forks\":2,\"open_issues\":5,\"updated_at\":\"2026-08-03T22:28:43Z\",\"pushed_at\":null,\"created_at\":\"2025-12-19T09:19:51Z\",\"description\":\"Curated collection of Claude Code plugins with specialized agents, skills, commands (pushed_at unavailable in minimal output)\"}",
+        "published": "2025-12-19"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "rohingosling/claude-skills",
+        "url": "https://github.com/rohingosling/claude-skills",
+        "snippet": "{\"owner\":\"rohingosling\",\"name\":\"claude-skills\",\"stars\":5,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-08-13T13:05:38Z\",\"pushed_at\":null,\"created_at\":\"2026-06-14T08:05:44Z\",\"description\":\"Claude Code plugin marketplace. Curated collection of publicly-shared agent skills (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-06-14"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "CoderMageFox/claude-skills-market",
+        "url": "https://github.com/CoderMageFox/claude-skills-market",
+        "snippet": "{\"owner\":\"CoderMageFox\",\"name\":\"claude-skills-market\",\"stars\":5,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-03-11T17:57:42Z\",\"pushed_at\":null,\"created_at\":\"2026-01-08T07:46:15Z\",\"description\":\"Claude Code Skills Marketplace - collection of high-quality skills (pushed_at unavailable in minimal output)\"}",
+        "published": "2026-01-08"
+      },
+      {
+        "query": "claude skills collection marketplace",
+        "title": "adeonir/claude-code-extras (ARCHIVED)",
+        "url": "https://github.comadeonir/claude-code-extras",
+        "snippet": "{\"owner\":\"adeonir\",\"name\":\"claude-code-extras\",\"stars\":8,\"forks\":0,\"open_issues\":0,\"updated_at\":\"2026-05-10T06:21:53Z\",\"pushed_at\":\"2026-01-31T22:38:42Z\",\"created_at\":\"2025-12-03T01:09:41Z\",\"archived\":true,\"description\":\"Personal collection of Claude Code plugins organized as marketplace — ARCHIVED\"}",
+        "published": "2025-12-03"
+      }
+    ]
+  },
+  "list_commits microsoft/SkillOpt|github": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "short",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "repo": "microsoft/SkillOpt",
+        "title": "microsoft/SkillOpt — recent 5 commits",
+        "url": "https://github.com/microsoft/SkillOpt",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-08-29T18:48:49Z\",\"message\":\"Merge PR #249 fix(webui): security hardening + launch theme crash; add CI\"},{\"date\":\"2026-08-29T18:47:50Z\",\"message\":\"feat(sleep): paired A/B evalkit with McNemar and bootstrap CIs (#242) — stdlib evalkit so Sleep comparisons share one instrument: fixed task manifest, McNemar on paired binary outcomes, percentile bootstrap CIs on success-rate delta, multi-seed variance bands\"},{\"date\":\"2026-08-29T18:47:46Z\",\"message\":\"chore: configure monthly Dependabot updates (#261)\"},{\"date\":\"2026-08-29T18:47:32Z\",\"message\":\"fix(model): resolve CLI exec paths for Windows .cmd shims (#250) — codex/claude/cursor/copilot exec path resolution + secret redaction hardening\"},{\"date\":\"2026-08-26T17:42:02Z\",\"message\":\"fix(webui): raise supported gradio floor to first working release\"}],\"cadence\":\"4 commits merged on 2026-08-29 (batch merge day), prior commit 2026-08-26; active as of 6 days before 2026-09-04. Supports codex/claude/cursor/copilot CLIs as eval targets.\"}",
+        "published": "2026-08-29"
+      },
+      {
+        "repo": "ace-agent/ace",
+        "title": "ace-agent/ace — recent 5 commits",
+        "url": "https://github.com/ace-agent/ace",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-08-24T18:49:59Z\",\"message\":\"feat: parallelize ACE ComBEE proposals with LLM reducer (#39)\"},{\"date\":\"2026-05-19T19:11:05Z\",\"message\":\"feat: Integrate Combee features (batch size, mini batch size and augmented shuffling) (#36)\"},{\"date\":\"2026-03-12T06:37:47Z\",\"message\":\"Add new provider commonstack (#33)\"},{\"date\":\"2026-02-18T00:50:19Z\",\"message\":\"[Environment] use uv instead of pip or conda; remove unneeded files\"},{\"date\":\"2026-02-18T00:39:17Z\",\"message\":\"[Env] use uv instead of pip or conda; remove unneeded files\"}],\"cadence\":\"Sparse, roughly quarterly large merges: Feb 18 -> Mar 12 -> May 19 -> Aug 24 (2026). Last commit 11 days before 2026-09-04.\"}",
+        "published": "2026-08-24"
+      },
+      {
+        "repo": "NousResearch/hermes-agent-self-evolution",
+        "title": "NousResearch/hermes-agent-self-evolution — recent 5 commits",
+        "url": "https://github.com/NousResearch/hermes-agent-self-evolution",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-06-17T11:53:04Z\",\"message\":\"fix(config): honor explicit --hermes-repo and make config construction non-fatal (#122)\"},{\"date\":\"2026-03-29T15:47:23Z\",\"message\":\"feat: add Hermes session importer + fix short skill name matching (#4)\"},{\"date\":\"2026-03-29T15:07:01Z\",\"message\":\"feat: external session importers for Claude Code (~/.claude/history.jsonl), Copilot, Hermes (#2) — mines session history into self-evolution eval datasets, two-stage relevance filter with LLM-as-judge via DSPy, secret detection\"},{\"date\":\"2026-03-09T13:30:28Z\",\"message\":\"refactor: rebrand to Hermes Agent Self-Evolution — repo renamed hermes-agent-evolution -> hermes-agent-self-evolution\"},{\"date\":\"2026-03-09T13:21:47Z\",\"message\":\"docs: Phase 1 validation report — +39.5% improvement, baseline 0.408 -> optimized 0.569 via DSPy + GEPA evolutionary optimization on arxiv skill (MiniMax M2.5, BootstrapFewShot)\"}],\"cadence\":\"Bursty: March 2026 burst (rebrand + session importers), single fix 2026-06-17, nothing since — quiet for ~2.5 months as of 2026-09-04.\"}",
+        "published": "2026-06-17"
+      }
+    ]
+  },
+  "list_commits ace-agent/ace|github": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "short",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "repo": "microsoft/SkillOpt",
+        "title": "microsoft/SkillOpt — recent 5 commits",
+        "url": "https://github.com/microsoft/SkillOpt",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-08-29T18:48:49Z\",\"message\":\"Merge PR #249 fix(webui): security hardening + launch theme crash; add CI\"},{\"date\":\"2026-08-29T18:47:50Z\",\"message\":\"feat(sleep): paired A/B evalkit with McNemar and bootstrap CIs (#242) — stdlib evalkit so Sleep comparisons share one instrument: fixed task manifest, McNemar on paired binary outcomes, percentile bootstrap CIs on success-rate delta, multi-seed variance bands\"},{\"date\":\"2026-08-29T18:47:46Z\",\"message\":\"chore: configure monthly Dependabot updates (#261)\"},{\"date\":\"2026-08-29T18:47:32Z\",\"message\":\"fix(model): resolve CLI exec paths for Windows .cmd shims (#250) — codex/claude/cursor/copilot exec path resolution + secret redaction hardening\"},{\"date\":\"2026-08-26T17:42:02Z\",\"message\":\"fix(webui): raise supported gradio floor to first working release\"}],\"cadence\":\"4 commits merged on 2026-08-29 (batch merge day), prior commit 2026-08-26; active as of 6 days before 2026-09-04. Supports codex/claude/cursor/copilot CLIs as eval targets.\"}",
+        "published": "2026-08-29"
+      },
+      {
+        "repo": "ace-agent/ace",
+        "title": "ace-agent/ace — recent 5 commits",
+        "url": "https://github.com/ace-agent/ace",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-08-24T18:49:59Z\",\"message\":\"feat: parallelize ACE ComBEE proposals with LLM reducer (#39)\"},{\"date\":\"2026-05-19T19:11:05Z\",\"message\":\"feat: Integrate Combee features (batch size, mini batch size and augmented shuffling) (#36)\"},{\"date\":\"2026-03-12T06:37:47Z\",\"message\":\"Add new provider commonstack (#33)\"},{\"date\":\"2026-02-18T00:50:19Z\",\"message\":\"[Environment] use uv instead of pip or conda; remove unneeded files\"},{\"date\":\"2026-02-18T00:39:17Z\",\"message\":\"[Env] use uv instead of pip or conda; remove unneeded files\"}],\"cadence\":\"Sparse, roughly quarterly large merges: Feb 18 -> Mar 12 -> May 19 -> Aug 24 (2026). Last commit 11 days before 2026-09-04.\"}",
+        "published": "2026-08-24"
+      },
+      {
+        "repo": "NousResearch/hermes-agent-self-evolution",
+        "title": "NousResearch/hermes-agent-self-evolution — recent 5 commits",
+        "url": "https://github.com/NousResearch/hermes-agent-self-evolution",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-06-17T11:53:04Z\",\"message\":\"fix(config): honor explicit --hermes-repo and make config construction non-fatal (#122)\"},{\"date\":\"2026-03-29T15:47:23Z\",\"message\":\"feat: add Hermes session importer + fix short skill name matching (#4)\"},{\"date\":\"2026-03-29T15:07:01Z\",\"message\":\"feat: external session importers for Claude Code (~/.claude/history.jsonl), Copilot, Hermes (#2) — mines session history into self-evolution eval datasets, two-stage relevance filter with LLM-as-judge via DSPy, secret detection\"},{\"date\":\"2026-03-09T13:30:28Z\",\"message\":\"refactor: rebrand to Hermes Agent Self-Evolution — repo renamed hermes-agent-evolution -> hermes-agent-self-evolution\"},{\"date\":\"2026-03-09T13:21:47Z\",\"message\":\"docs: Phase 1 validation report — +39.5% improvement, baseline 0.408 -> optimized 0.569 via DSPy + GEPA evolutionary optimization on arxiv skill (MiniMax M2.5, BootstrapFewShot)\"}],\"cadence\":\"Bursty: March 2026 burst (rebrand + session importers), single fix 2026-06-17, nothing since — quiet for ~2.5 months as of 2026-09-04.\"}",
+        "published": "2026-06-17"
+      }
+    ]
+  },
+  "list_commits NousResearch/hermes-agent-self-evolution|github": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "short",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "repo": "microsoft/SkillOpt",
+        "title": "microsoft/SkillOpt — recent 5 commits",
+        "url": "https://github.com/microsoft/SkillOpt",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-08-29T18:48:49Z\",\"message\":\"Merge PR #249 fix(webui): security hardening + launch theme crash; add CI\"},{\"date\":\"2026-08-29T18:47:50Z\",\"message\":\"feat(sleep): paired A/B evalkit with McNemar and bootstrap CIs (#242) — stdlib evalkit so Sleep comparisons share one instrument: fixed task manifest, McNemar on paired binary outcomes, percentile bootstrap CIs on success-rate delta, multi-seed variance bands\"},{\"date\":\"2026-08-29T18:47:46Z\",\"message\":\"chore: configure monthly Dependabot updates (#261)\"},{\"date\":\"2026-08-29T18:47:32Z\",\"message\":\"fix(model): resolve CLI exec paths for Windows .cmd shims (#250) — codex/claude/cursor/copilot exec path resolution + secret redaction hardening\"},{\"date\":\"2026-08-26T17:42:02Z\",\"message\":\"fix(webui): raise supported gradio floor to first working release\"}],\"cadence\":\"4 commits merged on 2026-08-29 (batch merge day), prior commit 2026-08-26; active as of 6 days before 2026-09-04. Supports codex/claude/cursor/copilot CLIs as eval targets.\"}",
+        "published": "2026-08-29"
+      },
+      {
+        "repo": "ace-agent/ace",
+        "title": "ace-agent/ace — recent 5 commits",
+        "url": "https://github.com/ace-agent/ace",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-08-24T18:49:59Z\",\"message\":\"feat: parallelize ACE ComBEE proposals with LLM reducer (#39)\"},{\"date\":\"2026-05-19T19:11:05Z\",\"message\":\"feat: Integrate Combee features (batch size, mini batch size and augmented shuffling) (#36)\"},{\"date\":\"2026-03-12T06:37:47Z\",\"message\":\"Add new provider commonstack (#33)\"},{\"date\":\"2026-02-18T00:50:19Z\",\"message\":\"[Environment] use uv instead of pip or conda; remove unneeded files\"},{\"date\":\"2026-02-18T00:39:17Z\",\"message\":\"[Env] use uv instead of pip or conda; remove unneeded files\"}],\"cadence\":\"Sparse, roughly quarterly large merges: Feb 18 -> Mar 12 -> May 19 -> Aug 24 (2026). Last commit 11 days before 2026-09-04.\"}",
+        "published": "2026-08-24"
+      },
+      {
+        "repo": "NousResearch/hermes-agent-self-evolution",
+        "title": "NousResearch/hermes-agent-self-evolution — recent 5 commits",
+        "url": "https://github.com/NousResearch/hermes-agent-self-evolution",
+        "snippet": "{\"last_commits\":[{\"date\":\"2026-06-17T11:53:04Z\",\"message\":\"fix(config): honor explicit --hermes-repo and make config construction non-fatal (#122)\"},{\"date\":\"2026-03-29T15:47:23Z\",\"message\":\"feat: add Hermes session importer + fix short skill name matching (#4)\"},{\"date\":\"2026-03-29T15:07:01Z\",\"message\":\"feat: external session importers for Claude Code (~/.claude/history.jsonl), Copilot, Hermes (#2) — mines session history into self-evolution eval datasets, two-stage relevance filter with LLM-as-judge via DSPy, secret detection\"},{\"date\":\"2026-03-09T13:30:28Z\",\"message\":\"refactor: rebrand to Hermes Agent Self-Evolution — repo renamed hermes-agent-evolution -> hermes-agent-self-evolution\"},{\"date\":\"2026-03-09T13:21:47Z\",\"message\":\"docs: Phase 1 validation report — +39.5% improvement, baseline 0.408 -> optimized 0.569 via DSPy + GEPA evolutionary optimization on arxiv skill (MiniMax M2.5, BootstrapFewShot)\"}],\"cadence\":\"Bursty: March 2026 burst (rebrand + session importers), single fix 2026-06-17, nothing since — quiet for ~2.5 months as of 2026-09-04.\"}",
+        "published": "2026-06-17"
+      }
+    ]
+  },
+  "Claude skill progressive disclosure token cost measured benchmark 2026|glb": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "What Do Claude Code Skills Actually Cost in Tokens? We Measured the ...",
+        "url": "https://theclaudekit.com/blog/claude-code-skills-token-cost-measured",
+        "snippet": "A typical Claude Code skill costs 600 to 1,500 tokens when its body is loaded into context. A small fraction of tool-heavy skills reach 3,000 to 4,000 tokens. We measured the entire ClaudeKit v2 catalog — 82,197 tokens across 5 kits, 101 commands, 19 skills, and 13 read-only agents — and the per-kit ledger is below.",
+        "published": null
+      },
+      {
+        "title": "GitHub - ADIGHB/claude-token-estimator: Claude skill for token cost ...",
+        "url": "https://github.com/ADIGHB/claude-token-estimator",
+        "snippet": "Professional-grade token cost estimation and model optimization skill for Claude. Version: 1.6.0 Released: 2026-02-20 Pricing data accurate as of 2026-02-20. Verify before production use.",
+        "published": "2026-02-20"
+      },
+      {
+        "title": "Reduce Claude Token Usage 60%: Progressive Disclosure",
+        "url": "https://chudi.dev/blog/reduce-ai-token-usage-progressive-disclosure",
+        "snippet": "3-tier progressive disclosure cuts Claude API costs 40-60%. The exact system: tier 1 triage, tier 2 context, tier 3 full pass.",
+        "published": null
+      }
+    ]
+  },
+  "SKILL.md description trigger accuracy token reduction techniques 2026|glb": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "SkillReducer: Optimizing LLM Agent Skills for Token Efficiency (abs)",
+        "url": "https://arxiv.org/abs/2603.29919",
+        "snippet": "LLM-based coding agents rely on skills, pre-packaged instruction sets that extend agent capabilities, yet every token of skill content injected into the context window incurs both monetary cost and attention dilution. Large-scale empirical study of 55,315 publicly available skills finds systemic inefficiencies: 26.4% lack ...",
+        "published": null
+      },
+      {
+        "title": "SkillReducer: Optimizing LLM Agent Skills for Token Efficiency (HTML)",
+        "url": "https://arxiv.org/html/2603.29919v1",
+        "snippet": "Evaluated on 600 skills alongside the external SkillsBench benchmark. SkillReducer achieves significant token savings, with a 48% mean compression rate for descriptions and a 39% mean reduction for body tokens. The optimization preserves functional quality, maintaining an 86.0% pass rate on task-based evaluations and a 100% pass rate ...",
+        "published": null
+      },
+      {
+        "title": "Why Anthropic Caps SKILL.md at Under 5K Tokens and Ho… | BestHub",
+        "url": "https://www.besthub.dev/articles/why-anthropic-caps-skill-md-at-under-5k-tokens-and-how-to-structure-yours-9310df28cb04",
+        "snippet": "Explains Anthropic's official 5K-token limit for SKILL.md files, breaks down the three-level loading architecture, demonstrates progressive disclosure with concrete token calculations, and provides a step-by-step refactoring guide that reduces token usage while improving skill accuracy.",
+        "published": null
+      }
+    ]
+  },
+  "LLM context compression prompt optimization token efficiency 2026 arxiv|glb": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "permanent",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "ACON: Optimizing Context Compression for Long-horizon LLM Agents (abs)",
+        "url": "https://arxiv.org/abs/2510.00615",
+        "snippet": "Existing compression methods fail to fully address this, often relying on brittle heuristics or requiring parameter updates impractical for proprietary or large-scale LLMs. We introduce Agent Context Optimization (ACON), a unified framework that optimally compresses both observations and history into concise, informative representations.",
+        "published": null
+      },
+      {
+        "title": "ACON: Optimizing Context Compression for Long-horizon LLM Agents (PDF)",
+        "url": "https://arxiv.org/pdf/2510.00615",
+        "snippet": "Existing compression methods fail to fully address this, often relying on brittle heuristics or requiring parameter updates impractical for proprietary or large-scale LLMs. We introduce Agent Context Optimization (ACON), a unified framework that optimally compresses both observations and history into concise, informative representations.",
+        "published": null
+      }
+    ]
+  },
+  "Claude skills non-English community localization español français 2026|glb": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "Automate Global App Localization | SkillsClaude",
+        "url": "https://skillsclaude.org/skills/localize",
+        "snippet": "End-to-end localization automation that detects hardcoded strings, generates translator briefings, validates cultural accuracy, manages voice-over and RTL testing, and enforces string freeze policies for global-ready apps.",
+        "published": null
+      },
+      {
+        "title": "GitHub - obviousworks/Claude-AI-skills-collection-2026: A curated ...",
+        "url": "https://github.com/obviousworks/Claude-AI-skills-collection-2026",
+        "snippet": "Claude Skills Collection: A curated collection of official and community-built Claude Skills. Anthropic Skills are modular tools that extend the capabilities of Claude AI — unlocking workflows for coding, document creation, design, data analysis, research, and more.",
+        "published": null
+      }
+    ]
+  },
+  "skills.sh ClawHub agent skills marketplace growth statistics 2026|glb": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "short",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "601. ClawHub Skill Market In-Depth Analysis - Wiki | clawbot",
+        "url": "https://clawbot.ai/wiki/skills/clawhub-skill-market-in-depth-analysis.html",
+        "snippet": "Market Performance: Explosive growth in the number of skills, with a monthly growth rate exceeding 100%. Multiple third-party indexing sites (e.g., awesome-openclaw-skills, claw-hub.net) aggregate ClawHub data. Forms a complementary ecosystem with third-party marketplaces like Smithery and LobeHub.",
+        "published": null
+      },
+      {
+        "title": "ClawHub By the Numbers: What 52,652 Skills Reveal | Trent AI",
+        "url": "https://trent.ai/blog/clawhub-by-the-numbers/",
+        "snippet": "An analysis of every package in the ClawHub registry, the largest marketplace for AI agent skills. It reveals an ecosystem that's exploding in scale, dominated by a handful of mass-publishers, and failing every classical software-supply-chain assumption at once.",
+        "published": null
+      }
+    ]
+  },
+  "Claude skill 编写 触发 描述 优化 token 技巧 2026|cn": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "一分钟搞明白Skill",
+        "url": "https://blog.csdn.net/hq354974212/article/details/161169672",
+        "snippet": "Skill是让AI编程助手从通用工具升级为领域专家的核心机制，本质是结构化、机器可读的操作指南（基于SKILL.md开放标准）。它支持能力复用、输出标准化、经验沉淀与Token高效利用。当前主流平台如Claude Code、Cursor、Trae和OpenCode均已原生支持Skill导入与调用，涵盖全局/项目级安装、触发语法及中文优化等实践要点。",
+        "published": null
+      },
+      {
+        "title": "用 Claude3.5 从零写扫雷游戏-基本功能篇",
+        "url": "https://juejin.cn/post/7450394415125266470",
+        "snippet": "刚好最近在重度体验 Cursor 和 Claude3.5，也用它们写了不少代码。于是想着用 Claude3.5 从零写个扫雷游戏...（与 SKILL.md 编写/优化主题不相关，仅因关键词命中返回）",
+        "published": "2024-12"
+      }
+    ]
+  },
+  "Claude skill 自动进化 评测 优化 实践 2026|cn": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "Claude Code 2026：国产模型接入与cc-switch动态切换实战指南",
+        "url": "https://blog.csdn.net/aocaiti5781/article/details/101458981",
+        "snippet": "本文详解Claude Code 2026（CC2026）作为本地智能代理前端的核心定位，重点阐述其通过标准OpenAI兼容API协议无缝对接DeepSeek-V4-Pro、Kimi K2.7和智谱GLM-4-Flash三大国产大模型的实践路径；深入解析内建机制cc-switch的JSON配置热重载、多模型动态切换、上下文隔离等关键技术能力；并涵盖VS Code深度集成、自定义Skill调用、会话钉选等AI原生工作流构建方法。",
+        "published": null
+      },
+      {
+        "title": "Claude Code Skills 推荐：2026年最值得安装的10个AI技能",
+        "url": "https://juejin.cn/post/7637367613895393295",
+        "snippet": "Claude Code Skills 推荐：2026年最值得安装的10个AI技能。什么是 Claude Code Skills？Skills 是 Claude... Vercel 官方出品的 React 最佳实践。适用场景：React 项目开发、前端性能优化；核心功能：45+ 条规则。点赞 84，阅读 12875。",
+        "published": "2026"
+      }
+    ]
+  },
+  "Claude Code 技能 编写|zhihu": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "Claude Code skill 方法论:我把工作方法做成 AI 技能包的四步框架 - 知乎",
+        "url": "https://zhuanlan.zhihu.com/p/2077335900044915391?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+        "snippet": "八个月给自己造了30多个skill。四步方法论：任务识别→方法抽象→规则迭代→能力沉淀。skill不是prompt而是资产沉淀：触发词+流程+硬规则+交付标准。判断标准：同一件事对AI重复交代过三遍以上就该skill化。第一个skill写了两天，最近的exec-briefing升级只花半小时。任务识别三条件：高频+有方法论+交付相对标准化，缺一都别做。规则迭代靠跑真实任务、badcase驱动改规则。能力沉淀：每次迭代经验回写skill。",
+        "published": "2026-08-30"
+      },
+      {
+        "title": "【Claude Code新手思维】小白教程,Skill才是关键 - 知乎",
+        "url": "https://zhuanlan.zhihu.com/p/2058275010524059575?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+        "snippet": "作者踩坑：误以为让AI自己写Skill即可，'AI学会了一切，只剩自己依旧愚蠢'——不推荐一上来就让AI自己写Skill。建议1：自己亲自写一遍，知道关键要素，再让AI辅助。官方建议：一开始自己写、skill要足够简单、改进中逐步增加。官方写法要点：开头yaml含name/description；尽可能简洁，推荐500行内；附加资源放子文档而非堆在SKILL.md；可用官方skill-creator创建/测试/评估。建议2：自己有评估好坏skill的能力后，安装比自己写得更好的skill。",
+        "published": "2026-07-08"
+      },
+      {
+        "title": "构建 Claude Code 的经验:Anthropic 如何运用 Skills 技能 - 知乎",
+        "url": "https://zhuanlan.zhihu.com/p/2017597470947967164?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+        "snippet": "Anthropic官方工程博客中译/转述：内部数百个技能活跃使用。常见误解：技能'只是markdown文件'——实际是文件夹，可含脚本/资产/数据，Claude Code中还有hooks等配置选项。技能分类：(1)库和API参考（如billing-lib、internal-platform-cli、frontend-design，附参考代码片段文件夹+注意事项清单）；(2)产品验证（配Playwright/tmux，让Claude录制输出视频、每步强制编程断言，'值得让一位工程师花一周时间打磨验证技能'）。最好的技能清晰归属单一类别，跨多类别的技能令人困惑。",
+        "published": "2026-03-18"
+      }
+    ]
+  },
+  "Claude skills communauté française español comunidad adopción 2026|glb": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "long",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "Skills Claude en français : le guide complet 2026 · Chipie Studio",
+        "url": "https://www.chipiestudio.com/fr/blog/skills-claude-francais",
+        "snippet": "Qu'est-ce qu'un skill Claude, comment fonctionne le format SKILL.md, comment l'installer sur Claude Pro ou Claude Code, 5 cas d'usage freelance concrets et où trouver des skills en français en 2026.",
+        "published": ""
+      },
+      {
+        "title": "Community | Claude by Anthropic",
+        "url": "https://claude.com/community",
+        "snippet": "Get involved in the Claude Community to share solutions, help each other, and push the boundaries of what's possible with AI.",
+        "published": ""
+      },
+      {
+        "title": "claude.rich · Claude Community Ambassador",
+        "url": "https://claude.rich/es",
+        "snippet": "Comunidad de Claude y AI, en español. Meetups, educación y herramientas para builders de Claude en México y la comunidad latina. Rich Lira, Claude Community Ambassador.",
+        "published": ""
+      },
+      {
+        "title": "GitHub - abracu/Claude-Skills: Una colección de Claude Skills en ...",
+        "url": "https://github.com/abracu/Claude-Skills",
+        "snippet": "Las Skills son carpetas de instrucciones, scripts y recursos que Claude carga dinámicamente para mejorar su rendimiento en tareas especializadas. Una skill le enseña a Claude cómo completar tareas específicas de forma repetible y precisa.",
+        "published": ""
+      },
+      {
+        "title": "Claude Skills: The Complete 2026 Guide — Build, Install & Use",
+        "url": "https://www.buildfastwithai.com/blogs/claude-skills-complete-guide-2026",
+        "snippet": "Claude Skills: The Complete 2026 Guide — Build, Install & Use. They are the most underused power feature in the Claude ecosystem — and in 2026, the ecosystem around them has exploded from a handful of official examples to over a ...",
+        "published": ""
+      }
+    ]
+  },
+  "skills.sh registry how many skills listed 2026|glb": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "short",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "Agent Skill Registry Attack: 1.7M Downloads of Malicious Skills (Zenity ...",
+        "url": "https://anomity.ai/blog/zenity-malicious-agent-skills-credential-theft/",
+        "snippet": "A credential-theft campaign built on agent skills, presented at Black Hat in August 2026. 1.7 million aggregate downloads across one malicious skill family, distributed mainly through the skills.sh registry. Delayed supply-chain attack: clone popular legitimate skills into typosquatted lookalikes, keep them clean while installs accumulate, then inject.",
+        "published": "2026-08 (Black Hat presentation)"
+      },
+      {
+        "title": "I analysed the top 10 skills on Vercel's new AI agent registry",
+        "url": "https://blog.devgenius.io/i-analysed-the-top-10-skills-on-vercels-new-ai-agent-registry-480c69e9d481",
+        "snippet": "On January 20th, 2026, Vercel announced skills.sh, an open registry for AI agent skills (npm for AI coding assistants). Four days later, over 110,000 skill installs recorded across 17 different AI coding agents.",
+        "published": "2026-01"
+      },
+      {
+        "title": "The State of AI Agent Skills 2026 - Skillselion",
+        "url": "https://skillselion.com/state-of-ai-agent-skills-2026",
+        "snippet": "Source: Skillselion catalog (skills.sh registry & GitHub). Data as of August 21, 2026: 81,070 tools tracked, 152M combined installs, 59,826 agent skills, 8,448 MCP servers, 10,411 marketplaces.",
+        "published": "2026-08-21"
+      },
+      {
+        "title": "skills.sh | Ry Walker Research",
+        "url": "https://rywalker.com/research/skills-sh",
+        "snippet": "skills.sh is Vercel's open agent-skills registry — one-command install (npx skills add) across 20+ coding agents, ~669,670 skills listed and a top skill at 2.0M installs within five months of launch. Zero-curation, telemetry-ranked, center of the ecosystem's security debate.",
+        "published": ""
+      },
+      {
+        "title": "2026年最火爆的AI Agent Skills榜单：解锁AI的\"超能力\"宝库",
+        "url": "https://www.toutiao.com/article/7619600379650802185/",
+        "snippet": "find-skills (vercel-labs/skills): 644,300+ installs, 11.1K GitHub stars — ecosystem entry skill that searches skills.sh's 85,000+ skill library via npx skills find.",
+        "published": ""
+      }
+    ]
+  },
+  "agent skills adoption statistics community growth standard 2026|prime": {
+    "fetched_at": "2026-09-04",
+    "ttl_class": "short",
+    "task": "reports/research/skill-improve",
+    "results": [
+      {
+        "title": "How Agent Skills Became AI's Most Important Standard in 90 Days",
+        "url": "https://ai.gopubby.com/how-agent-skills-became-ais-most-important-standard-in-90-days-a66b6369b1b7",
+        "snippet": "Week 1 (Dec 19-25): ~8,000 Skills indexed; Week 2 (Dec 26-31): ~17,000 Skills indexed; By January 9, 2026: ...",
+        "published": "2026-01"
+      },
+      {
+        "title": "The Agent Skills Ecosystem in 2026: Who's Building",
+        "url": "https://agentman.ai/blog/agent-skills-ecosystem-report-2026",
+        "snippet": "cross-vendor standard in under nine months, ~40 compatible platforms, millions of published skills",
+        "published": "2026"
+      },
+      {
+        "title": "Agent Skills Overview - agentskills.io",
+        "url": "https://agentskills.io/home",
+        "snippet": "lightweight open format for extending AI agent capabilities",
+        "published": "2026"
+      },
+      {
+        "title": "What Is Agent Skills as an Open Standard",
+        "url": "https://www.mindstudio.ai/blog/agent-skills-open-standard-claude-openai-google",
+        "snippet": "started as Claude feature, became open standard adopted by OpenAI, Google DeepMind and others",
+        "published": "2026"
+      },
+      {
+        "title": "skills.sh agent-skills-overview (inference.sh)",
+        "url": "https://inference.sh/blog/skills/agent-skills-overview",
+        "snippet": "format developed by Anthropic, released as open standard late 2025; spec lives on github.com/agentskills/",
+        "published": "2026"
+      }
+    ]
   }
 }

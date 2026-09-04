@@ -1,0 +1,20 @@
+[
+  {
+    "title": "一文讲清楚Claude Agent Skills篇,如何自定义Skills - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/1987456533315999135?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+    "snippet": "Claude Agent Skills 自定义教程：SKILL.md frontmatter（name 最多64字符小写字母数字连字符、description 非空最多1024字符需说明功能与使用时机、allowed-tools 逗号分隔工具列表、model 可指定模型）；目录结构最佳实践（SKILL.md 核心指令 + scripts/ 可执行脚本 + references/ 按需加载文档 + assets/ 模板）；官方最佳实践：简洁是关键、明确描述、渐进式披露、避免深层嵌套引用、目录结构导航。",
+    "published": "2025-12-25"
+  },
+  {
+    "title": "AI 给自己当\"安全教练\":Claude 修自己的 bug,效果碾压人类研究员 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/2076942593099879377?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+    "snippet": "Anthropic 自动化对齐研究员（AAR）：Claude 平均闭合 85% 安全差距，人类安全研究员平均仅 20%，Claude 最佳方案比人类最佳提案好 20%；成本约 $4/小时 vs 人类 $150/小时，可 5 路并行。在比优化对象大 4.7 倍的模型上依然有效；生产环境中 Sonnet 5 花 60 小时闭合了 Opus 4.8 早期版本 65% 的安全差距。三大局限：(1) 基准依赖——基准不准时'修复'可能只是在优化残缺指标，反而让真实场景表现更差；(2) 认知盲区——AI 意识不到的问题不会去修，缺乏'不知道自己不知道'的自觉，仍需人类发现和定义；(3) 递归自我改进隐忧——Anthropic 自己承认 AI 若能在对齐上自我改进，理论上也能更广泛地改进训练方法，人类在循环中的位置会被压缩。佐证：截至 2026 年 5 月 Claude 已写 Anthropic 代码库超 80% 的代码。",
+    "published": "2026-08-29"
+  },
+  {
+    "title": "Claude 新王牌 \"Skills\" 深度解析:让你的 AI 秒变行业专家,告别重复劳动 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/1966598753134842902?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+    "snippet": "Skills 可捆绑可执行 Python 脚本以保证确定性任务可靠性（如 Slack GIF Skill 验证文件大小限制）；跨产品使用：Claude.ai 网页版（Pro/Max/Team/Enterprise 可上传自定义 Skills）、Skills API、Claude Code 本地 ~/.claude/skills 目录自动发现并可通过 Git 协作共享。应用案例：品牌风格一致性、乐天（Rakuten）财务报告流程从一天缩短到一小时、标准化代码审查。",
+    "published": "2025-10-28"
+  }
+]

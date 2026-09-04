@@ -1,0 +1,22 @@
+{
+  "code": "159651",
+  "name": "国开债ETF平安",
+  "type": "利率债-国开（短久期）",
+  "duration": "0-3 年",
+  "scale": {
+    "value": 13.74,
+    "unit": "亿元",
+    "tier": "T1",
+    "source": "界面新闻"
+  },
+  "performance": {
+    "return_1y": "1.61%",
+    "tier": "T1"
+  },
+  "risk_metrics": {
+    "max_drawdown": "极低（类货币增强）",
+    "user_constraint_check": "✅ 满足"
+  },
+  "tier_in_report": "A 短久期补充",
+  "scenario_recommendation": "情景 A 配置 15%，情景 B 配置 5%"
+}

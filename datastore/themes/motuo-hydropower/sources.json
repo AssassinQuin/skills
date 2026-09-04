@@ -1,0 +1,160 @@
+{
+  "project_sources": {
+    "T0": [
+      {
+        "name": "新华网：国务院核准雅鲁藏布江下游水电工程",
+        "url": "http://www.news.cn/politics/20241225/b61f14cad5c046a0a209bf36fa99d69b/c.html",
+        "date": "2024-12-25",
+        "used_for": "核准日期"
+      },
+      {
+        "name": "人民日报：李强出席开工仪式",
+        "url": "https://paper.people.com.cn/rmrb/pc/content/202507/20/content_30088870.html",
+        "date": "2025-07-20",
+        "used_for": "正式开工日期、装机容量"
+      },
+      {
+        "name": "政府网：雅鲁藏布江下游水电工程开工",
+        "url": "https://www.gov.cn/yaowen/liebiao/202507/content_7032776.htm",
+        "date": "2025-07-19",
+        "used_for": "开工日期交叉验证"
+      },
+      {
+        "name": "东方财富引东方电气公司人士：374.8 亿中标",
+        "url": "https://caifuhao.eastmoney.com/news/20250806152712531338700",
+        "date": "2025-08-06",
+        "used_for": "东方电气中标金额"
+      },
+      {
+        "name": "易方达基金 562960 招募书",
+        "url": "https://www.efunds.com.cn/",
+        "used_for": "562960 绿电 ETF 历史回撤 -17.84%"
+      }
+    ],
+    "T1": [
+      {
+        "name": "证券时报：中国雅江集团挂牌",
+        "url": "https://www.stcn.com/article/detail/2658737.html",
+        "date": "2025-07",
+        "used_for": "雅江集团成立、注册资本"
+      },
+      {
+        "name": "21财经：1.2 万亿投资构成",
+        "url": "https://m.21jingji.com/article/20250207",
+        "date": "2025-02-07",
+        "used_for": "总投资金额"
+      },
+      {
+        "name": "东方财富 caifuhao：长江电力与雅江无直接关联",
+        "url": "https://caifuhao.eastmoney.com/news/20250721141141745635280",
+        "date": "2025-07-21",
+        "used_for": "长江电力与雅江关系澄清"
+      },
+      {
+        "name": "财联社：东方电气 H 股涨超 7 倍",
+        "url": "https://www.cls.cn/detail/2090819",
+        "date": "2025-07-19",
+        "used_for": "东方电气 H 股涨幅"
+      },
+      {
+        "name": "京报网引 Wind：电力指数 2021 以来最大回撤 -28.55%",
+        "url": "https://news.bjd.com.cn",
+        "date": "2026-05-06",
+        "used_for": "电力板块历史回撤"
+      },
+      {
+        "name": "新民周刊：墨脱地质/地震风险",
+        "url": "https://www.xinminweekly.com.cn/xinminyizhou/2025/07/23/33053.html",
+        "date": "2025-07-23",
+        "used_for": "工程实质性风险"
+      },
+      {
+        "name": "美国之音：地震风险",
+        "url": "https://www.voachinese.com/a/tibet-quake-highlights-earthquake-risk-for-dams-on-roof-of-the-world-20250110/7932027.html",
+        "date": "2025-01-10",
+        "used_for": "地震风险"
+      },
+      {
+        "name": "The Diplomat：雅鲁藏布项目风险",
+        "url": "https://thediplomat.com/2025/01/y-nithiyanandam-on-the-risks-of-chinas-ambitious-yarlung-tsangpo-project/",
+        "date": "2025-01",
+        "used_for": "国际视角风险"
+      }
+    ],
+    "T2": [
+      {
+        "name": "端传媒：中国墨脱水电站的'寂静'开工",
+        "url": "https://theinitium.com/20251117-mainland-mega-dam-zh-hans/",
+        "date": "2025-11-17",
+        "used_for": "项目背景、低调开工"
+      },
+      {
+        "name": "中国工业报：1.2 万亿投向雅鲁藏布江",
+        "url": "https://www.cinn.cn/yw/2025/08-01/gDangJKk.html",
+        "date": "2025-08-01",
+        "used_for": "投资规模"
+      },
+      {
+        "name": "钛媒体：雅江超级电站万亿投资背后",
+        "url": "https://www.tmtpost.com/7634859.html",
+        "used_for": "雅江集团股权结构传闻"
+      },
+      {
+        "name": "雪球：1.2 万亿基建计划",
+        "url": "https://xueqiu.com/5941996397/343306698",
+        "used_for": "投产时间表（不同版本）"
+      }
+    ],
+    "T3": [
+      {
+        "name": "知乎：雅江集团股权结构推测",
+        "url": "https://zhuanlan.zhihu.com/p/1950965089747443800",
+        "warning": "UGC 内容，未官方证实"
+      },
+      {
+        "name": "知乎：雅江集团下面的水电站",
+        "url": "https://xueqiu.com/3046834832/343269548",
+        "warning": "UGC 内容"
+      }
+    ]
+  },
+  "etf_data_sources": {
+    "T0": [
+      "广发基金官网 159611 季报",
+      "华夏基金官网 512950 季报",
+      "易方达基金官网 562960 季报"
+    ],
+    "T1": [
+      "天天基金 fundf10.eastmoney.com",
+      "理杏仁 lixinger.com",
+      "京报网引 Wind 数据",
+      "ETF 生态周报 PDF（dfcfw.com）",
+      "财联社 cls.cn",
+      "界面新闻 jiemian.com",
+      "NBD nbd.com.cn"
+    ],
+    "T2": [
+      "搜狐证券",
+      "新浪财经基金频道",
+      "网易财经"
+    ]
+  },
+  "bond_data_sources": {
+    "T0": [
+      "博时基金 159650 招募书",
+      "海富通基金 511270/511060 招募书"
+    ],
+    "T1": [
+      "理杏仁（国债 ETF 历史回撤）",
+      "NBD（511260 规模）",
+      "东方财富 PDF：基金市场债券类 ETF 分析"
+    ]
+  },
+  "data_refresh_policy": {
+    "project_facts": "重大公告时更新（雅江集团/发改委新公告）",
+    "etf_holdings": "季度更新（基金季报披露后 1-2 周）",
+    "etf_valuation": "月度更新",
+    "bond_yields": "月度更新（中债登）",
+    "historical_drawdown": "半年回看"
+  }
+}

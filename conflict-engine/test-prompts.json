@@ -1,0 +1,16 @@
+{
+  "skill": "conflict-engine",
+  "version": "0.1.0",
+  "source_book": "《小说的骨架：好提纲成就好故事》 — 凯蒂·维兰德",
+  "darwin_compatible": true,
+  "test_cases": [
+    {"id": "should-trigger-01", "type": "should_trigger", "prompt": "我的场景太平淡了，怎么加冲突", "expected_behavior": "激活 conflict-engine，在人物与目标之间加障碍", "notes": "正面：场景平淡"},
+    {"id": "should-trigger-02", "type": "should_trigger", "prompt": "怎么让人物受挫？我不想只会写车祸和死亡", "expected_behavior": "激活 conflict-engine，用最糟十事/截止日期/反派等生成非套路障碍", "notes": "正面：要非套路挫折"},
+    {"id": "should-trigger-03", "type": "should_trigger", "prompt": "我的人物一路顺风顺水，读者说无聊", "expected_behavior": "激活 conflict-engine，添加障碍并调节强度", "notes": "正面：太顺利"},
+    {"id": "should-not-trigger-01", "type": "should_not_trigger", "prompt": "我的人物到底想要什么？", "expected_behavior": "不应激活本 skill，应激活 character-engine（先定目标）", "notes": "跨 skill 混淆：先有目标才能加障碍"},
+    {"id": "should-not-trigger-02", "type": "should_not_trigger", "prompt": "帮我写一首情诗", "expected_behavior": "不应激活任何小说提纲 skill", "notes": "诱饵：非小说"},
+    {"id": "edge-01", "type": "edge_case", "prompt": "我写的是治愈系日常文，本来就没什么冲突，是不是不合格？", "expected_behavior": "应识别为边界：不是所有故事都要高强度冲突，合作/治愈向可弱冲突", "notes": "边界：治愈向无冲突"}
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 跨 skill 混淆）+ 1 edge_case。"
+}

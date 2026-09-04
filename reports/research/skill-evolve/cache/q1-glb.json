@@ -1,0 +1,32 @@
+[
+ {
+  "title": "Evolving Contexts for Self-Improving Language Models - arXiv (abs 2510.04618)",
+  "url": "https://arxiv.org/abs/2510.04618",
+  "snippet": "Oct 6, 2025 ... Abstract page for arXiv paper 2510.04618: Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models. ACE (Agentic Context Engineering) is a framework that treats contexts as evolving playbooks that accumulate, refine, and organize strategies through a modular process of generation, reflection, and curation. ACE prevents collapse with structured, incremental updates that preserve detailed knowledge and scale with long-context models.",
+  "published": "2025-10-06"
+ },
+ {
+  "title": "Evolving Contexts for Self-Improving Language Models - arXiv HTML v3",
+  "url": "https://arxiv.org/html/2510.04618v3",
+  "snippet": "Mar 29, 2026 ... 3 Agentic Context Engineering (ACE). We present ACE (Agentic Context Engineering), a framework for scalable and efficient context adaptation ...",
+  "published": "2026-03-29"
+ },
+ {
+  "title": "Agentic Context Engineering: Evolving Contexts for Self-Improving ... - alphaxiv",
+  "url": "https://www.alphaxiv.org/abs/2510.04618",
+  "snippet": "Mar 29, 2026 ... Abstract · AI Overview · The Problem: Brevity Bias and Context Collapse · The Architecture of ACE: Generator, Reflector, and Curator · The Concept ...",
+  "published": "2026-03-29"
+ },
+ {
+  "title": "[2510.04618] Agentic Context Engineering: Evolving Contexts for Self ... - arXiv (duckduckgo)",
+  "url": "https://arxiv.org/abs/2510.04618",
+  "snippet": "We introduce ACE (Agentic Context Engineering), a framework that treats contexts as evolving playbooks that accumulate, refine, and organize strategies through a modular process of generation, reflection, and curation. ACE prevents collapse with structured, incremental updates that preserve detailed knowledge and scale with long-context models.",
+  "published": "2025-10-06"
+ },
+ {
+  "title": "Agentic Context Engineering: Evolving Contexts for Self-Improving ... - arXiv HTML v1",
+  "url": "https://arxiv.org/html/2510.04618v1",
+  "snippet": "Due to its support for incremental, \"delta\" context updates and non-LLM-based context merging and de-duplication, ACE demonstrates particular advantages in reducing the cost (in terms of the number of rollouts or the amount of dollar cost for token ingestion/generation) and latency of adaptation.",
+  "published": "2025-10-06"
+ }
+]

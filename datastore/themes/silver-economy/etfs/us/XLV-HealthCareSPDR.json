@@ -1,0 +1,56 @@
+{
+  "code": "XLV",
+  "name": "Health Care Select Sector SPDR",
+  "fund_company": "State Street Global Advisors",
+  "tracking_index": {
+    "code": "",
+    "name": "S&P Health Care Select Sector Index"
+  },
+  "scale": {
+    "value": 37.6,
+    "unit": "billion USD",
+    "as_of": "2026-05",
+    "rank_in_category": "美股医疗 ETF 规模最大",
+    "tier": "T1",
+    "source_primary": "stockanalysis.com",
+    "source_secondary": "nasdaq.com",
+    "verified": true
+  },
+  "fees": {
+    "expense_ratio": "0.08%",
+    "tier": "T0",
+    "source": "State Street 官网",
+    "comment": "美股医疗 ETF 中费率最低"
+  },
+  "top_holdings_2026Q2": [
+    {"name": "Eli Lilly", "ticker": "LLY", "weight": "16.5%"},
+    {"name": "Johnson & Johnson", "ticker": "JNJ", "weight": "10.1%"},
+    {"name": "AbbVie", "ticker": "ABBV", "weight": "7.2%"},
+    {"name": "UnitedHealth", "ticker": "UNH", "weight": "6.7%"},
+    {"name": "Merck", "ticker": "MRK", "weight": "5.4%"},
+    {"name": "Amgen", "ticker": "AMGN", "weight": "3.4%"},
+    {"name": "Thermo Fisher", "ticker": "TMO", "weight": "3.2%"},
+    {"name": "Gilead", "ticker": "GILD", "weight": "2.9%"},
+    {"name": "Abbott", "ticker": "ABT", "weight": "2.9%"},
+    {"name": "Intuitive Surgical", "ticker": "ISRG", "weight": "2.7%"}
+  ],
+  "silver_economy_exposure_analysis": {
+    "tier": "高",
+    "explanation": "美国医疗大盘股组合，含制药+医疗器械+健康保险+医疗服务。LLY（糖尿病/肥胖）+ UNH（老年医疗保险）直接受益于老龄化"
+  },
+  "risk_metrics": {
+    "max_drawdown_5y": "-17%",
+    "tier": "T1",
+    "source": "nasdaq.com 2026-05",
+    "user_constraint_check": "❌ 突破 15% 硬约束（但在所有医疗 ETF 中最接近）",
+    "dividend_yield": "1.71%"
+  },
+  "valuation_2026Q2": {
+    "pe_ttm": "约 22-24 倍（LLY 高估值拉高整体）",
+    "pe_percentile": "约 35% 分位",
+    "comment": "估值处于历史中位偏低"
+  },
+  "currency_risk": "人民币兑美元波动影响收益",
+  "tier_in_report": "C 情景 C 配置",
+  "scenario_recommendation": "情景 C 配置 5%（卫星仓位中全球化分散的一部分）"
+}

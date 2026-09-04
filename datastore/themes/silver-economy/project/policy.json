@@ -1,0 +1,53 @@
+{
+  "policy_timeline": [
+    {
+      "date": "2024-01",
+      "event": "国务院办公厅《关于发展银发经济增进老年人福祉的意见》",
+      "significance": "首个以'银发经济'命名的政策文件（'银发经济 26 条'）",
+      "tier": "T0",
+      "url": "https://www.gov.cn/zhengce/content/202401/content_6925955.htm"
+    },
+    {
+      "date": "2025",
+      "event": "《提振消费专项行动方案》",
+      "significance": "包含老年消费专项",
+      "tier": "T0"
+    },
+    {
+      "date": "2025-07-24",
+      "event": "民政部《2024 年度国家老龄事业发展公报》",
+      "significance": "官方老龄化数据披露",
+      "tier": "T0"
+    },
+    {
+      "date": "即将发布",
+      "event": "十五五规划",
+      "significance": "全面应对老龄化",
+      "tier": "T0",
+      "status": "pending"
+    }
+  ],
+  "policy_definition": {
+    "银发经济": "向老年人提供产品或服务，以及为老龄阶段做准备等一系列经济活动的总和",
+    "key_words": ["涉及面广", "产业链长", "业态多元", "潜力巨大"]
+  },
+  "international_reference": {
+    "japan": {
+      "experience": "全球最老龄化的国家（65+ 29.4%）",
+      "implications": [
+        "65+ 就业人数连续 21 年创新高（930 万人，2024）",
+        "老年消费渗透各行业",
+        "养老 REIT 模式成熟"
+      ],
+      "investable_companies": ["武田制药 4502.T", "Astellas 4503.T", "SOMPO 老年保险"]
+    },
+    "usa": {
+      "experience": "中度老龄化，医疗支出 2032 年预计占 GDP 20%（$7.7 万亿）",
+      "investable_companies": ["LLY Eli Lilly", "JNJ Johnson & Johnson", "UNH UnitedHealth", "WELL Welltower"]
+    },
+    "europe": {
+      "experience": "欧盟 21.1% 老龄率，80+ 是最快增长组",
+      "investable_companies": ["Roche", "Novartis", "Novo Nordisk"]
+    }
+  }
+}

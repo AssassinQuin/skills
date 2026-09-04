@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Ruflo适用于 Claude Code 与 Codex 的智能体元框架",
+    "url": "https://download.csdn.net/download/zhaodiandiandian/93265386",
+    "snippet": "Ruflo 提供内置的反馈强化学习接口，可将测试失败信号、执行超时事件、内存溢出记录自动转化为 token 级别的 reward signal 并反向传播至模型推理过程。",
+    "published": ""
+  },
+  {
+    "title": "用 Claude3.5 从零写扫雷游戏-基本功能篇",
+    "url": "https://juejin.cn/post/7450394415125266470",
+    "snippet": "用 Claude3.5 从零写扫雷游戏，测试 Cursor 和 Claude 的编码效果。与 eval 污染/reward hacking 无关。",
+    "published": ""
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "code": "511110",
+  "name": "公司债ETF易方达",
+  "full_name": "易方达中债-本公司债券公司债基准做市券交易型开放式指数证券投资基金",
+  "fund_company": "易方达基金",
+  "type": "信用债-公司债（基准做市）",
+  "duration": "中短久期",
+  "scale": {
+    "value": 209.17,
+    "unit": "亿元",
+    "as_of": "2026-03-31",
+    "tier": "T1",
+    "source": "财联社/东方财富",
+    "note": "同类信用债 ETF 最大"
+  },
+  "performance": {
+    "net_inflow_2026H1": "超 50 亿元",
+    "tier": "T1"
+  },
+  "risk_metrics": {
+    "max_drawdown": "历史较低（具体数值待补）",
+    "tier": "T2",
+    "user_constraint_check": "✅ 满足 15% 硬约束"
+  },
+  "tier_in_report": "A 核心仓位",
+  "scenario_recommendation": "情景 A 配置 25%，情景 B 配置 15%",
+  "yield_context": "信用利差相比国债约 +0.5-1.0%"
+}

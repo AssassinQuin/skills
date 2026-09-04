@@ -1,0 +1,30 @@
+{"query":"claude skills agent skills in:name,description,readme stars:>100","lane":"github","agent":"orchestrator","wave":0,"reused":true}
+{"query":"self-evolving agent skill in:name,description,readme","lane":"github","agent":"orchestrator","wave":0,"reused":true}
+{"query":"commits anthropics/skills recent activity","lane":"github","agent":"orchestrator","wave":0,"reused":true}
+{"query":"Anthropic agent skills best practices writing skills 2026","lane":"glb","agent":"orchestrator","wave":0,"reused":true}
+{"query":"Claude Skills 使い方 活用事例 Qiita Zenn","lane":"glb","agent":"orchestrator","wave":0,"reused":true}
+{"query":"Claude Skills 中文 合集 仓库 github 精选 自定义 skill 教程","lane":"cn","agent":"orchestrator","wave":0,"reused":true}
+{"query":"Claude Skills","lane":"zhihu","agent":"orchestrator","wave":0,"reused":true}
+{"query":"self-evolving LLM agents skill acquisition optimization from evaluation feedback 2025 2026 arxiv","lane":"prime","agent":"orchestrator","wave":0,"reused":true}
+{"query":"Claude skill 编写 触发 描述 优化 token 技巧 2026","lane":"cn","agent":"cn-1","wave":1}
+{"query":"Claude Code 技能 编写","lane":"zhihu","agent":"zhihu-1","wave":1}
+{"query":"awesome claude skills","lane":"github","agent":"github-1","wave":1}
+{"query":"claude skills collection marketplace","lane":"github","agent":"github-1","wave":1}
+{"query":"Claude skill 自动进化 评测 优化 实践 2026","lane":"cn","agent":"cn-1","wave":1}
+{"query":"Claude skill progressive disclosure token cost measured benchmark 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"list_commits microsoft/SkillOpt","lane":"github","agent":"github-1","wave":1}
+{"query":"list_commits ace-agent/ace","lane":"github","agent":"github-1","wave":1}
+{"query":"list_commits NousResearch/hermes-agent-self-evolution","lane":"github","agent":"github-1","wave":1}
+{"query":"SKILL.md description trigger accuracy token reduction techniques 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"LLM context compression prompt optimization token efficiency 2026 arxiv","lane":"glb","agent":"glb-1","wave":1}
+{"query":"Claude skills non-English community localization español français 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"skills.sh ClawHub agent skills marketplace growth statistics 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"Claude skills communauté française español comunidad adopción 2026","lane":"glb","agent":"glb-2","wave":2}
+{"query":"skills.sh registry how many skills listed 2026","lane":"glb","agent":"glb-2","wave":2}
+{"query":"agent skills adoption statistics community growth standard 2026","lane":"prime","agent":"orchestrator-prime","wave":1}
+{"query":"Claude skills progressive disclosure token savings exaggerated criticism overestimated","lane":"glb","agent":"verifier","wave":9}
+{"query":"skills.sh 安装量 质疑 虚高 刷量","lane":"cn","agent":"verifier","wave":9}
+{"query":"ClawHub security report criticized methodology questioned","lane":"glb","agent":"verifier","wave":9}
+{"query":"Anthropic Agent Skills standard overhyped criticism adoption","lane":"glb","agent":"verifier","wave":9}
+{"query":"Zenity Black Hat malicious Claude skills 1.7 million downloads disputed","lane":"glb","agent":"verifier","wave":9}
+{"query":"SKILL.md 5000 tokens limit Anthropic skill authoring best practices description 1024 characters","lane":"glb","agent":"verifier","wave":9}

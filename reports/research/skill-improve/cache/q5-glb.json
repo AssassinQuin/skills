@@ -1,0 +1,14 @@
+[
+  {
+    "title": "ACON: Optimizing Context Compression for Long-horizon LLM Agents (abs)",
+    "url": "https://arxiv.org/abs/2510.00615",
+    "snippet": "Existing compression methods fail to fully address this, often relying on brittle heuristics or requiring parameter updates impractical for proprietary or large-scale LLMs. We introduce Agent Context Optimization (ACON), a unified framework that optimally compresses both observations and history into concise, informative representations.",
+    "published": null
+  },
+  {
+    "title": "ACON: Optimizing Context Compression for Long-horizon LLM Agents (PDF)",
+    "url": "https://arxiv.org/pdf/2510.00615",
+    "snippet": "Existing compression methods fail to fully address this, often relying on brittle heuristics or requiring parameter updates impractical for proprietary or large-scale LLMs. We introduce Agent Context Optimization (ACON), a unified framework that optimally compresses both observations and history into concise, informative representations.",
+    "published": null
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "topic": "skill 进化完善方法论调研（GitHub指标/多语言/论文/流行度与更新频率/自我进化机制）",
+  "date": "2026-09-04",
+  "requested_mode": "deep",
+  "effective_mode": "deep",
+  "report_file": "report.md",
+  "absorbed_inbox": [],
+  "prior_reports_absorbed": [
+    "reports/research/claude-skill-eco/（2026-09-03 生态调研，本地引用不复搜）",
+    "reports/research/skill-evolve/（2026-09-03 提案验证，本地引用不复搜）"
+  ],
+  "sub_questions": [
+    {"id": "Q1", "question": "GitHub 热度与活跃度：头部 skill 仓库/自进化项目 star/fork/issue 数 + commit 更新频率", "tier": "core", "source_route": "github + 复用缓存"},
+    {"id": "Q2", "question": "skill 质量改进方法论：SKILL.md 编写规范/渐进披露/触发准确性/token 降低实测数据", "tier": "core", "source_route": "glb + cn + 复用缓存"},
+    {"id": "Q3", "question": "相关论文：self-evolving agents / skill acquisition / context&prompt 优化 / token 效率（2025-2026）", "tier": "core", "source_route": "glb + prime(复用)"},
+    {"id": "Q4", "question": "自进化机制与失败模式：gate/eval 工具链、无门控反例、skill bloat、安全风险", "tier": "core", "source_route": "github + 本地 skill-evolve 报告"},
+    {"id": "Q5", "question": "多语言用户使用：中/日/其他语言社区 adoption、双语 description 等本地化实践", "tier": "background", "source_route": "cn + zhihu + glb"},
+    {"id": "Q6", "question": "流行趋势与更新频率：skill 市场平台规模、Agent Skills 开放标准演进节奏、生态增长", "tier": "background", "source_route": "glb + prime + 复用缓存"}
+  ]
+}

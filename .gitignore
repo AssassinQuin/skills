@@ -1,0 +1,10 @@
+.env
+.env.*
+.DS_Store
+**/.DS_Store
+*.bak
+*.bak-*
+.stats/usage.jsonl.bak*
+node_modules/
+__pycache__/
+.last-update-check

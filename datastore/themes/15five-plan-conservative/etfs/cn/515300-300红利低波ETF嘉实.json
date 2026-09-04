@@ -1,0 +1,20 @@
+{
+  "fetched_at": "2026-07-07",
+  "code": "515300",
+  "name": "300红利低波ETF嘉实",
+  "manager": "嘉实基金",
+  "tracked_index": "沪深300红利低波动指数 (930740)",
+  "fee_pct": 0.5,
+  "role_in_portfolio": "core_dividend",
+  "target_weight_pct": 10,
+  "top_holdings_as_of": "2026-03-31",
+  "top_holdings": [
+    {"rank": 1, "code": "601088", "name": "中国神华", "weight_pct": 5.13},
+    {"rank": 2, "code": "600938", "name": "中国海油", "weight_pct": 4.67},
+    {"rank": 3, "code": "601857", "name": "中国石油", "weight_pct": 4.27},
+    {"rank": 4, "code": "000895", "name": "双汇发展", "weight_pct": 3.79}
+  ],
+  "holdings_concentration": "能源（神华/海油/中石油）+ 消费（双汇），与 512890 形成行业互补",
+  "data_source_holdings": "eastmoney FundArchivesDatas (T0 季报披露)",
+  "complement_to": "512890"
+}

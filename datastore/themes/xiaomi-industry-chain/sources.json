@@ -1,0 +1,69 @@
+{
+  "theme": "xiaomi-industry-chain",
+  "subject": "小米集团-W (01810.HK) 投资研究",
+  "research_date": "2026-07-08",
+  "data_cutoff": "2026-07-08 (含 2025 全年年报 + 2026 Q1 季报 + 2026 年 6 月经营数据)",
+  "fetched_at": "2026-07-08T14:55:00+08:00",
+  "data_sufficiency": {
+    "A_multi_source": ["小米2025财务", "2026Q1财务", "估值快照", "分析师目标价", "EV交付与产能", "手机全球排名", "地缘风险"],
+    "B_single_source": ["EV竞争对手估值"],
+    "C_estimate": []
+  },
+  "primary_sources": {
+    "company_filings": [
+      "新华网：小米集团2025年营收4573亿 http://www.news.cn/finance/20260325/b8715fcd6f814721a9b4ee2593a5e65c/c.html",
+      "小米投资者关系 IR https://ir.mi.com/",
+      "小米2026Q1季报 (港交所)"
+    ],
+    "financial_media": [
+      "财联社：小米一季度增收不增利 https://www.cls.cn/detail/2382060",
+      "新浪财经：小米汽车2025营收破千亿经营利润9亿 https://finance.sina.com.cn/2026-03-24/doc-inhsavws1699004.shtml",
+      "新浪财经：智能电动汽车业务由盈转亏 https://finance.sina.com.cn/wm/2026-05-28/doc-inhzmihs7971998.shtml",
+      "虎嗅：小米的股价悲歌 https://www.huxiu.com/article/4870668.html",
+      "钛媒体：小米亟待走出等风来 https://www.tmtpost.com/8003937.html",
+      "21财经：小米再遇抛盘8年两次腰斩 https://www.21jingji.com/article/20260407/herald/83cc956eb4c7203ee2244383605d843c.html",
+      "华尔街见闻：小米2025全年经营盈利+9亿"
+    ],
+    "valuation_analysts": [
+      "Yahoo Finance 1810.HK https://finance.yahoo.com/quote/1810.HK/",
+      "富途分析师评级 https://www.futunn.com/en/stock/01810-HK/forecast",
+      "Investing.com一致预期 https://www.investing.com/equities/xiaomi-consensus-estimates",
+      "高盛研报2026-05 (TP HK$40)",
+      "招银国际研报 (SOTP TP HK$55.31, 26.3x FY26E PE) https://www.cmbi.com.hk/upload/202511/20251119225508.pdf",
+      "Simply Wall St https://simplywall.st/stocks/hk/tech/hkg-1810/xiaomi-shares/"
+    ],
+    "industry": [
+      "IDC全球智能手机市场份额 https://www.idc.com/promo/smartphone-market-share/",
+      "Counterpoint全球手机份额 https://counterpointresearch.com/en/insights/global-smartphone-share",
+      "财联社：全球车企市值洗牌 https://www.cls.cn/detail/2247690",
+      "TrendX 2026电动车市场份额 https://trendxinsights.com/blogs/electric-vehicle-market-share-2026/"
+    ],
+    "risk_geopolitical": [
+      "RFI：美议员呼吁将DeepSeek小米列入涉军清单 https://www.rfi.fr/cn/中国/20251220",
+      "Sputnik：美国将比亚迪阿里百度等列入涉军名单2026 https://sputniknews.cn/20260609/1071760373.html",
+      "DW：美国扩大中国军企清单 https://www.dw.com/zh/美国扩大中国军企清单/a-77470854"
+    ]
+  },
+  "key_verified_facts": {
+    "stock_price_hkd_2026_07": "~23-24",
+    "market_cap_hkd_b": "~590-630",
+    "pe_ttm": "~15",
+    "revenue_2025_rmb_b": 4573,
+    "adjusted_net_profit_2025_rmb_b": 392,
+    "ev_revenue_2025_rmb_b": 1061,
+    "ev_gross_margin_2025": "24.3%",
+    "ev_operating_profit_2025_rmb_b": 9,
+    "ev_deliveries_2025": "41.1万 (+200.4%)",
+    "ev_q1_2026_loss_rmb_b": -31,
+    "analyst_consensus": "23买/6持/3卖 (30位)",
+    "analyst_avg_target_hkd": "45-67"
+  },
+  "audit": {
+    "tool": "~/.claude/tools/ai-berkshire/report_audit.py",
+    "verdict": "准出 (PASS) - 0 不通过",
+    "errors_caught_and_fixed": [
+      "蔚来市值 HK$117-244亿 → HK$1171-2441亿 (10倍笔误)",
+      "小鹏市值 HK$150亿 → HK$1495亿 (10倍笔误)"
+    ]
+  }
+}

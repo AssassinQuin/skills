@@ -1,0 +1,16 @@
+{
+  "skill": "structure-three-act",
+  "version": "0.1.0",
+  "source_book": "《小说的骨架：好提纲成就好故事》 — 凯蒂·维兰德",
+  "darwin_compatible": true,
+  "test_cases": [
+    {"id": "should-trigger-01", "type": "should_trigger", "prompt": "我的故事中间拖沓，怎么搭三幕结构", "expected_behavior": "激活 structure-three-act，按开头-中间-结尾检查点搭骨架", "notes": "正面：中间拖沓"},
+    {"id": "should-trigger-02", "type": "should_trigger", "prompt": "开头怎么写？结尾怎么收？", "expected_behavior": "激活 structure-three-act，用开头/结尾清单", "notes": "正面：问开头结尾"},
+    {"id": "should-trigger-03", "type": "should_trigger", "prompt": "我写完整本书觉得结构松散不连贯", "expected_behavior": "激活 structure-three-act，检查三幕+首尾呼应", "notes": "正面：结构松散"},
+    {"id": "should-not-trigger-01", "type": "should_not_trigger", "prompt": "这个场景该用谁的视角写？", "expected_behavior": "不应激活本 skill，应激活 pov-selection", "notes": "跨 skill 混淆：视角是 pov"},
+    {"id": "should-not-trigger-02", "type": "should_not_trigger", "prompt": "帮我写一段产品文案", "expected_behavior": "不应激活任何小说提纲 skill", "notes": "诱饵：非小说"},
+    {"id": "edge-01", "type": "edge_case", "prompt": "我写的是网文超长篇，三幕结构还适用吗？", "expected_behavior": "应识别为边界：网文是单元爽点+卷级高潮循环，三幕映射到单卷而非全书", "notes": "边界：网文超长篇"}
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 跨 skill 混淆）+ 1 edge_case。"
+}

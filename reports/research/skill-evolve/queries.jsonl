@@ -1,0 +1,33 @@
+{"query": "SkillOpt self-evolving agent skills 2605.23904 reproduction critique not reproducible", "lane": "glb", "agent": "orchestrator", "wave": 0, "reused": true}
+{"query": "SkillWeaver ACLA agent skill acquisition arxiv 2025 2026", "lane": "glb", "agent": "orchestrator", "wave": 0, "reused": true}
+{"query": "self-evolving agent skills failure skill bloat runaway risk criticism overrated", "lane": "glb", "agent": "orchestrator", "wave": 0, "reused": true}
+{"query": "Claude Skills 批评 AGENTS.md 换皮 token 消耗 成本 翻车", "lane": "cn", "agent": "orchestrator", "wave": 0, "reused": true}
+{"query": "AI Agent 自我进化", "lane": "zhihu", "agent": "orchestrator", "wave": 0, "reused": true}
+{"query":"AI agent 技能自我进化 编辑预算 人工审批 红线 2026","lane":"cn","agent":"cn-1","wave":1}
+{"query":"Claude Skills 自我改进 安全 风险","lane":"zhihu","agent":"zhihu-1","wave":1}
+{"query":"search_repositories: SkillOpt microsoft","lane":"github","agent":"github-1","wave":1}
+{"query":"search_repositories: NousResearch hermes agent self-evolution","lane":"github","agent":"github-1","wave":1}
+{"query":"search_repositories: agentic context engineering ACE","lane":"github","agent":"github-1","wave":1}
+{"query":"Claude skill eval 评测集 污染 过拟合 reward hacking","lane":"cn","agent":"cn-1","wave":1}
+{"query":"get_file_contents: microsoft/SkillOpt README.md","lane":"github","agent":"github-1","wave":1}
+{"query":"search_issues: repo:NousResearch/hermes-agent-self-evolution is:issue is:open","lane":"github","agent":"github-1","wave":1}
+{"query":"get_file_contents: ace-agent/ace README.md","lane":"github","agent":"github-1","wave":1}
+{"query":"Agentic Context Engineering ACE delta updates context collapse arxiv 2025 2026","lane":"glb","agent":"glb-1","wave":1}
+{"query":"LLM 自我改进 评估器 被钻空子 风险 案例","lane":"cn","agent":"cn-1","wave":1}
+{"query":"bounded edits editing budget LLM self-improvement eval set size 5-10 examples","lane":"glb","agent":"glb-1","wave":1}
+{"query":"search_repositories: skill-creator claude skill evaluation","lane":"github","agent":"github-1","wave":1}
+{"query":"search_issues: repo:anthropics/skills is:issue eval harness","lane":"github","agent":"github-1","wave":1}
+{"query":"ClawHub Claude skills marketplace audit","lane":"glb","agent":"glb-1","wave":1}
+{"query":"gated self-evolution of agent skills evaluation gate reward hacking safety LLM 2026","lane":"prime","agent":"orchestrator-prime","wave":1}
+{"query":"editing budget bounded edits per iteration LLM skill optimization small eval set size 5-10 examples evidence","lane":"prime","agent":"orchestrator-prime","wave":1}
+{"query":"webReader: https://arxiv.org/html/2605.23904v1 (SkillOpt edit budget + eval set size)","lane":"glb","agent":"gap-1","wave":3}
+{"query":"webReader: https://github.com/microsoft/SkillOpt/issues (open issues pain points)","lane":"glb","agent":"gap-1","wave":3}
+{"query":"webReader: https://github.com/ace-agent/ace/issues (open issues pain points)","lane":"glb","agent":"gap-1","wave":3}
+{"query":"webReader: https://github.com/alirezarezvani/claude-skills (mechanism, stars, updates)","lane":"glb","agent":"gap-1","wave":3}
+{"query":"webReader: https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/SKILL.md (v2 marker, eval dimensions)","lane":"glb","agent":"gap-1","wave":3}
+{"query":"how many test examples needed LLM evaluation statistical significance small eval set criticism","lane":"glb","agent":"verifier","wave":9}
+{"query":"Snyk ToxicSkills ClawHub criticism false positives methodology questioned","lane":"glb","agent":"verifier","wave":9}
+{"query":"AI agent 评估器 被钻空子 reward hacking 真实案例 skill 评测 污染","lane":"cn","agent":"verifier","wave":9}
+{"query":"Microsoft SkillOpt arXiv 2605.23904 criticism independent reproduction failed","lane":"glb","agent":"verifier","wave":9}
+{"query":"reward hacking self-evolving agents risk overstated criticism","lane":"glb","agent":"verifier","wave":9}
+{"query":"智能体 自我进化 评估 作弊 reward hacking 事故 案例","lane":"cn","agent":"verifier","wave":9}

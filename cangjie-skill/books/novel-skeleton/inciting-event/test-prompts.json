@@ -1,0 +1,16 @@
+{
+  "skill": "inciting-event",
+  "version": "0.1.0",
+  "source_book": "《小说的骨架：好提纲成就好故事》 — 凯蒂·维兰德",
+  "darwin_compatible": true,
+  "test_cases": [
+    {"id": "should-trigger-01", "type": "should_trigger", "prompt": "我的开头一直平淡，故事到底该从哪个事件开始", "expected_behavior": "激活 inciting-event，用门测试找激发事件", "notes": "正面：开头平淡"},
+    {"id": "should-trigger-02", "type": "should_trigger", "prompt": "这个事件够不够格当转折点？", "expected_behavior": "激活 inciting-event，用四特质+门测试校验", "notes": "正面：校验事件"},
+    {"id": "should-trigger-03", "type": "should_trigger", "prompt": "激发事件应该放在小说的什么位置？", "expected_behavior": "激活 inciting-event，回答四分之一处或之后", "notes": "正面：问位置"},
+    {"id": "should-not-trigger-01", "type": "should_not_trigger", "prompt": "帮我挖一下主角的过去经历", "expected_behavior": "不应激活本 skill，应激活 backstory-iceberg", "notes": "跨 skill 混淆：挖过去是幕后故事"},
+    {"id": "should-not-trigger-02", "type": "should_not_trigger", "prompt": "帮我算一下这个月开销", "expected_behavior": "不应激活任何写作 skill", "notes": "诱饵：非写作"},
+    {"id": "edge-01", "type": "edge_case", "prompt": "我的小说是日常向的，没有惊天动地的大事件，也需要激发事件吗？", "expected_behavior": "应识别为边界：激发事件可以是小事（搬家/新工作），只要不可逆即可", "notes": "边界：日常向的激发事件"}
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 跨 skill 混淆）+ 1 edge_case。"
+}

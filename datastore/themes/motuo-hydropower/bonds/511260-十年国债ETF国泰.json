@@ -1,0 +1,42 @@
+{
+  "code": "511260",
+  "name": "十年国债ETF国泰",
+  "full_name": "国泰上证10年期国债交易型开放式指数证券投资基金",
+  "fund_company": "国泰基金",
+  "type": "利率债-国债",
+  "duration": {
+    "value_years": 8.9,
+    "range": "8-10 年",
+    "tier": "T1"
+  },
+  "scale": {
+    "value": 201.69,
+    "unit": "亿元",
+    "as_of": "2026-05-29",
+    "tier": "T1",
+    "source_primary": "理杏仁",
+    "source_secondary": "NBD 量级一致",
+    "verified": true
+  },
+  "performance": {
+    "return_1y": "1.48%",
+    "return_3y_cumulative": "14.23%",
+    "return_3y_annualized": "约 4.5%",
+    "tier": "T1",
+    "source": "理杏仁 2025-03-17"
+  },
+  "risk_metrics": {
+    "max_drawdown_3y": "-2.27%",
+    "tier": "T1",
+    "source": "理杏仁",
+    "user_constraint_check": "✅ 远低于 15% 硬约束"
+  },
+  "current_yield_context": {
+    "yield_10y_treasury": "约 1.72%",
+    "as_of": "2025 年中",
+    "tier": "T1",
+    "warning": "10Y 国债收益率处于历史低位，未来若利率上行，长久期债券 ETF 会亏损"
+  },
+  "tier_in_report": "A 核心仓位",
+  "scenario_recommendation": "情景 A 配置 60%，情景 B 配置 65%"
+}

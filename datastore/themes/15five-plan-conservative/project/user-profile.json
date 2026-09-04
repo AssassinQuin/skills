@@ -1,0 +1,30 @@
+{
+  "fetched_at": "2026-07-07",
+  "investor_profile": {
+    "risk_tolerance": "conservative",
+    "max_drawdown_limit_pct": 15,
+    "holding_period_years": "5+",
+    "rebalance_frequency": "annual",
+    "allowed_assets": [
+      "passive_index_etf",
+      "government_bonds",
+      "policy_bank_bonds",
+      "dividend_value_active_funds"
+    ],
+    "excluded_assets": [
+      "hk_stocks",
+      "us_stocks",
+      "high_volatility_satellite",
+      "convertible_bonds",
+      "crypto"
+    ],
+    "liquidity_constraint": "may_withdraw_lt_50pct_within_3y",
+    "implications": {
+      "equity_allocation_cap_pct": 45,
+      "single_asset_cap_pct": 25,
+      "cash_and_short_bond_floor_pct": 35,
+      "bond_allocation_pct": 25
+    }
+  },
+  "source": "AskUserQuestion user response on 2026-07-06"
+}

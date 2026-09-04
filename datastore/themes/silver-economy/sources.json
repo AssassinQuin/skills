@@ -1,0 +1,127 @@
+{
+  "demographic_sources": {
+    "T0": [
+      {
+        "name": "国家统计局《2025 年国民经济和社会发展统计公报》",
+        "url": "https://www.stats.gov.cn/sjjd/202601/t20260119_1962338.html",
+        "date": "2026-01-19",
+        "used_for": "中国 2025 末人口数据（60+/65+ 占比）"
+      },
+      {
+        "name": "国务院办公厅《关于发展银发经济增进老年人福祉的意见》",
+        "url": "https://www.gov.cn/zhengce/content/202401/content_6925955.htm",
+        "date": "2024-01",
+        "used_for": "首个银发经济政策文件（银发经济 26 条）"
+      },
+      {
+        "name": "民政部《2024 年度国家老龄事业发展公报》",
+        "date": "2025-07-24",
+        "used_for": "老龄事业官方数据"
+      },
+      {
+        "name": "日本总务省老龄化数据",
+        "date": "2025-09-14",
+        "used_for": "日本 65+ 占比 29.4%（创历史新高）"
+      },
+      {
+        "name": "US Census Bureau",
+        "date": "2024",
+        "used_for": "美国 65+ 占比 18%（6120 万人）"
+      },
+      {
+        "name": "Eurostat",
+        "date": "2020/21",
+        "used_for": "欧盟 65+ 占比 21.1%"
+      }
+    ],
+    "T1": [
+      {
+        "name": "复旦老龄研究院",
+        "used_for": "银发经济规模 2035 年 30 万亿元预测"
+      },
+      {
+        "name": "CGTN",
+        "url": "https://www.cgtn.com/",
+        "date": "2025-03-19",
+        "used_for": "银发经济规模 2024 年 7 万亿元"
+      },
+      {
+        "name": "中国老龄科学研究中心",
+        "used_for": "2050 年 100 万亿元预测"
+      },
+      {
+        "name": "Pew Research",
+        "date": "2025",
+        "used_for": "美国老龄化数据交叉验证"
+      }
+    ]
+  },
+  "etf_data_sources": {
+    "cn_T0": [
+      "华宝基金官网（512170, 516560）https://www.fsfund.com/",
+      "博时基金官网（513060）https://www.bosera.com/",
+      "银华基金官网（159992）https://www.yhfund.com.cn/",
+      "国泰基金官网（159828, 512290）",
+      "中证指数官网 csindex.com.cn"
+    ],
+    "cn_T1": [
+      "天天基金 fundf10.eastmoney.com（重仓股、规模、净值）",
+      "理杏仁 lixinger.com（历史估值分位）",
+      "蛋卷基金 danjuanfunds.com（每日估值）",
+      "京报网引 Wind（指数最大回撤）",
+      "每经网 nbd.com.cn（医疗板块业绩分析）",
+      "财联社 cls.cn"
+    ],
+    "hk_T1": [
+      "金基研 2025-06-18（513060 持仓分析）",
+      "雪球大 V 2025-07-29（513060 PE 历史分位）"
+    ],
+    "us_T0": [
+      "State Street 官网（XLV）",
+      "Vanguard 官网（VHT）",
+      "BlackRock iShares 官网（IXJ, IBB, IYH）",
+      "KraneShares 官网（KURE）"
+    ],
+    "us_T1": [
+      "stockanalysis.com",
+      "nasdaq.com",
+      "etfdb.com",
+      "morningstar.com"
+    ]
+  },
+  "policy_sources": {
+    "T0": [
+      "国务院 2024-01 国办发〔2024〕1 号",
+      "国务院 2025《提振消费专项行动方案》",
+      "民政部 2025-07-24 公报"
+    ]
+  },
+  "warning_UGC_T3": [
+    {
+      "name": "知乎专栏（513060 持仓分析）",
+      "url": "https://zhuanlan.zhihu.com/p/1951217908576392770",
+      "warning": "UGC 内容，仅作参考"
+    },
+    {
+      "name": "雪球'辉猿走壁'（医疗 ETF 历史估值）",
+      "url": "https://xueqiu.com/",
+      "date": "2024-02-01",
+      "warning": "历史数据参考，时效性弱"
+    }
+  ],
+  "data_refresh_policy": {
+    "demographic_data": "年度更新（国家统计局每年 1 月发布上年末数据）",
+    "industry_size_forecast": "半年更新（多源预测差异较大）",
+    "etf_holdings": "季度更新（基金季报披露后 1-2 周）",
+    "etf_valuation": "月度更新",
+    "roe_earnings": "季度更新（关注业绩拐点）",
+    "us_etf_aum": "月度更新",
+    "ah_premium": "周度更新"
+  },
+  "important_disclaimers": [
+    "本目录所有数据点必须标注 T0/T1/T2/T3 源等级",
+    "T3 UGC 数据不可作为关键决策唯一依据",
+    "ETF 代码必须通过基金公司官网或天天基金核验（网络流传清单错误率高）",
+    "估值分位数据有时效性，超过 30 天需重新核验"
+  ]
+}

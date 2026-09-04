@@ -1,0 +1,51 @@
+{
+  "topic": "skill 进化完善方法论调研（GitHub指标/多语言/论文/流行度与更新频率/自我进化机制）",
+  "date": "2026-09-04",
+  "mode": "deep",
+  "sub_questions": [
+    {"id": "Q1", "question": "GitHub 热度与活跃度：头部 skill 仓库/自进化项目 star/fork/issue 数 + commit 更新频率", "tier": "core", "status": "answered"},
+    {"id": "Q2", "question": "skill 质量改进方法论：SKILL.md 编写规范/渐进披露/触发准确性/token 降低实测数据", "tier": "core", "status": "answered"},
+    {"id": "Q3", "question": "相关论文：self-evolving agents / skill acquisition / context&prompt 优化 / token 效率（2025-2026）", "tier": "core", "status": "answered"},
+    {"id": "Q4", "question": "自进化机制与失败模式：gate/eval 工具链、无门控反例、skill bloat、安全风险", "tier": "core", "status": "answered"},
+    {"id": "Q5", "question": "多语言用户使用：中/日/其他语言社区 adoption、双语 description 等本地化实践", "tier": "background", "status": "partial"},
+    {"id": "Q6", "question": "流行趋势与更新频率：skill 市场平台规模、Agent Skills 开放标准演进节奏、生态增长", "tier": "background", "status": "partial"}
+  ],
+  "findings": [
+    {"claim": "合集仓库头部集中且克隆泛滥：ComposioHQ 74,425★（push 停 3.5 周）、hesreallyhim 53,467★（当天活跃）、VoltAgent 33,715★；同名 awesome-claude-skills 克隆 48 小时内出现 3 个", "sub_question": "Q1", "confidence": "high", "evidence": [{"url": "https://github.com/ComposioHQ/awesome-claude-skills", "lane": "github"}, {"url": "https://github.com/hesreallyhim/awesome-claude-code", "lane": "github"}, {"url": "https://github.com/VoltAgent/awesome-agent-skills", "lane": "github"}]},
+    {"claim": "marketplace 仓库形态远弱于合集形态：最大 davepoon/buildwithclaude 仅 3,409★，其余全部 ≤55★", "sub_question": "Q1", "confidence": "high", "evidence": [{"url": "https://github.com/davepoon/buildwithclaude", "lane": "github"}, {"url": "https://github.com/netresearch/claude-code-marketplace", "lane": "github"}]},
+    {"claim": "更新频率比 star 更能识别真项目：SkillOpt 活跃（2026-08-29，引入 McNemar+bootstrap CI 配对 A/B evalkit）；ace 季度脉冲（最近 2026-08-24）；hermes 静默 2.5 个月且曾改名、自报 +39.5% 无独立验证", "sub_question": "Q1", "confidence": "high", "evidence": [{"url": "https://github.com/microsoft/SkillOpt", "lane": "github"}, {"url": "https://github.com/ace-agent/ace", "lane": "github"}, {"url": "https://github.com/NousResearch/hermes-agent-self-evolution", "lane": "github"}]},
+    {"claim": "典型 skill body 加载 600–1,500 tokens（工具密集型 3,000–4,000），ClaudeKit v2 全目录 82,197 tokens；三层成本模型：always-on description 行 15–40 tokens/条、body 按需、references 按需；审计优先级应为 MCP schema(5k–15k/个) > CLAUDE.md > 僵尸 description 行 > body", "sub_question": "Q2", "confidence": "medium", "evidence": [{"url": "https://theclaudekit.com/blog/claude-code-skills-token-cost-measured", "lane": "glb"}]},
+    {"claim": "官方硬限制仅 description ≤1,024 字符 / name ≤64 字符；SKILL.md <5K token 是建议值非硬上限（besthub 等二手源称 official limit 属拔高）", "sub_question": "Q2", "confidence": "high", "evidence": [{"url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices", "lane": "glb"}, {"url": "https://williamzujkowski.github.io/standards/guides/SKILL_FORMAT_SPEC/", "lane": "glb"}]},
+    {"claim": "SkillReducer（arXiv 2603.29919）55,315 skills 实证：26.4% 缺 routing description、>60% body 不可行动；两阶段压缩 description −48%、body −39% 且功能质量 +2.8%（less-is-more），跨 5 模型 retention 0.965", "sub_question": "Q2", "confidence": "medium", "evidence": [{"url": "https://arxiv.org/abs/2603.29919", "lane": "glb"}]},
+    {"claim": "中文社区方法论（知乎时间线 2026-03→08）：四步框架（任务识别→方法抽象→规则迭代→能力沉淀）；skill 化判据=同一件事对 AI 重复交代三遍以上；「让 AI 自己写第一个 skill 是第一大坑」（人先亲手写以获得评估力）；Anthropic 内部经验转述：验证类 skill 值得工程师一周打磨", "sub_question": "Q2", "confidence": "medium", "evidence": [{"url": "https://zhuanlan.zhihu.com/p/2077335900044915391", "lane": "zhihu"}, {"url": "https://zhuanlan.zhihu.com/p/2058275010524059575", "lane": "zhihu"}, {"url": "https://zhuanlan.zhihu.com/p/2017597470947967164", "lane": "zhihu"}]},
+    {"claim": "论文全景：SkillReducer（skill 压缩实证）、SkillOpt 2605.23904（门控自进化+held-out gate）、ACE 2510.04618（delta 增量防 collapse）、ACON 2510.00615（ICML 2026，长程 observations/history 压缩，峰值 token −26~54%，机制与 skill 压缩不同不可混用）、ClawHub Security Signals 2606.01494（67,453 版本安全数据集）", "sub_question": "Q3", "confidence": "high", "evidence": [{"url": "https://arxiv.org/abs/2603.29919", "lane": "glb"}, {"url": "https://arxiv.org/abs/2510.00615", "lane": "glb"}, {"url": "https://arxiv.org/abs/2606.01494", "lane": "glb"}, {"url": "https://arxiv.org/abs/2510.04618", "lane": "glb"}]},
+    {"claim": "门控自进化在统计严谨化：SkillOpt #242（2026-08-29）统一评测仪器=固定任务清单+配对二值结果 McNemar 检验+bootstrap CI+多种子方差带，覆盖 codex/claude/cursor/copilot 四 CLI", "sub_question": "Q4", "confidence": "high", "evidence": [{"url": "https://github.com/microsoft/SkillOpt", "lane": "github"}]},
+    {"claim": "失败模式清单：无门控自改（hermes 静默+0行diff报+30.7%）、评测 harness 自身会坏（anthropics/skills #1706 并行触发率坍缩 1/N）、skill 膨胀（ACE #11 >100K playbook；>60% body 不可行动）、安全攻击（typosquat 经 skills.sh 累计 >170 万次安装=aggregate installs 非独立用户）", "sub_question": "Q4", "confidence": "high", "evidence": [{"url": "https://www.tmcnet.com/usubmit/2026/08/06/10426627.htm", "lane": "glb"}, {"url": "https://thenextweb.com/news/zenity-malicious-ai-skills-1-7m-installs-supply-chain-credential-theft", "lane": "glb"}, {"url": "https://github.com/NousResearch/hermes-agent-self-evolution", "lane": "github"}]},
+    {"claim": "中文社区（CSDN/掘金/linuxdo 可搜范围）截至 2026-09 无任何 skill 自进化/评测体系实践文章——讨论全部在英文侧（负结果）", "sub_question": "Q4", "confidence": "medium", "evidence": [{"url": "https://blog.csdn.net/hq354974212/article/details/161169672", "lane": "cn"}]},
+    {"claim": "多语言使用存在性证据：法语完整指南（Chipie Studio 2026-07-02，厂商博客）、西语组织化社区（claude.rich 官方 Ambassador + abracu/Claude-Skills 西语合集）、日语 Qiita/Zenn 教程导入期、中文实操层最厚；但全生态无双语 description 对触发准确率影响的量化数据", "sub_question": "Q5", "confidence": "medium", "evidence": [{"url": "https://www.chipiestudio.com/fr/blog/skills-claude-francais", "lane": "glb"}, {"url": "https://claude.rich/es", "lane": "glb"}, {"url": "https://github.com/abracu/Claude-Skills", "lane": "glb"}]},
+    {"claim": "Agent Skills 标准 90 天增长：索引 week1 ~8k → week2 ~17k skills；~40 兼容平台（OpenAI/Google DeepMind 等采纳）——全部为二手博客源，无官方审计数字", "sub_question": "Q6", "confidence": "medium", "evidence": [{"url": "https://ai.gopubby.com/how-agent-skills-became-ais-most-important-standard-in-90-days-a66b6369b1b7", "lane": "prime"}, {"url": "https://agentman.ai/blog/agent-skills-ecosystem-report-2026", "lane": "prime"}]},
+    {"claim": "市场规模五口径冲突：59,826（Skillselion 2026-08-21）/ 52,652（ClawHub）/ 85,000+（头条）/ ~669,670（Ry Walker）/ 80 万级（SkillsMP 微信 2026-08-28）；skills.sh 上线 4 天 110k 安装；安装≠使用（Vercel Labs：日用 <5%）", "sub_question": "Q6", "confidence": "high", "evidence": [{"url": "https://skillselion.com/state-of-ai-agent-skills-2026", "lane": "glb"}, {"url": "https://trent.ai/blog/clawhub-by-the-numbers/", "lane": "glb"}, {"url": "https://rywalker.com/research/skills-sh", "lane": "glb"}]},
+    {"claim": "ClawHub 解剖（Trent AI 2026-06-09，竞品 CTA 利益相关、方向获多源佐证）：全库 ≤99 天、65% 包零安装、80% 零 star、install/download 转化 0.73%、top1 账号 1,941 包占 3.7%、38 个 >100 包账号 > 底部 65% 合计、45% 包引用外部凭证、全部包无 license、迭代与使用零相关（r=0.04）；self-improving-agent 单包 384,735 下载为最热题材", "sub_question": "Q6", "confidence": "medium", "evidence": [{"url": "https://trent.ai/blog/clawhub-by-the-numbers/", "lane": "glb"}, {"url": "https://arxiv.org/abs/2606.01494", "lane": "glb"}, {"url": "https://insiderllm.com/guides/openclaw-security-report-february-2026/", "lane": "glb"}]},
+    {"claim": "「渐进披露降 API 成本 40–60%」为单源主张（chudi.dev），同类数字谱系 26–98% 跨度 >2 倍且机制混杂（ACON 压缩的是 observations/history），应降级为定性表述", "sub_question": "Q2", "confidence": "high", "evidence": [{"url": "https://chudi.dev/blog/reduce-ai-token-usage-progressive-disclosure", "lane": "glb"}, {"url": "https://chrisduffyigniteai.substack.com/p/claude-skills-the-98-token-savings", "lane": "glb"}, {"url": "https://arxiv.org/abs/2510.00615", "lane": "glb"}]}
+  ],
+  "strongest_objection": "对证据最少的核心数字的反驳：①「渐进披露省 40–60% token」单源且与 98%/26–54% 等不同机制的数字谱系混杂，已降级为定性表述；②市场规模存在五口径互相否证（59,826/52,652/85k/66.9万/80万级），任何单一数字不可直接引用；③Trent.ai ClawHub 数据带竞品 CTA（细分百分比单源），suspicious≠malicious，1.7M 恶意安装=累计安装非独立用户数（多源确认后反而加强）；④「<5K 硬上限」是建议值，官方硬限制只有 description ≤1,024 字符。GitHub star/commits、SkillReducer 论文数字、中文方法论帖的反面证据未发现。",
+  "gaps": [
+    "多语言优化的量化效果（双语 description/非英语触发词对触发准确率的影响）无任何语言的基准数据",
+    "skills.sh/生态规模无官方（Vercel/Anthropic）口径，五口径无法仲裁",
+    "知乎转述的「官方建议 500 行内」未找到官方原文出处（官方可查的是 <5K tokens 建议值）",
+    "部分中腰部合集仓库 pushed_at 未取得（API minimal output 限制）",
+    "6 条 verifier contrarian 查询未写回搜索缓存（对抗搜索性质，结果已进报告引用）"
+  ],
+  "meta": {
+    "requested_mode": "deep",
+    "effective_mode": "deep",
+    "reused_queries": 8,
+    "fresh_queries": 22,
+    "contrarian_run": true,
+    "save_memory_success": 16,
+    "lane_health": "github:ok / glb:降级(startpage 全程故障,全部 duckduckgo;brave 2次429) / cn:降级(搜狗反爬,csdn+juejin fallback) / zhihu:ok / prime:ok",
+    "degradation_notes": "无 model 回退；glb/cn 引擎层降级；verifier 6 查询无缓存文件未写回 save-memory",
+    "task_dir": "reports/research/skill-improve/",
+    "prior_reports": ["reports/research/claude-skill-eco/", "reports/research/skill-evolve/"]
+  }
+}

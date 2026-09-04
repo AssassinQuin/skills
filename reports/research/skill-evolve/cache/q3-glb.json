@@ -1,0 +1,32 @@
+[
+ {
+  "title": "Built on ClawHub, Spread on Moltbook: The New Agent-to-Agent Attack Chain - Straiker",
+  "url": "https://www.straiker.ai/blog/built-on-clawhub-spread-on-moltbook-the-new-agent-to-agent-attack-chain",
+  "snippet": "Feb 17, 2026 ... Straiker uncovered an active agent-to-agent attack chain where malicious Claude Skills on ClawHub are spread via fake AI personas, ...",
+  "published": "2026-02-17"
+ },
+ {
+  "title": "Snyk Finds Prompt Injection in 36%, 1467 Malicious Payloads in a ... (ToxicSkills)",
+  "url": "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/",
+  "snippet": "Feb 5, 2026 ... ... Claude Code and OpenClaw, using 30+ malicious skills distributed via ClawHub. ... ClawHub marketplace. One key takeaway from our findings ...",
+  "published": "2026-02-05"
+ },
+ {
+  "title": "I audited all 31,000+ skills on OpenClaw's ClawHub registry - Reddit r/cybersecurity",
+  "url": "https://www.reddit.com/r/cybersecurity/comments/1s2f1r5/i_audited_all_31000_skills_on_openclaws_clawhub/",
+  "snippet": "Mar 24, 2026 ... 75 votes, 17 comments. OpenClaw has a skill registry called ClawHub where anyone can publish tools that agents download and run.",
+  "published": "2026-03-24"
+ },
+ {
+  "title": "GitHub - agentnode-dev/skills-security-audit: Security audit for AI agent skills",
+  "url": "https://github.com/agentnode-dev/skills-security-audit",
+  "snippet": "The AI agent skill ecosystem has a security problem. Third-party skills execute with your agent's full privileges, and marketplaces have limited vetting: Snyk ToxicSkills -- 36.82% of MCP servers on ClawHub have at least one vulnerability; SlowMist -- 472+ malicious MCP servers identified with real-world credential theft and data exfiltration; Koi Security ClawHavoc -- 341 malicious servers ...",
+  "published": ""
+ },
+ {
+  "title": "clawhub — Claude Code Skill | Claude Code Marketplace",
+  "url": "https://www.claudemarketplace.net/skills/clawhub",
+  "snippet": "Search, install, update, sync, or publish agent skills with the ClawHub CLI and registry.",
+  "published": ""
+ }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Claude Code skill 方法论:我把工作方法做成 AI 技能包的四步框架 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/2077335900044915391?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+    "snippet": "八个月给自己造了30多个skill。四步方法论：任务识别→方法抽象→规则迭代→能力沉淀。skill不是prompt而是资产沉淀：触发词+流程+硬规则+交付标准。判断标准：同一件事对AI重复交代过三遍以上就该skill化。第一个skill写了两天，最近的exec-briefing升级只花半小时。任务识别三条件：高频+有方法论+交付相对标准化，缺一都别做。规则迭代靠跑真实任务、badcase驱动改规则。能力沉淀：每次迭代经验回写skill。",
+    "published": "2026-08-30"
+  },
+  {
+    "title": "【Claude Code新手思维】小白教程,Skill才是关键 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/2058275010524059575?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+    "snippet": "作者踩坑：误以为让AI自己写Skill即可，'AI学会了一切，只剩自己依旧愚蠢'——不推荐一上来就让AI自己写Skill。建议1：自己亲自写一遍，知道关键要素，再让AI辅助。官方建议：一开始自己写、skill要足够简单、改进中逐步增加。官方写法要点：开头yaml含name/description；尽可能简洁，推荐500行内；附加资源放子文档而非堆在SKILL.md；可用官方skill-creator创建/测试/评估。建议2：自己有评估好坏skill的能力后，安装比自己写得更好的skill。",
+    "published": "2026-07-08"
+  },
+  {
+    "title": "构建 Claude Code 的经验:Anthropic 如何运用 Skills 技能 - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/2017597470947967164?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+    "snippet": "Anthropic官方工程博客中译/转述：内部数百个技能活跃使用。常见误解：技能'只是markdown文件'——实际是文件夹，可含脚本/资产/数据，Claude Code中还有hooks等配置选项。技能分类：(1)库和API参考（如billing-lib、internal-platform-cli、frontend-design，附参考代码片段文件夹+注意事项清单）；(2)产品验证（配Playwright/tmux，让Claude录制输出视频、每步强制编程断言，'值得让一位工程师花一周时间打磨验证技能'）。最好的技能清晰归属单一类别，跨多类别的技能令人困惑。",
+    "published": "2026-03-18"
+  }
+]

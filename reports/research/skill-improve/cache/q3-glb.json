@@ -1,0 +1,20 @@
+[
+  {
+    "title": "What Do Claude Code Skills Actually Cost in Tokens? We Measured the ...",
+    "url": "https://theclaudekit.com/blog/claude-code-skills-token-cost-measured",
+    "snippet": "A typical Claude Code skill costs 600 to 1,500 tokens when its body is loaded into context. A small fraction of tool-heavy skills reach 3,000 to 4,000 tokens. We measured the entire ClaudeKit v2 catalog — 82,197 tokens across 5 kits, 101 commands, 19 skills, and 13 read-only agents — and the per-kit ledger is below.",
+    "published": null
+  },
+  {
+    "title": "GitHub - ADIGHB/claude-token-estimator: Claude skill for token cost ...",
+    "url": "https://github.com/ADIGHB/claude-token-estimator",
+    "snippet": "Professional-grade token cost estimation and model optimization skill for Claude. Version: 1.6.0 Released: 2026-02-20 Pricing data accurate as of 2026-02-20. Verify before production use.",
+    "published": "2026-02-20"
+  },
+  {
+    "title": "Reduce Claude Token Usage 60%: Progressive Disclosure",
+    "url": "https://chudi.dev/blog/reduce-ai-token-usage-progressive-disclosure",
+    "snippet": "3-tier progressive disclosure cuts Claude API costs 40-60%. The exact system: tier 1 triage, tier 2 context, tier 3 full pass.",
+    "published": null
+  }
+]

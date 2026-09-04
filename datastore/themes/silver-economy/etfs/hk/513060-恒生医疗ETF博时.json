@@ -1,0 +1,60 @@
+{
+  "code": "513060",
+  "name": "恒生医疗ETF博时",
+  "full_name": "博时恒生医疗保健交易型开放式指数证券投资基金(QDII)",
+  "fund_company": "博时基金",
+  "fund_manager": "万琼",
+  "tracking_index": {
+    "code": "HSHCI",
+    "name": "恒生医疗保健"
+  },
+  "scale": {
+    "value": 62.84,
+    "unit": "亿元",
+    "as_of": "2026-03-31",
+    "rank_in_category": "港股医疗类 ETF 规模第一",
+    "tier": "T1",
+    "source_primary": "天天基金",
+    "source_secondary": "雪球 2025-07（78 亿，规模在缩减）",
+    "warning": "规模较 2025 年中报 78 亿有所下降，需持续监控"
+  },
+  "fees": {
+    "management_fee": "0.50%",
+    "custodian_fee": "0.15%",
+    "total_expense_ratio": "0.65%"
+  },
+  "top_holdings_2026Q1": [
+    {"name": "信达生物", "weight": "高"},
+    {"name": "百济神州-H", "code": "6160"},
+    {"name": "药明生物", "code": "2269"},
+    {"name": "康方生物", "code": "2626"},
+    {"name": "石药集团", "code": "1093"},
+    {"name": "中国生物制药", "code": "1177"},
+    {"name": "药明康德-H", "code": "2359"},
+    {"name": "翰森制药", "code": "3692"},
+    {"name": "京东健康", "code": "6618"},
+    {"name": "三生制药", "code": "1530"}
+  ],
+  "top10_concentration": "61.15%",
+  "silver_economy_exposure_analysis": {
+    "tier": "高",
+    "explanation": "港股医疗 ETF 第一大。含 A 股没有的创新药+互联网医疗龙头（京东健康）。AH 折价显著",
+    "ah_premium_index": "恒生沪深港通 AH 股溢价指数 122.86（A 股相对 H 股偏贵）"
+  },
+  "risk_metrics": {
+    "max_drawdown": "-73.81%",
+    "annualized_return_since_inception": "-11.28%/yr",
+    "tier": "T1",
+    "user_constraint_check": "❌ 严重突破 15% 硬约束"
+  },
+  "valuation_2026Q3": {
+    "pe_ttm": 27.4,
+    "pe_percentile_5y": "5.39%",
+    "tier": "T1",
+    "source": "金基研 2025-06-18 + 雪球 2025-07-29",
+    "interpretation": "历史极低位，比 A 股医疗 ETF 还便宜"
+  },
+  "intraday_trading": "T+0 交易（QDII 港股 ETF 特性），便于止损",
+  "tier_in_report": "B 情景 B/C 配置",
+  "scenario_recommendation": "情景 B 配置 5%，情景 C 配置 4%"
+}

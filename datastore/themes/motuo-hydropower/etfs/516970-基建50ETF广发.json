@@ -1,0 +1,50 @@
+{
+  "code": "516970",
+  "name": "基建50ETF广发",
+  "fund_company": "广发基金",
+  "tracking_index": {
+    "code": "399995",
+    "name": "中证基建工程"
+  },
+  "scale": {
+    "value": 29.78,
+    "unit": "亿元",
+    "as_of": "2025 最新",
+    "tier": "T1",
+    "source": "界面新闻"
+  },
+  "fees": {
+    "total_expense_ratio": "0.60%"
+  },
+  "top_holdings": [
+    {"name": "中国建筑", "weight": "9.14%"},
+    {"name": "中国中铁", "weight": "8.61%"},
+    {"name": "中国电建", "code": "601669", "weight": "7.66%"},
+    {"name": "中国能建", "code": "601868", "weight": "5.82%"},
+    "中国铁建",
+    "中国交建",
+    "中国化学",
+    "中国中冶",
+    "四川路桥",
+    "金诚信"
+  ],
+  "motuo_exposure_analysis": {
+    "tier": "高",
+    "explanation": "中国电建 7.66%（墨脱主体施工龙头）+ 中国能建 5.82% = 13.48% 直接敞口，主题相关性最强的股票 ETF"
+  },
+  "risk_metrics": {
+    "max_drawdown_estimate": "约 -30% 量级（2021 以来）",
+    "tier": "T2",
+    "source": "Wind 数据估算",
+    "user_constraint_check": "❌ 严重突破用户 15% 硬约束"
+  },
+  "valuation_2026Q1": {
+    "pe_ttm": 26.43,
+    "pb": 1.43,
+    "tier": "T1",
+    "source": "etf.run 2026-07-03",
+    "note": "PE 偏离历史中枢（8-12 倍），但 PB 1.43 接近中枢"
+  },
+  "tier_in_report": "C",
+  "scenario_recommendation": "不推荐保守型配置（回撤约束不允许）"
+}

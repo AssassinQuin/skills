@@ -1,0 +1,14 @@
+[
+  {
+    "title": "一分钟搞明白Skill",
+    "url": "https://blog.csdn.net/hq354974212/article/details/161169672",
+    "snippet": "Skill是让AI编程助手从通用工具升级为领域专家的核心机制，本质是结构化、机器可读的操作指南（基于SKILL.md开放标准）。它支持能力复用、输出标准化、经验沉淀与Token高效利用。当前主流平台如Claude Code、Cursor、Trae和OpenCode均已原生支持Skill导入与调用，涵盖全局/项目级安装、触发语法及中文优化等实践要点。",
+    "published": null
+  },
+  {
+    "title": "用 Claude3.5 从零写扫雷游戏-基本功能篇",
+    "url": "https://juejin.cn/post/7450394415125266470",
+    "snippet": "刚好最近在重度体验 Cursor 和 Claude3.5，也用它们写了不少代码。于是想着用 Claude3.5 从零写个扫雷游戏...（与 SKILL.md 编写/优化主题不相关，仅因关键词命中返回）",
+    "published": "2024-12"
+  }
+]

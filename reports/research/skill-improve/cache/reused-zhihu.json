@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Claude Skills有什么实际作用吗? - 知乎",
+    "url": "https://www.zhihu.com/question/2003161952747275284/answer/2005195354681938581",
+    "author": "chouheiwa",
+    "published": "2026-02-13",
+    "snippet": "结论：Skills 本质是 Context 管理方案，有没有用取决于工作流是「探索型」还是「规范型」。算法团队做研究实验大概率鸡肋；业务开发团队能把代码规范和工程流程灌进 AI 执行逻辑。逆向分析确认 Skills 不是可执行代码，是注入上下文的特化 prompt 模板。社区最普遍吐槽：\"Skills are just AGENTS.md in disguise\"；Simon Willison 给正面评价但承认该批评有道理。渐进式加载三层：启动只加载名字+描述（约 100 token/skill），语义匹配才加载完整 SKILL.md（<5K token），脚本代码不进 context window 只有执行结果进入。可同时挂 20+ Skills。作者 iOS 业务团队在用。"
+  },
+  {
+    "title": "Claude Skill 的思路并不复杂,为什么又是再次被 Claude 优先提出? - 知乎",
+    "url": "https://www.zhihu.com/question/1998162232379458760/answer/2000257130637329569",
+    "author": "Simon Zhang",
+    "published": "2026-01-29",
+    "snippet": "核心论点：Skills 不是技术创新而是经济生存策略。动态加载上下文需要击穿 KV-Cache 缓存机制，只有\"不优化就得死\"压力下才值得投入。两个原因：(1) Claude 3.5 Sonnet 之后模型元认知能力才达到 Agentic 基准线，支撑细颗粒度动态路由；(2) MCP + Claude Code 后 token 消耗暴涨迫使 Anthropic 降低消耗。Skills 解决的不是有没有上下文（MCP 已解决），而是上下文何时加载——通过渐进式披露（Progressive Disclosure）。LLM 经济学中 Token 是固定成本上的负载：Anthropic 与云服务商签固定容量租约，基础设施有上限，选项 A 增加 GPU 容量→固定成本飙升，选项 B 让相同基础设施支持更多用户→需将单位 Token 消耗降低 20-30%。"
+  },
+  {
+    "title": "2026 最新 Claude Skills 保姆级教程及实践! - 知乎",
+    "url": "https://zhuanlan.zhihu.com/p/1996724780209047225",
+    "author": "苍何",
+    "published": "2026-01-19",
+    "snippet": "教程类文章（支付宝员工）。定义：Skills 是可复用指令包，封装团队工作流、业务逻辑和领域知识。文件夹结构：scripts 存执行脚本、references 存按需加载详细文档（表结构、API 规范）。底层是渐进式披露，仅需要时加载详细指令。文章覆盖：Skills 与 MCP 区别联系、怎么用、有哪些好用的 Skills、如何制作自己的 Skills。动机：对话短暂（每次从 0 开始）、知识分散（Wiki 文档 AI 无法调用）、重复劳动多。"
+  }
+]

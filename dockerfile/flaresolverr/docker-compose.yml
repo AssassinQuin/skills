@@ -1,0 +1,16 @@
+services:
+  flaresolverr:
+    # v3.5.0 (2026-05-26)：新增 turnstile 验证码解决 (#1634)
+    # 用途：mcp-searxng 的 web_url_read 读 CF 保护页面时自动过验证
+    # 接入：~/.claude.json searxng env 加 FLARESOLVERR_URL=http://localhost:8191
+    # 注意：作用于页面读取层，不影响 SearXNG 搜索引擎本身
+    # 限制：容器直连出网（无代理），被墙域名仍需走智谱 web-reader
+    image: flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8191:8191"
+    environment:
+      - LOG_LEVEL=info
+      - TZ=Asia/Shanghai
+    mem_limit: 1g

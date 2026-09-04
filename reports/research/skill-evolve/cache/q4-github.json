@@ -1,0 +1,7 @@
+[
+  {
+    "title": "NousResearch/hermes-agent-self-evolution — open issues = 28 (search_issues is:issue is:open, total_count 28, 2026-09-03)",
+    "url": "https://github.com/NousResearch/hermes-agent-self-evolution",
+    "snippet": "Repo EXISTS. Open issue count is 28 — the claimed '38.7k issues' is off by ~3 orders of magnitude (likely garbled/rumor; 38,700 vs actual 28). Fork evidence: WeilaiSun/hermes-agent-self-evolution 'CJK-aware fork of NousResearch/hermes-agent-self-evolution — GEPA skill evolution'. No 'audit disaster' spectacle — issues are detailed, low-comment (0-1 each) bug reports — but content is genuinely damning for the self-evolution pipeline: #172 (2026-08-06) 'SkillModule couples skill_text as an input field — GEPA/MIPROv2 cannot write evolved skill text back to SKILL.md': evolved_skill.md byte-identical to baseline (0 lines diff) while reporting '+30.7%'; #175 (2026-08-16) 'dspy 3.3 compatibility + extract bugs: evolution never writes back real skill changes' — 'reported +X% is pure holdout noise'; #169/#171 'skill_structure validation always fails' (validator checks bare body without YAML frontmatter, so every run reports FAILED even for valid output); #164 (2026-08-01) missing LICENSE file though README claims MIT. Upstream NousResearch/hermes-agent exists (LICENSE MIT per #164 repro)."
+  }
+]
