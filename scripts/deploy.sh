@@ -1,65 +1,77 @@
 #!/usr/bin/env bash
-# deploy.sh — 全局 skill 部署审计：symlink 拓扑 / 断链 / 自引用环
-# 原则（用户 2026-09-04 拍板）：全局 skill 统一在本 repo 维护，各处以软链接消费；项目 skill 留在项目 repo
-# 退出: 0 正常；1 发现断链/自引用环；2 用法错误
+# deploy.sh — Active Catalog deployment audit for symlink-based skill runtimes.
+# Principle: /Users/ganjie/skills is the active source; runtimes consume symlinks.
+# Exit: 0 healthy; 1 broken/missing topology or malformed skill; 2 usage error.
 set -u
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-DEPLOYED="${HOME}/.claude/skills"
 FAIL=0
 
-echo "═══ Skill 部署审计 ═══"
-echo "实体源: $REPO"
-echo ""
+echo "═══ Skill deployment audit ═══"
+echo "Active source: $REPO"
+echo
 
-echo "─── 部署入口 ───"
-if [ -L "$DEPLOYED" ]; then
-  TARGET=$(readlink "$DEPLOYED")
-  if [ "$TARGET" = "$REPO" ]; then
-    echo "  ✓ $DEPLOYED → ${REPO}（symlink 直连，单实体源）"
+audit_link() {
+  local link="$1"
+  if [ -L "$link" ]; then
+    local target
+    target=$(readlink "$link")
+    if [ "$target" = "$REPO" ]; then
+      echo "  ✓ $link → $REPO"
+    else
+      echo "  ✗ $link → $target (expected $REPO)"
+      FAIL=1
+    fi
+  elif [ -d "$link" ] && [ "$(cd "$link" && pwd -P)" = "$REPO" ]; then
+    echo "  ✓ $link resolves to $REPO"
   else
-    echo "  ⚠ $DEPLOYED → ${TARGET}（指向非本 repo！预期 ${REPO}）"
+    echo "  ✗ $link is missing or is an independent directory"
     FAIL=1
   fi
-elif [ -d "$DEPLOYED" ] && [ "$(cd "$DEPLOYED" && pwd -P)" = "$REPO" ]; then
-  echo "  ✓ $DEPLOYED 与 repo 同一存储（hardlink/同 inode）"
-else
-  echo "  ⚠ $DEPLOYED 是独立目录（非链接）——存在双实体漂移风险"
-fi
-echo ""
+}
 
-echo "─── repo 内指向外部的 symlink（项目 skill 依赖，正常形态）───"
+echo "─── Runtime adapters ───"
+audit_link "$HOME/.claude/skills"
+audit_link "$HOME/.codex/skills"
+audit_link "$HOME/.agents/skills"
+echo
+
+echo "─── Vendor-backed wrappers ───"
 EXT=0
 for d in "$REPO"/*/; do
   [ -L "${d%/}" ] || continue
   NAME="${d%/}"; NAME="${NAME##*/}"
   LINK=$(readlink "${d%/}")
   if [ -e "${d%/}" ]; then
-    echo "  → ${NAME} → $LINK"
+    echo "  → $NAME → $LINK"
   else
-    echo "  ✗ ${NAME} → $LINK （断链！）"
+    echo "  ✗ $NAME → $LINK (broken vendor wrapper)"
     FAIL=1
   fi
   EXT=$((EXT+1))
 done
-[ "$EXT" -eq 0 ] && echo "  （无外部依赖）"
-echo ""
+[ "$EXT" -eq 0 ] && echo "  (none)"
+echo
 
-echo "─── SKILL.md 完整性（实体 skill 目录缺 SKILL.md = 哑目录）───"
+echo "─── Active SKILL.md integrity ───"
 MISS=0
 for d in "$REPO"/*/; do
+  name="${d%/}"; name="${name##*/}"
   [ -d "$d" ] || continue
-  [ -L "${d%/}" ] && continue  # symlink 已在上节审计
-  case "${d%/}" in
-    */scripts|*/reports|*/datastore|*/data|*/dockerfile|*/docs|*/node_modules) continue ;;  # 功能目录非 skill
+  [ -L "${d%/}" ] && continue
+  case "$name" in
+    .*|scripts|reports|datastore|data|docs|config|tests|node_modules) continue ;;
   esac
-  [ -f "$d/SKILL.md" ] || { echo "  ✗ ${d%/}/ 缺 SKILL.md"; MISS=$((MISS+1)); FAIL=1; }
+  if [ ! -f "$d/SKILL.md" ]; then
+    echo "  ✗ $name/ is an active directory but has no SKILL.md"
+    MISS=$((MISS+1)); FAIL=1
+  fi
 done
-[ "$MISS" -eq 0 ] && echo "  ✓ 全部完整"
-echo ""
+[ "$MISS" -eq 0 ] && echo "  ✓ all active skill directories have SKILL.md"
+echo
 
 if [ "$FAIL" -eq 0 ]; then
-  echo "结论: 部署健康（单实体源 + symlink 分发）"
-else
-  echo "结论: 发现问题（见 ✗ 行），exit 1"
+  echo "PASS: single active source + symlink adapters"
+  exit 0
 fi
-exit $FAIL
+echo "FAIL: deployment audit found errors"
+exit 1

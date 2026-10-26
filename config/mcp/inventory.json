@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "preserve_unmanaged": true,
+    "host_only_examples": [
+      "node_repl"
+    ],
+    "authority": "manifest"
+  },
+  "servers": {
+    "codebase-memory-mcp": {
+      "transport": "stdio",
+      "command": "codebase-memory-mcp",
+      "args": [],
+      "env": {},
+      "tier": "coding",
+      "risk": "local-code-index"
+    },
+    "context-mode": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "context-mode"
+      ],
+      "env": {},
+      "tier": "context-cache",
+      "risk": "local-index"
+    },
+    "context7": {
+      "transport": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": {
+          "credential_ref": "CONTEXT7_API_KEY"
+        }
+      },
+      "codex_header_key": "http_headers",
+      "tier": "default",
+      "risk": "external-docs"
+    },
+    "web-reader": {
+      "transport": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": {
+          "credential_ref": "BIGMODEL_WEB_READER_AUTHORIZATION"
+        }
+      },
+      "codex_header_key": "http_headers",
+      "tier": "default",
+      "risk": "external-read"
+    },
+    "web-search-prime": {
+      "transport": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": {
+          "credential_ref": "BIGMODEL_WEB_SEARCH_AUTHORIZATION"
+        }
+      },
+      "codex_header_key": "headers",
+      "tier": "research",
+      "risk": "paid-external-search"
+    },
+    "websearch-cn": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "open-websearch@latest"
+      ],
+      "env": {
+        "ALLOWED_SEARCH_ENGINES": "baidu,sogou,csdn,juejin,linuxdo,startpage,duckduckgo,brave,bing,hackernews",
+        "DEFAULT_SEARCH_ENGINE": "baidu",
+        "MODE": "stdio",
+        "PROXY_URL": "http://127.0.0.1:7890",
+        "USE_PROXY": "true"
+      },
+      "tier": "default",
+      "risk": "external-search"
+    },
+    "mem0": {
+      "transport": "http",
+      "url": "http://localhost:8765/mcp/codex/http/ganjie",
+      "tier": "memory",
+      "risk": "local-memory-service"
+    }
+  }
+}
