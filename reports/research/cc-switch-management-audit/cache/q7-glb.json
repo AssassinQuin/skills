@@ -1,0 +1,50 @@
+[
+  {
+    "title": "cc-switch README",
+    "url": "https://github.com/farion1231/cc-switch"
+  },
+  {
+    "title": "cc-switch data storage FAQ",
+    "url": "https://github.com/farion1231/cc-switch#where-is-my-data-stored"
+  },
+  {
+    "title": "MCP manual",
+    "url": "https://github.com/farion1231/cc-switch/blob/main/docs/user-manual/zh/3-extensions/3.1-mcp.md"
+  },
+  {
+    "title": "Skills manual",
+    "url": "https://github.com/farion1231/cc-switch/blob/main/docs/user-manual/zh/3-extensions/3.3-skills.md"
+  },
+  {
+    "title": "Issue #8673 managed MCP/Skills integrity",
+    "url": "https://github.com/farion1231/cc-switch/issues/8673"
+  },
+  {
+    "title": "Issue #8797 Codex http_headers",
+    "url": "https://github.com/farion1231/cc-switch/issues/8797"
+  },
+  {
+    "title": "Issue #8861 Gemini env key",
+    "url": "https://github.com/farion1231/cc-switch/issues/8861"
+  },
+  {
+    "title": "Issue #8843 Codex unsupported MCP fields",
+    "url": "https://github.com/farion1231/cc-switch/issues/8843"
+  },
+  {
+    "title": "Community feedback raw report",
+    "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/raw/community-feedback.md"
+  },
+  {
+    "title": "Local environment audit",
+    "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/raw/local-environment.md"
+  },
+  {
+    "title": "Alternatives comparison",
+    "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/raw/alternatives.md"
+  },
+  {
+    "title": "CC Switch Trae PR #8759",
+    "url": "https://github.com/farion1231/cc-switch/pull/8759"
+  }
+]

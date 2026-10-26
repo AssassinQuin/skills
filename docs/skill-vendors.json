@@ -1,0 +1,15 @@
+{
+  "moved_at": "2026-10-23",
+  "source_commit": "5bf52ef9be2d416f7be3cb53a1ab6b07290e2913",
+  "reason": "Remove nested upstream SKILL.md manifests from global skill scanning while preserving unmodified external sources.",
+  "vendors": {
+    "cangjie-skill": "/Users/ganjie/skill-vendors/cangjie-skill",
+    "huashu-nuwa": "/Users/ganjie/skill-vendors/huashu-nuwa"
+  },
+  "active_wrapper": [
+    "cangjie-skill"
+  ],
+  "archived": [
+    "huashu-nuwa"
+  ]
+}

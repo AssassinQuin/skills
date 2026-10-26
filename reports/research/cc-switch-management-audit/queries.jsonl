@@ -1,0 +1,20 @@
+{"query": "repo:farion1231/cc-switch architecture database MCP skills config management", "lane": "github", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "repo:farion1231/cc-switch issue bug data loss config corruption MCP skills", "lane": "github", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "repo:farion1231/cc-switch release changelog issue fix maintenance", "lane": "github", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "cc-switch Claude Code 使用体验 问题", "lane": "cn", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "cc-switch 评价 安全 配置 管理", "lane": "zhihu", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "cc-switch review complaints data loss config management", "lane": "glb", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "Claude Code MCP selector profile config management best practice", "lane": "glb", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "cc-switch alternatives MCP skills configuration manager", "lane": "github", "agent": "orchestrator", "wave": 0, "reused": false}
+{"query": "cc-switch Claude Code 使用体验 评价 linux.do 知乎 CSDN 掘金", "lane": "cn", "agent": "community_feedback_orchestrator", "wave": 1, "reused": false, "tool": "websearch_cn.search"}
+{"query": "site:linux.do \"cc-switch\" \"Claude Code\" 评价 体验 切换", "lane": "cn", "agent": "community_feedback_orchestrator", "wave": 1, "reused": false, "tool": "websearch_cn.search"}
+{"query": "\"cc-switch\" \"linux.do\" Claude Code", "lane": "cn", "agent": "community_feedback_orchestrator", "wave": 1, "reused": false, "tool": "websearch_cn.search"}
+{"query": "cc-switch Claude Code Reddit Hacker News blog review usage", "lane": "glb", "agent": "community_feedback_orchestrator", "wave": 1, "reused": false, "tool": "web_search_prime"}
+{"query": "cc-switch linux.do OR CC Switch linux.do Claude Code 体验", "lane": "cn", "agent": "community_feedback_orchestrator", "wave": 1, "reused": false, "tool": "web_search_prime"}
+{"query": "cc-switch Claude Code site:reddit.com OR site:zhihu.com", "lane": "glb", "agent": "community_feedback_orchestrator", "wave": 1, "reused": false, "tool": "web_search_prime"}
+{"query": "\"cc-switch\" Claude Code Codex provider MCP GitHub", "lane": "glb", "agent": "alternatives", "wave": 1, "search": "web_search_prime"}
+{"query": "\"Claude Code MCP Server Selector\" GitHub", "lane": "glb", "agent": "alternatives", "wave": 1, "search": "web_search_prime"}
+{"query": "\"cc-switch-web\" GitHub CLI Claude Code", "lane": "glb", "agent": "alternatives", "wave": 1, "search": "web_search_prime"}
+{"query": "Claude Code project scoped MCP .mcp.json configuration documentation", "lane": "glb", "agent": "alternatives", "wave": 1, "search": "web_search_prime"}
+{"query": "OpenAI Codex CLI config.toml mcp_servers documentation", "lane": "glb", "agent": "alternatives", "wave": 1, "search": "web_search_prime"}
+{"query": "Trae MCP project configuration mcp.json documentation", "lane": "glb", "agent": "alternatives", "wave": 1, "search": "web_search_prime"}

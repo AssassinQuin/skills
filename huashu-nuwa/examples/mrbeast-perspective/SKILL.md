@@ -448,5 +448,5 @@ MrBeast 最容易被错误模仿的 7 种反模式：
 ---
 
 *女娲造人术 · 第三号作品*
-*提炼者：Claude（Opus 4.6）for 花生*
+*提炼者：Codex（Opus 4.6）for 花生*
 *调研来源：泄露36页培训手册 + Lex Fridman/Joe Rogan/Colin & Samir等6个深度播客 + 30+媒体来源*

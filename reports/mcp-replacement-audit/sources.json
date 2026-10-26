@@ -1,0 +1,22 @@
+[
+  {"id":"S1","title":"2026年Claude Code Skill生态,哪些是噱头,这20个是真的在帮我干活","url":"https://cloud.tencent.com/developer/article/skill-ecosystem-2026","lane":"cn","published":"2026-06-04"},
+  {"id":"S2","title":"danjdewhurst/story-skills","url":"https://github.com/danjdewhurst/story-skills","lane":"github","published":"2026-10-20"},
+  {"id":"S3","title":"PhosAQy/novel-skills","url":"https://github.com/PhosAQy/novel-skills","lane":"github","published":"2026-01-19"},
+  {"id":"S4","title":"anthropics/skills 官方仓库（gh API 直查 183,137 star）","url":"https://github.com/anthropics/skills","lane":"github","published":"2026-10-09"},
+  {"id":"S5","title":"Claude Code 装了一堆 Skill,用了三个月,我删掉了 80%","url":"https://blog.csdn.net/skill-cleanup-80-percent","lane":"cn","published":"2026-06-22"},
+  {"id":"S6","title":"How Many Claude Code Skills Can I Have Before Performance Degrades?","url":"https://agentengineermaster.com/skills/how-many-claude-code-skills-can-i-have-before-performance-degrades","lane":"glb","published":"2026"},
+  {"id":"S7","title":"Claude Code Skills Context Window Impact: How Many Is Too Many?","url":"https://docs.bswen.com/blog/2026-03-28-claude-skills-context-window/","lane":"glb","published":"2026-03-28"},
+  {"id":"S8","title":"Token Optimization | Claude Code Wiki","url":"http://www.markalston.net/claude-code-wiki/internals/token-optimization/","lane":"glb","published":"2026"},
+  {"id":"S9","title":"Best Open Source GPT Research Assistant Tools in 2026","url":"https://listenlabs.com/articles/best-open-source-gpt-assistants/","lane":"glb","published":"2026-10"},
+  {"id":"S10","title":"assafelovic/gpt-researcher","url":"https://github.com/assafelovic/gpt-researcher","lane":"github","published":"2026"},
+  {"id":"S11","title":"State of AI Agent Memory 2026: Benchmarks & Trends (Mem0)","url":"https://mem0.ai/blog/state-of-ai-agent-memory-2026","lane":"prime","published":"2026-10-10"},
+  {"id":"S12","title":"Memory MCP Servers Compared: Benchmarks and Picks (2026)","url":"https://getunblocked.com/blog/memory-mcp-servers-compared","lane":"prime","published":"2026-05-27"},
+  {"id":"S13","title":"13 Memory MCP Servers Compared (2026)","url":"https://mnemoverse.com/docs/library/memory-mcp-servers-compared","lane":"prime","published":"2026"},
+  {"id":"S14","title":"Top 7 MCP Alternatives for Context7 in 2026","url":"https://neuledge.com/blog/2026-02-06/top-7-mcp-alternatives-for-context7-in-2026","lane":"glb","published":"2026-02-06"},
+  {"id":"S15","title":"Best Web Search MCP Server in 2026 (Parallel)","url":"https://parallel.ai/articles/best-web-search-mcp","lane":"glb","published":"2026"},
+  {"id":"S16","title":"Firecrawl vs Tavily vs Exa: best web search API for AI agents (July 2026)","url":"https://pondero.ai/agents/guides/firecrawl-vs-tavily-vs-exa-search-api-agents-july-2026/","lane":"glb","published":"2026-07"},
+  {"id":"S17","title":"本地旧报告：claude-skill-eco（2026-09-03）","url":"reports/research/claude-skill-eco/research-report.md","lane":"human","published":"2026-09-03"},
+  {"id":"S18","title":"本地旧报告：skill-improve（2026-09-04）","url":"reports/research/skill-improve/report.md","lane":"human","published":"2026-09-04"},
+  {"id":"S19","title":"本地长期记忆：codebase-memory-mcp / headroom / Agent-Reach 调研（2026-06-22）","url":"memory://cb901d230d323da0f68c70a7d80afb0310d6869b7cd0aa3cc936de3be463cd39","lane":"human","published":"2026-06-22"},
+  {"id":"S20","title":"Ultimate Guide to Open Source AI Agent Frameworks in 2026","url":"https://the-agent-report.com/2026/05/ultimate-guide-open-source-ai-agent-frameworks/","lane":"glb","published":"2026-05"}
+]

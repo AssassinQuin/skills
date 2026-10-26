@@ -1,0 +1,72 @@
+{
+  "generated": "2026-10-23",
+  "source": "~/.codex/config.toml + ~/.claude.json (user scope, sanitized)",
+  "servers": {
+    "codebase-memory-mcp": {
+      "type": "stdio",
+      "command": "codebase-memory-mcp",
+      "role": "code graph/index"
+    },
+    "context-mode": {
+      "type": "stdio",
+      "command": "npx -y context-mode",
+      "role": "session context cache/search"
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "role": "library docs"
+    },
+    "memory": {
+      "type": "stdio",
+      "command": "miniconda memory server",
+      "role": "long-term semantic memory"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx -y @playwright/mcp@latest",
+      "role": "on-demand browser automation; retained for two-week observation"
+    },
+    "web-reader": {
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
+      "role": "URL reading"
+    },
+    "web-search-prime": {
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
+      "role": "high-value general web search"
+    },
+    "websearch-cn": {
+      "type": "stdio",
+      "command": "npx -y open-websearch@latest",
+      "role": "unified CN/global Open Websearch lanes",
+      "engines": [
+        "baidu",
+        "sogou",
+        "csdn",
+        "juejin",
+        "linuxdo",
+        "startpage",
+        "duckduckgo",
+        "brave",
+        "bing",
+        "hackernews"
+      ]
+    }
+  },
+  "app_infrastructure": [
+    "cua_repl",
+    "node_repl"
+  ],
+  "removed": {
+    "zai-mcp-server": "no exposed tools and overlapped BigModel endpoints",
+    "zread": "overlapped web-reader/Playwright/browser reading",
+    "github": "replaced by authenticated gh CLI; deep-research github-search.sh covers repos/issues/code"
+  },
+  "notes": [
+    "Credentials are intentionally omitted.",
+    "websearch-global was not restored; websearch-cn now carries both CN and global engines.",
+    "GitHub operations use gh CLI and the macOS keyring instead of a persistent MCP PAT."
+  ]
+}

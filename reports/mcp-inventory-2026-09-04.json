@@ -40,17 +40,6 @@
     "HF_ENDPOINT": "https://hf-mirror.com"
    }
   },
-  "searxng": {
-   "type": "stdio",
-   "command": "npx",
-   "args": [
-    "-y",
-    "mcp-searxng"
-   ],
-   "env": {
-    "SEARXNG_URL": "http://localhost:8888"
-   }
-  },
   "web-reader": {
    "type": "http",
    "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
@@ -117,6 +106,15 @@
    "headers": {
     "Authorization": "Bearer…yTkR (sha:e4a3879c)"
    }
+  },
+  "playwright": {
+   "type": "stdio",
+   "command": "npx",
+   "args": [
+    "-y",
+    "@playwright/mcp@latest"
+   ],
+   "note": "2026-09-04 新增：浏览器自动化（JS 渲染页/登录态），补联网层缺口；同日移除 searxng（自托管 Docker 实例+容器+镜像已删）"
   }
  },
  "plugin_servers": {

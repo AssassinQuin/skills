@@ -1,0 +1,16 @@
+{
+  "topic": "已有 skills + MCP 的上位替代/垂直替代/优化审计",
+  "date": "2026-10-23",
+  "requested_mode": "deep",
+  "effective_mode": "deep+solo",
+  "scope_note": "用户两问合并：①在用 MCP 的替代 ②已有 skill 的上位替代/垂直替代/优化",
+  "sub_questions": [
+    {"id":"SQ1","question":"Anthropic 官方 skills 生态现状：官方技能清单、方法论、哪些已覆盖自建 skill 场景","tier":"core","source_route":"github+glb"},
+    {"id":"SQ2","question":"小说/写作类 skill 的社区上位替代与垂直替代","tier":"core","source_route":"glb+github"},
+    {"id":"SQ3","question":"deep-research 类调研自动化的替代方案（agent 框架/官方能力 vs 自建 skill）","tier":"core","source_route":"glb"},
+    {"id":"SQ4","question":"中文社区 skills 实践与替代讨论","tier":"core","source_route":"cn"},
+    {"id":"SQ5","question":"skill 结构优化最佳实践（体积、渐进披露、eval、数据外置）","tier":"background","source_route":"local+glb"},
+    {"id":"SQ6","question":"本仓库结构性问题盘点（重复安装/超标体积/缺 eval）","tier":"core","source_route":"local"},
+    {"id":"SQ7","question":"在用 MCP（memory/context7/playwright/websearch/codebase-memory）竞争格局与替代","tier":"core","source_route":"local-memory+glb+prime"}
+  ]
+}

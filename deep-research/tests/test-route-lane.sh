@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# route-lane.sh 单元测试（8 用例）
+# route-lane.sh 单元测试（9 用例）
 set -u
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT="$DIR/scripts/route-lane.sh"
@@ -25,7 +25,7 @@ echo "$out" | jq -e '.action=="reuse" and .key=="老查询|cn" and (.results|len
 old=$(jq -nr 'now - 40*86400 | strftime("%Y-%m-%d")')
 jq -n --arg d "$old" '{("旧闻|glb"): {fetched_at:$d, ttl_class:"short", results:[], task:"x/"}}' > "$MEM"
 out=$(SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "旧闻" --lane glb 2>/dev/null)
-echo "$out" | jq -e '.action=="search"' >/dev/null && ok "short 过期重搜" || bad "Case3 输出: $out"
+echo "$out" | jq -e '.action=="search" and .tool=="mcp__websearch-cn__search" and (.tool_params.engines|index("bing")!=null)' >/dev/null && ok "short 过期重搜且 glb 路由到统一 OWS" || bad "Case3 输出: $out"
 
 # Case 4: permanent 永不过期
 jq -n --arg d "$old" '{("史实|glb"): {fetched_at:$d, ttl_class:"permanent", results:[{title:"t",url:"u",snippet:"s"}], task:"x/"}}' > "$MEM"
@@ -44,11 +44,14 @@ SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane badlane >/dev/null 2>"$TMP/err"; 
 SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "q" --lane >/dev/null 2>"$TMP/err2"; rc=$?
 [ "$rc" -eq 2 ] && grep -q "缺少参数" "$TMP/err2" && ok "--lane缺值报错exit2+中文" || bad "Case7 rc=$rc"
 
-# Case 8: github lane → search + github 工具
+# Case 8: github lane → search + gh CLI 工具
+echo '{}' > "$MEM"
+out=$(SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "Claude skills 生态" --lane zhihu 2>/dev/null)
+echo "$out" | jq -e '.action=="search" and .tool=="cli:zhihu-search" and .fallback.tool=="mcp__websearch-cn__search"' >/dev/null && ok "zhihu 路由到 CLI+OWS fallback" || bad "Zhihu 输出: $out"
 echo '{}' > "$MEM"
 out=$(SEARCH_MEMORY_FILE="$MEM" "$SCRIPT" "claude skills ecosystem" --lane github 2>/dev/null)
-echo "$out" | jq -e '.action=="search" and .lane=="github" and .tool=="mcp__github__search_repositories"' >/dev/null \
-  && ok "github lane 路由正确" || bad "Case8 输出: $out"
+echo "$out" | jq -e '.action=="search" and .lane=="github" and .tool=="cli:gh-search" and .tool_params.kind=="repos"' >/dev/null \
+  && ok "github lane 路由到 gh CLI" || bad "Case8 输出: $out"
 
 echo "----"; echo "pass=$pass fail=$fail"
 rm -rf "$TMP"

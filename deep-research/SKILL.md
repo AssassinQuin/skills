@@ -22,7 +22,7 @@ metadata: {"openclaw":{"emoji":"🔬","requires":{"bins":["bash","jq"]}}}
 4. 报告必须标注 Requested/Effective Mode、lane 健康、reused/fresh 查询数
 5. 查询去重：任何搜索执行前先查任务登记表与路由缓存，已登记/已缓存的跳过
 6. 子 agent 必须显式指定 model（R5.1）：搜索员 sonnet / 读取员 haiku / 核实员 opus
-7. 限额：prime ≤3 次且仅 deep、主会话直调；zhihu MCP ≤4 次/任务；github MCP ≤8 次/任务；deep ≤2 主 wave + 1 gap 轮
+7. 限额：prime ≤3 次且仅 deep、主会话直调；zhihu MCP ≤4 次/任务；github gh CLI ≤8 次/任务；deep ≤2 主 wave + 1 gap 轮
 
 ## Phase 0 感知判定
 
@@ -65,9 +65,9 @@ spawn 搜索员（Agent 工具，general-purpose，**显式 model**，并行发�
 | 员 | model | 工具（只用这些） | 搜索上限 |
 |---|---|---|---|
 | cn 搜索员 | sonnet | mcp__websearch-cn__search | quick 3 / deep 6 |
-| glb 搜索员 | sonnet | mcp__websearch-global__search | quick 3 / deep 6 |
-| zhihu 搜索员 | sonnet | mcp__zhihu-global__global_search | ≤4 次，串行调用 |
-| github 搜索员 | sonnet | mcp__github__*（search_repositories / search_issues / search_code / get_file_contents / list_commits） | ≤8 次调用 |
+| glb 搜索员 | sonnet | mcp__websearch-cn__search（bing 优先，duckduckgo/brave fallback） | quick 3 / deep 6 |
+| zhihu 搜索员 | sonnet | zhihu-search CLI → mcp__websearch-cn__search（sogou + `site:zhihu.com`） | ≤4 次，串行调用 |
+| github 搜索员 | sonnet | `{baseDir}/scripts/github-search.sh`（repos / issues / code，凭证走 gh keyring） | ≤8 次调用 |
 
 搜索员 prompt 模板（`{LANE}`/`{DATE}`/`{TASK}`/`{QUERY_LIST}`/`{TOOL_DOC}`/`{WAVE}` 运行时填充）：
 
@@ -128,7 +128,7 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 你是对抗核实员。任务目录 {TASK}，今天 {DATE}。
 1. 独立来源计数：下列每个载荷论断，数一数独立来源数（域名不同才算独立；同一域名多篇=1）。<2 个的标 low：
 {载荷论断清单 + 各自现有来源域名}
-2. contrarian 搜索：用 mcp__websearch-cn__search（中文）或 mcp__websearch-global__search（外文）搜每个核心结论的反面证据（构造「<结论关键词> 错了/批评/翻车/反面/风险」类查询），搜索上限 ≤6 次、优先攻击证据最少的结论。输出每个结论的「最强反驳」；找不到写「未发现」。每次搜索后登记：
+2. contrarian 搜索：用 mcp__websearch-cn__search（中文或外文引擎按 lane 选择）搜每个核心结论的反面证据（构造「<结论关键词> 错了/批评/翻车/反面/风险」类查询），搜索上限 ≤6 次、优先攻击证据最少的结论。输出每个结论的「最强反驳」；找不到写「未发现」。每次搜索后登记：
   printf '%s\n' '{"query":"...","lane":"cn|glb","agent":"verifier","wave":9}' >> {TASK}/queries.jsonl
 3. factored 验证：不看草稿，仅凭下列 URL 用 mcp__web-reader__webReader 直接回答验证题，再与草稿说法比对，列出不一致处：
 {验证题清单（如「S3 中提到的营收数字是多少？」）+ 草稿对应说法}
@@ -172,7 +172,7 @@ prime：deep 模式且存在高价值查询 → **主会话直调** mcp__web-sea
 - Write 工具被守卫拦截（如文件名被误判）→ 依次改用备选文件名 report.md → research-report.md → 调研报告.md，把最终文件名记入 meta.json 的 report_file 字段（INDEX 与会话回复引用实际文件名）；禁止绕过权限拒绝，无备选可用时在 Meta 降级记录标注并继续
 - MCP 工具失败 → 用 route-lane.sh 输出的 fallback 配置 → 仍失败 → CLI 兜底：`python3 $(dirname {baseDir})/global-search/scripts/global-search.py '{"query":"...","count":5}'` 或 `python3 $(dirname {baseDir})/zhihu-search/scripts/zhihu-search.py '{"query":"...","count":3}'`
 - prime 失败 → glb lane（ows）兜底
-- github MCP 失败 → glb lane 网页搜索兜底（查询加 site:github.com）
+- gh CLI 失败 → glb lane 网页搜索兜底（查询加 site:github.com）；不要回退 GitHub MCP
 - zhihu 超限 → search-memory 缓存 / 旧报告引用
 - 某 lane 全挂 → 报告标注 lane 缺席 + 其余发现置信度降级说明 + 提示「可放入 {TASK}/inbox/ 后重跑」
 

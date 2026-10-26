@@ -1,0 +1,37 @@
+{
+  "topic": "cc-switch 仓库、Issue、用户使用情况与技能/MCP/配置管理方案调研",
+  "date": "2026-10-26",
+  "requested_mode": "deep",
+  "sub_questions": [
+    {
+      "id": "R1",
+      "question": "cc-switch 仓库定位、架构、数据模型、功能范围和备份/同步机制是什么？",
+      "tier": "core",
+      "source_route": "github+local"
+    },
+    {
+      "id": "R2",
+      "question": "cc-switch 的 Issue 历史、修复节奏、常见故障和用户痛点有哪些？",
+      "tier": "core",
+      "source_route": "github"
+    },
+    {
+      "id": "R3",
+      "question": "中文/外文社区对 cc-switch 的真实使用反馈、好评和批评是什么？",
+      "tier": "core",
+      "source_route": "cn+glb+zhihu"
+    },
+    {
+      "id": "R4",
+      "question": "相比 cc-switch，MCP selector、dotfiles/GitOps、自写 sync 等方案各自的适用边界是什么？",
+      "tier": "core",
+      "source_route": "glb+github+local"
+    },
+    {
+      "id": "R5",
+      "question": "在当前 Claude/Codex/Trae/skills 本机环境下，应采用什么分层管理方案与迁移步骤？",
+      "tier": "core",
+      "source_route": "local+synthesis"
+    }
+  ]
+}

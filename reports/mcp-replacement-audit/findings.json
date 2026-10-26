@@ -1,0 +1,39 @@
+{
+  "topic": "已有 skills + MCP 的上位替代/垂直替代/优化审计",
+  "date": "2026-10-23",
+  "mode": "deep",
+  "sub_questions": [
+    {"id":"SQ1","question":"Anthropic 官方 skills 生态现状：官方技能清单、方法论、哪些已覆盖自建 skill 场景","tier":"core","status":"answered"},
+    {"id":"SQ2","question":"小说/写作类 skill 的社区上位替代与垂直替代","tier":"core","status":"answered"},
+    {"id":"SQ3","question":"deep-research 类调研自动化的替代方案","tier":"core","status":"answered"},
+    {"id":"SQ4","question":"中文社区 skills 实践与替代讨论","tier":"core","status":"answered"},
+    {"id":"SQ5","question":"skill 结构优化最佳实践（体积、渐进披露、eval、数据外置）","tier":"background","status":"answered"},
+    {"id":"SQ6","question":"本仓库结构性问题盘点（重复安装/超标体积/缺 eval）","tier":"core","status":"answered"},
+    {"id":"SQ7","question":"在用 MCP 竞争格局与替代","tier":"core","status":"answered"}
+  ],
+  "findings": [
+    {"claim":"本机已安装 98 个 skill，含大量重复（Naval 系最多 3-4 份副本）与超标体积（15 个 perspective skill 均 24-54K）","sub_question":"SQ6","confidence":"high","evidence":[{"url":"file://~/.agents/skills","lane":"human"}]},
+    {"claim":"社区实测约 30 个 skill 后性能明显退化，每个 description 常驻约 100 tokens 且每轮 API 付费；同行经验为装 50 删到 5、三个月删 80%","sub_question":"SQ5","confidence":"medium","evidence":[{"url":"https://agentengineermaster.com/skills/how-many-claude-code-skills-can-i-have-before-performance-degrades","lane":"glb"},{"url":"https://docs.bswen.com/blog/2026-03-28-claude-skills-context-window/","lane":"glb"},{"url":"https://cloud.tencent.com/developer/article/skill-ecosystem-2026","lane":"cn"}]},
+    {"claim":"story-skills（341★，2026-10 活跃，24 技能）是小说系 19 个 skill 的明确上位替代：项目格式契约 + story CLI 连续性编译器 + evals + GitHub Actions CI + EPUB/DOCX/印刷输出","sub_question":"SQ2","confidence":"high","evidence":[{"url":"https://github.com/danjdewhurst/story-skills","lane":"github"}]},
+    {"claim":"novel-skills（16★，2026-01 停更）是中文网文垂直参考而非依赖：其 5 维质量评分（OOC/Lore/逻辑/风格/重复）值得借鉴","sub_question":"SQ2","confidence":"medium","evidence":[{"url":"https://github.com/PhosAQy/novel-skills","lane":"github"}]},
+    {"claim":"Anthropic 官方 skills 仓库（183,137★，19 个官方技能）不含小说/调研/心智模型类，自建场景大多无官方上位替代","sub_question":"SQ1","confidence":"high","evidence":[{"url":"https://github.com/anthropics/skills","lane":"github"}]},
+    {"claim":"GPT Researcher（29K★）与 LangChain deepagents 是独立框架而非 deep-research skill 的替代；应吸收其 planner/executor 与引用强制架构","sub_question":"SQ3","confidence":"medium","evidence":[{"url":"https://github.com/assafelovic/gpt-researcher","lane":"github"},{"url":"https://listenlabs.com/articles/best-open-source-gpt-assistants/","lane":"glb"}]},
+    {"claim":"SkillReducer 实证（55,315 skill）：description 压缩 48%、body 压缩 39% 后质量反升 2.8%，超 60% body 内容不可行动——perspective 系瘦身方向正确","sub_question":"SQ5","confidence":"high","evidence":[{"url":"reports/research/skill-improve/report.md","lane":"human"}]},
+    {"claim":"memory MCP 有升级候选 Mem0（自报 LoCoMo 92.5 / LongMemEval 94.4，MCP hosted server），但 benchmark 自报需并行试点验证","sub_question":"SQ7","confidence":"medium","evidence":[{"url":"https://mem0.ai/blog/state-of-ai-agent-memory-2026","lane":"prime"},{"url":"https://getunblocked.com/blog/memory-mcp-servers-compared","lane":"prime"}]},
+    {"claim":"context7（54K★）与 playwright 无明确上位替代应保留；搜索质量层可加 Tavily/Exa/Firecrawl（Firecrawl 自报 94.7% SimpleQA），但中文引擎覆盖是 websearch_cn 独有价值需保留","sub_question":"SQ7","confidence":"medium","evidence":[{"url":"https://neuledge.com/blog/2026-02-06/top-7-mcp-alternatives-for-context7-in-2026","lane":"glb"},{"url":"https://pondero.ai/agents/guides/firecrawl-vs-tavily-vs-exa-search-api-agents-july-2026/","lane":"glb"}]}
+  ],
+  "strongest_objection": "30 个性能退化阈值来自第三方博客而非官方基准；story-skills 仅 341★ 单作者且中文网文未验证；Mem0 benchmark 自报嫌疑——三项行动建议均应以试点而非直接迁移落地",
+  "gaps": [
+    "story-skills 中文长篇网文场景未实测，建议 10 章试写验证",
+    "用户 30 天真实 skill 触发频率未采集",
+    "Mem0 hosted server 隐私与成本未实测"
+  ],
+  "meta": {
+    "requested_mode": "deep",
+    "effective_mode": "deep+solo",
+    "reused_queries": 3,
+    "fresh_queries": 9,
+    "contrarian_run": true,
+    "degradations": ["prime 空结果 2 次后 glb 兜底", "gh 沙箱拦截后升级成功", "solo 模式：spawn 不可用"]
+  }
+}

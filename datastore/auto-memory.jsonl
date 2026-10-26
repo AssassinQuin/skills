@@ -1,0 +1,1 @@
+{"date": "2026-10-26", "topic": "cc-switch-management-audit", "conclusion": "cc-switch保留为provider/proxy/usage控制面；Skills以Git仓库为SSOT；MCP用脱敏manifest生成Claude/Codex/Trae adapter并审计同名覆盖；Trae等待官方支持期间走独立adapter。", "report": "/Users/ganjie/skills/reports/research/cc-switch-management-audit/report.md"}

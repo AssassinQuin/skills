@@ -155,7 +155,7 @@ Step 2: 采集近100条推文数据
     → 目标100条，每滚动一屏约10条，需滚动约10次
     → 失败判定：页面显示登录墙/404/超时3次 → 切方式2
 
-  方式2（备选）：claude-in-chrome 浏览器工具
+  方式2（备选）：Codex-in-chrome 浏览器工具
     → navigate到用户主页 → read_page获取DOM
     → javascript_tool提取推文列表（article元素）
     → 多次scroll + read_page累积数据
@@ -275,15 +275,15 @@ X 运营咨询中遇到以下信号,按对应路径修复:
 
 ## 实测微例（baseline → round1）
 
-### 例 1: 写「Claude Code 体验」推文
+### 例 1: 写「Codex 体验」推文
 
 **❌ baseline**：
-> 在这条推文中，我想分享一下我用 Claude Code 的体验。它是一个 AI 编程工具，可以帮你写代码。链接：https://...
+> 在这条推文中，我想分享一下我用 Codex 的体验。它是一个 AI 编程工具，可以帮你写代码。链接：https://...
 
 问题：0 好奇缺口 / 0 数字锚点 / 外链在正文 / Hook 公式空。
 
 **✅ round1（走场景 A）**：
-> 我让 Claude Code 写了一个 200 行的 Chrome 扩展。
+> 我让 Codex 写了一个 200 行的 Chrome 扩展。
 > 一次跑通。
 > 我做这行 3 年，第一次怀疑自己学的不是「编程」，是「祈祷」。
 >

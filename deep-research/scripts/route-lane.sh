@@ -28,10 +28,10 @@ key="${qnorm}|${lane}"
 routing() {
   case "$1" in
     cn)    jq -cn '{action:"search",lane:"cn",tool:"mcp__websearch-cn__search",tool_params:{engines:["sogou"],limit:5},fallback:{tool:"mcp__websearch-cn__search",tool_params:{engines:["sogou","csdn","juejin","linuxdo"],limit:5}},note:"中文事实/新闻；baidu 引擎间歇 302 不路由"}' ;;
-    glb)   jq -cn '{action:"search",lane:"glb",tool:"mcp__websearch-global__search",tool_params:{engines:["startpage","duckduckgo"],limit:5},fallback:{tool:"mcp__websearch-global__search",tool_params:{engines:["startpage","duckduckgo","brave"],limit:5}},note:"外文事实/技术文档；非英文查询先翻译"}' ;;
-    zhihu) jq -cn '{action:"search",lane:"zhihu",tool:"mcp__zhihu-global__global_search",tool_params:{count:5},fallback:{tool:"mcp__websearch-cn__search",tool_params:{engines:["sogou"],limit:5}},note:"观点/体验/中文争议；限额≤4次/任务串行；2026-09-04 起唯一知乎通道（原 zhihu_search MCP 已移除）"}' ;;
+    glb)   jq -cn '{action:"search",lane:"glb",tool:"mcp__websearch-cn__search",tool_params:{engines:["bing"],limit:5},fallback:{tool:"mcp__websearch-cn__search",tool_params:{engines:["bing","duckduckgo","brave"],limit:5}},note:"外文事实/技术文档；非英文查询先翻译；websearch-cn 已统一承载中文/外文引擎"}' ;;
+    zhihu) jq -cn '{action:"search",lane:"zhihu",tool:"cli:zhihu-search",tool_params:{count:3},fallback:{tool:"mcp__websearch-cn__search",tool_params:{engines:["sogou"],limit:5}},note:"观点/体验/中文争议；首选 CLI 原生知乎检索；MCP fallback 时查询追加 site:zhihu.com；限额≤4次/任务串行"}' ;;
     prime) jq -cn '{action:"search",lane:"prime",tool:"mcp__web-search-prime__web_search_prime",tool_params:{count:5},fallback:null,note:"仅 deep 模式高价值查询；主会话直调≤3次；贵"}' ;;
-    github) jq -cn '{action:"search",lane:"github",tool:"mcp__github__search_repositories",tool_params:{perPage:10,sort:"stars"},fallback:{tool:"mcp__github__search_issues",tool_params:{perPage:10}},note:"仓库指标/issue/代码检索；搜索员按查询类型自选 mcp__github__* 工具；≤8次/任务"}' ;;
+    github) jq -cn '{action:"search",lane:"github",tool:"cli:gh-search",tool_params:{kind:"repos",limit:10,sort:"stars"},fallback:{tool:"cli:gh-search",tool_params:{kind:"issues",limit:10}},note:"仓库指标/issue/代码检索；优先 {baseDir}/scripts/github-search.sh，可按查询类型选 repos/issues/code；≤8次/任务"}' ;;
   esac
 }
 

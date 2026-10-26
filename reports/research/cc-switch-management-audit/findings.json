@@ -1,0 +1,262 @@
+{
+  "topic": "cc-switch 仓库、Issue、用户使用情况与技能/MCP/配置管理方案调研",
+  "date": "2026-10-26",
+  "mode": "deep",
+  "sub_questions": [
+    {
+      "id": "R1",
+      "question": "cc-switch 仓库定位、架构、数据模型、功能范围和备份/同步机制是什么？",
+      "tier": "core",
+      "status": "answered"
+    },
+    {
+      "id": "R2",
+      "question": "cc-switch 的 Issue 历史、修复节奏、常见故障和用户痛点有哪些？",
+      "tier": "core",
+      "status": "answered"
+    },
+    {
+      "id": "R3",
+      "question": "中文/外文社区对 cc-switch 的真实使用反馈、好评和批评是什么？",
+      "tier": "core",
+      "status": "answered"
+    },
+    {
+      "id": "R4",
+      "question": "相比 cc-switch，MCP selector、dotfiles/GitOps、自写 sync 等方案各自的适用边界是什么？",
+      "tier": "core",
+      "status": "answered"
+    },
+    {
+      "id": "R5",
+      "question": "在当前 Claude/Codex/Trae/skills 本机环境下，应采用什么分层管理方案与迁移步骤？",
+      "tier": "core",
+      "status": "answered"
+    }
+  ],
+  "findings": [
+    {
+      "claim": "cc-switch 是 Tauri/Rust/React/SQLite 架构，SQLite 保存 providers、MCP、Skills、prompts、projects 与 usage，设备侧保存 settings/live state/OAuth/备份。",
+      "sub_question": "R1",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "https://github.com/farion1231/cc-switch#where-is-my-data-stored",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch",
+          "lane": "github"
+        }
+      ]
+    },
+    {
+      "claim": "MCP 管理规则是 DB 中同名字段以 CC Switch 为准；未导入的手动 server 不被改动。",
+      "sub_question": "R1",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "https://github.com/farion1231/cc-switch/blob/main/docs/user-manual/zh/3-extensions/3.1-mcp.md",
+          "lane": "github"
+        }
+      ]
+    },
+    {
+      "claim": "项目活跃度极高但版本/schema 演进极快，近期 releases 连续升级数据库 schema。",
+      "sub_question": "R2",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "https://github.com/farion1231/cc-switch",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/releases/tag/v4.0.20",
+          "lane": "github"
+        }
+      ]
+    },
+    {
+      "claim": "v4.0.0 修复了整份配置快照覆盖问题，但后续仍有 http_headers、Gemini env key、OpenCode 覆盖、Codex 专属 MCP 字段等白名单/抽象遗漏。",
+      "sub_question": "R2",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "https://github.com/farion1231/cc-switch/releases/tag/v4.0.0",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8797",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8861",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8780",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8843",
+          "lane": "github"
+        }
+      ]
+    },
+    {
+      "claim": "云同步/多设备一致性仍有 open issues，云同步不能替代本地恢复演练。",
+      "sub_question": "R2",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8502",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8019",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8783",
+          "lane": "github"
+        }
+      ]
+    },
+    {
+      "claim": "社区最强真实使用场景是 provider/model 切换，MCP/Skills 深度长期使用样本不足。",
+      "sub_question": "R3",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "url": "https://linux.do/t/topic/1812468",
+          "lane": "cn"
+        },
+        {
+          "url": "https://news.ycombinator.com/item?id=46264180",
+          "lane": "glb"
+        },
+        {
+          "url": "https://www.reddit.com/r/ClaudeCode/comments/1peohn7/ccswitch_copilot_api_master_worth_it_to_get/",
+          "lane": "glb"
+        },
+        {
+          "url": "https://blog.csdn.net/wochunyang/article/details/160148024",
+          "lane": "cn"
+        }
+      ]
+    },
+    {
+      "claim": "远程 SSH/容器场景和系统环境变量覆盖是社区高频痛点。",
+      "sub_question": "R3",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "url": "https://linux.do/t/topic/1209623",
+          "lane": "cn"
+        },
+        {
+          "url": "https://linux.do/t/topic/1214498",
+          "lane": "cn"
+        },
+        {
+          "url": "https://zhuanlan.zhihu.com/p/2055911607197348700",
+          "lane": "zhihu"
+        }
+      ]
+    },
+    {
+      "claim": "本机当前是三套源头并存：CC Switch DB、/Users/ganjie/skills Git/symlink、Claude/Codex/Trae live config，尚未形成单一事实源。",
+      "sub_question": "R5",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/raw/local-environment.md",
+          "lane": "human"
+        }
+      ]
+    },
+    {
+      "claim": "本机 skills Git 工作区有大量未提交删除，当前不能作为可靠恢复点；CC Switch skills 与 repo 几乎不相交。",
+      "sub_question": "R5",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/raw/local-environment.md",
+          "lane": "human"
+        }
+      ]
+    },
+    {
+      "claim": "本机 cc-switch.db 与早期备份权限过宽，且 DB 含敏感配置/日志，应先收紧并加密备份。",
+      "sub_question": "R5",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/raw/local-environment.md",
+          "lane": "human"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8353",
+          "lane": "github"
+        }
+      ]
+    },
+    {
+      "claim": "Trae 官方支持尚未合入；PR #8759 仍 open、review required 且 conflicting。",
+      "sub_question": "R4",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8868",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/issues/8007",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/pull/8759",
+          "lane": "github"
+        }
+      ]
+    },
+    {
+      "claim": "推荐混合架构：CC Switch 管 provider/proxy/usage；Git repo 管 Skills；脱敏 MCP inventory 加 generator/audit 管跨客户端配置；Trae 独立 adapter。",
+      "sub_question": "R4",
+      "confidence": "high",
+      "evidence": [
+        {
+          "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/report.md",
+          "lane": "human"
+        },
+        {
+          "url": "https://github.com/farion1231/cc-switch/blob/main/docs/user-manual/zh/3-extensions/3.1-mcp.md",
+          "lane": "github"
+        },
+        {
+          "url": "https://github.com/henkisdabro/Claude-Code-MCP-Server-Selector",
+          "lane": "glb"
+        },
+        {
+          "url": "file:///Users/ganjie/skills/reports/research/cc-switch-management-audit/raw/alternatives.md",
+          "lane": "human"
+        }
+      ]
+    }
+  ],
+  "strongest_objection": "cc-switch 维护活跃且内建 GUI、备份、代理与用量统计；如果只在一台桌面机使用、以 provider 切换为主、不需要 Trae，也不要求 Git review，那么全交给 cc-switch 的短期复杂度最低。但该前提与当前环境不符：Trae 未正式支持，Skills 已有 Git/vendor 治理需求，且本机已发生 CC Switch DB 与 repo/live config 的实质漂移。",
+  "gaps": [
+    "未完成全量 issue open/closed 分母统计；关键词命中数存在重叠。",
+    "仓库 tarball 下载超时，未做完整源码树本地审计。",
+    "社区样本约15-20位可辨认参与者，不足以估计长期稳定性比例。",
+    "444 个本机 Git 删除是否全部符合既定清理设计，需要用户确认或逐项审计。"
+  ],
+  "meta": {
+    "requested_mode": "deep",
+    "effective_mode": "deep + parallel research + local audit + solo contrarian",
+    "reused_queries": 0,
+    "fresh_queries": 20,
+    "contrarian_run": true,
+    "agent_degradation": "模型名 sonnet/haiku/opus 在当前 Codex agent 工具中不可用；搜索/审计由继承模型执行。对抗核实 agent 超时未返回，主会话按验证清单完成独立复核：findings/source/query 计数、引用解析、secret scan、validate-findings 均通过。"
+  }
+}
